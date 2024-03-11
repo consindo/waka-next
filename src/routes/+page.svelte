@@ -6,13 +6,14 @@
   const connect = db.connect()
 
   const getData = async () => {
-    const res = await fetch('/stops.txt')
+    const res = await fetch('/stop_times.txt')
     const data = res.text()
     return data
   }
 
   const importToDb = (table: string, data: string) => {
     const rows = data.split('\n')
+    console.log(rows.length, 'total rows')
 
     const sqlColumns = rows[0]
       .split(',')
@@ -20,30 +21,49 @@
       .join(', ')
     db.db.run(`CREATE TABLE ${table} (${sqlColumns});`)
 
-    rows.forEach((row, index) => {
-      if (index === 0) return
-      if (row.length === 0) return
-      const values = row
-        .split(',')
-        .map((i) => `'${i.split("'").join("''")}'`)
-        .join(',')
-      try {
-        db.db.exec(`INSERT INTO ${table} VALUES (${values});`)
-      } catch (err) {
-        console.log(err, values)
-      }
-    })
+    const batchSize = 10000
+    for (let i = 0; i < Math.floor(rows.length / batchSize); i++) {
+      if (i % 5 === 0) console.log(`batch ${i}`)
+      const insertion = rows
+        .slice(i * batchSize, (i + 1) * batchSize)
+        .map((row, index) => {
+          if (index === 0) return ''
+          if (row.length === 0) return ''
+          if (index % 50000 === 0) console.log(index)
+          const values = row
+            .split(',')
+            .map((i) => `'${i.split("'").join("''")}'`)
+            .join(',')
+          return `INSERT INTO ${table} VALUES (${values});`
+        })
+        .join('\n')
+      db.db.exec(insertion)
+    }
   }
 
   onMount(async () => {
     window.db = db
-    // window.getData = getData
 
     await connect
     const data = await getData()
-    console.time('startImport')
-    importToDb('stops', data)
-    console.timeEnd('startImport')
+
+    const run = () => {
+      console.time('import')
+      importToDb('stoptimes', data)
+      console.timeEnd('import')
+    }
+
+    const save = async () => {
+      const handle = await showSaveFilePicker()
+      const data = db.db.export()
+      const stream = await handle.createWritable()
+      await stream.write(data.buffer)
+      await stream.close()
+      console.log('done!')
+    }
+
+    window.run = run
+    window.save = save
   })
 
   let results = []
