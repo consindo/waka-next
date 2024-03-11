@@ -7,7 +7,7 @@ export class DB {
 
   async connect() {
     this.sql = await sqlInit({
-      locateFile: () => wasm
+      locateFile: () => wasm,
     })
     this.db = new this.sql.Database()
   }
@@ -20,7 +20,7 @@ export class DB {
   exec(query: string) {
     if (!this.db) throw 'DB needs to be connected!'
     const results = this.db.exec(query)
-    results.forEach(result => {
+    results.forEach((result) => {
       console.table([result.columns, ...result.values])
     })
     return results
@@ -28,6 +28,7 @@ export class DB {
 
   run(query: string) {
     if (!this.db) throw 'DB needs to be connected!'
+    // console.debug(query)
     this.db.run(query)
   }
 }

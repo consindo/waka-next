@@ -1,10 +1,10 @@
 <script lang="ts">
   import { DB } from '$lib/db'
-  import { GTFSImport } from '$lib/gtfsImport'
   import { onMount } from 'svelte'
+  import { Importer } from '$lib/importer'
 
   const db = new DB()
-  const gtfsImport = new GTFSImport({ db })
+  const importer = new Importer({ db })
   let connect: Promise<void>
 
   const getDb = async () => {
@@ -20,6 +20,8 @@
 
     db.load(dbData)
     console.log('existing db loaded')
+
+    window.importer = importer
   })
 
   let error = ''
@@ -36,9 +38,7 @@
   }
 
   const triggerImport = async () => {
-    const res = await fetch('/stops.txt')
-    const data = await res.text()
-    gtfsImport.import('stops', data)
+    importer.run()
   }
 
   const triggerSave = async () => {
@@ -91,5 +91,13 @@
   }
   input {
     width: 400px;
+  }
+  table {
+    font-family: monospace;
+    white-space: pre;
+    font-size: 11px;
+  }
+  th {
+    text-align: left;
   }
 </style>
