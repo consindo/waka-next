@@ -1,6 +1,9 @@
 import { parse } from 'csv-parse/browser/esm/sync'
-import type { DB } from '../db'
-import { schema } from './schema'
+
+import type { DB } from '$lib/db'
+import { logger } from '$lib/logger'
+
+import { type Schema } from './schema'
 
 export class DBImport {
   db: DB
@@ -9,15 +12,13 @@ export class DBImport {
     this.db = props.db
   }
 
-  createTable = (table: string) => {
-    const template = schema.find((i) => i.name === table)
-    if (!template) throw `Could not find template for ${table}`
-
-    const sqlColumns = Object.entries(template.schema).flatMap((i) => i.join(' '))
-    this.db.run(`CREATE TABLE ${table} (${sqlColumns});`)
+  createTable = (schema: Schema) => {
+    const sqlColumns = Object.entries(schema.tableSchema).flatMap((i) => i.join(' '))
+    this.db.run(`CREATE TABLE ${schema.table} (${sqlColumns});`)
+    logger.info(`[${schema.table}]: created table`)
   }
 
-  parseData = (table: string, columns: string[], data: string, batchSize = 10): string[] => {
+  parseData = (table: string, columns: string[], data: string, batchSize = 10000): string[] => {
     const rows = parse(data, { columns: true }) // this is a bit slow, could stream it instead
     const insertCommand = `INSERT INTO ${table} (${columns.join(',')})`
 
@@ -26,25 +27,24 @@ export class DBImport {
         .slice(index * batchSize, (index + 1) * batchSize)
         .map((row: { [key: string]: string }) => {
           const values = columns
-            .map((key) => `'${(row[key] || '').split("'").join("''")}'`)
+            .map((key) => (row[key] ? `'${row[key].split("'").join("''")}'` : 'NULL'))
             .join(',')
           return `${insertCommand} VALUES (${values});`
         })
         .join('\n')
     })
 
+    logger.info(`[${table}]: parsed csv`)
     return result
   }
 
-  importTable = (table: string, data: string) => {
-    const template = schema.find((i) => i.name === table)
-    if (!template) throw `Could not find template for ${table}`
+  importTable = (schema: Schema, data: string) => {
+    const columns = Object.keys(schema.tableSchema)
+    const result = this.parseData(schema.table, columns, data)
 
-    const columns = Object.keys(template.schema)
-    const result = this.parseData(template.name, columns, data)
-
-    result.forEach((batch) => {
+    result.forEach((batch, index) => {
       this.db.run(`BEGIN;${batch}COMMIT;`) // dramatically increases the speed of sqlite
+      logger.info(`[${schema.table}]: committed batch ${index + 1}/${result.length}`)
     })
   }
 }
