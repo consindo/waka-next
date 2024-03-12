@@ -1,7 +1,8 @@
 import type { DB } from '$lib/db'
 import { DBImport } from './dbImport'
-import { BlobReader, TextWriter, ZipReader, type Entry } from '@zip.js/zip.js'
+import { ZipReader } from '@zip.js/zip.js'
 import { schema, type Schema } from './schema'
+import { CsvParser } from './csv'
 
 export class Importer {
   db: DB
@@ -16,41 +17,36 @@ export class Importer {
 
   async download() {
     const res = await fetch('/gtfs.zip')
-    const blob = await res.blob()
-    return blob
+    if (res.body === null) throw 'download failed'
+    return new ZipReader(res.body)
   }
 
-  async unzip(zipBlob: Blob): Promise<Entry[]> {
-    const zipFileReader = new BlobReader(zipBlob)
-    const zipReader = new ZipReader(zipFileReader)
-    const entries = await zipReader.getEntries()
-    return entries
-  }
-
-  async import(files: Entry[], schemas: Schema[]) {
-    for (let schema of schemas) {
-      const file = files.find((f) => f.filename === schema.filename)
-      if (file == undefined || file.getData === undefined) {
-        throw `${schema.filename} not found in archive`
+  async import(files: ZipReader<unknown>, schemas: Schema[]) {
+    for await (const file of files.getEntriesGenerator()) {
+      const schema = schemas.find((s) => s.filename === file.filename)
+      if (schema === undefined || file.getData === undefined) {
+        console.log('skipping', file.filename)
+        continue
       }
 
-      const data = await file.getData(new TextWriter())
+      // sets up our streams
+      const decoder = new TextDecoderStream()
+      const parser = new CsvParser()
+      decoder.readable.pipeThrough(parser)
+      file.getData(decoder)
+
       this.#dbImport.createTable(schema)
-      this.#dbImport.importTable(schema, data)
+      await this.#dbImport.importTable(schema, parser.readable)
     }
   }
 
   async run() {
     console.time('fetch')
-    const zipBlob = await this.download()
+    const gtfsZip = await this.download()
     console.timeEnd('fetch')
 
-    console.time('unzip')
-    const gtfsFiles = await this.unzip(zipBlob)
-    console.timeEnd('unzip')
-
     console.time('import')
-    await this.import(gtfsFiles, schema)
+    await this.import(gtfsZip, schema)
     console.timeEnd('import')
     console.log('done!')
   }

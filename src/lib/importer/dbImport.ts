@@ -1,5 +1,3 @@
-import { parse } from 'csv-parse/browser/esm/sync'
-
 import type { DB } from '$lib/db'
 import { logger } from '$lib/logger'
 
@@ -18,30 +16,46 @@ export class DBImport {
     logger.info(`[${schema.table}]: created table`)
   }
 
-  parseData = (table: string, columns: string[], data: string, batchSize = 10000): string[] => {
-    const rows = parse(data, { columns: true }) // this is a bit slow, could stream it instead
+  parseData = async (
+    table: string,
+    columns: string[],
+    data: ReadableStream,
+    batchSize = 10000
+  ): Promise<string[]> => {
     const insertCommand = `INSERT INTO ${table} (${columns.join(',')})`
 
-    const result = new Array(Math.ceil(rows.length / batchSize)).fill(null).map((_value, index) => {
-      return rows
-        .slice(index * batchSize, (index + 1) * batchSize)
-        .map((row: { [key: string]: string }) => {
-          const values = columns
-            .map((key) => (row[key] ? `'${row[key].split("'").join("''")}'` : 'NULL'))
-            .join(',')
-          return `${insertCommand} VALUES (${values});`
-        })
-        .join('\n')
-    })
+    let index = 0
+    let batch = -1
+    let output: string[] = []
+    const reader = data.getReader()
+    while (true) {
+      const { done, value } = await reader.read() // async interables not supported yet
+      if (done) break
 
-    logger.info(`[${table}]: parsed csv`)
-    return result
+      // batched in a string array
+      value.data.forEach((row: string[]) => {
+        if (index % batchSize === 0) {
+          output.push('')
+          batch++
+        }
+        const values = columns
+          .map((key) =>
+            row[value.schema[key]] ? `'${row[value.schema[key]].split("'").join("''")}'` : 'NULL'
+          )
+          .join(',')
+        output[batch] += `${insertCommand} VALUES (${values});\n`
+
+        index++
+      })
+    }
+    return output
   }
 
-  importTable = (schema: Schema, data: string) => {
+  importTable = async (schema: Schema, data: ReadableStream) => {
     const columns = Object.keys(schema.tableSchema)
-    const result = this.parseData(schema.table, columns, data)
+    const result = await this.parseData(schema.table, columns, data)
 
+    // return
     result.forEach((batch, index) => {
       this.db.run(`BEGIN;${batch}COMMIT;`) // dramatically increases the speed of sqlite
       logger.info(`[${schema.table}]: committed batch ${index + 1}/${result.length}`)
