@@ -1,0 +1,39 @@
+name: Build & Test
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      pull-requests: write
+      checks: write
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+      - run: npm ci
+      # - run: npm run lint
+      # - run: npm run check
+      - run: npm run build
+      - run: npx vitest --coverage.enabled true --reporter=junit --outputFile=./test-output.xml
+        env:
+          CI: true
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: test
+          path: ./test-output.xml
+          reporter: jest-junit
+      - name: 'Report Coverage'
+        if: always()
+        uses: davelosert/vitest-coverage-report-action@v2
