@@ -2,57 +2,31 @@
   import { onMount } from 'svelte'
 
   import { DB } from '$lib/db'
-  import { Importer } from '$lib/importer'
-  import { logger } from '$lib/logger'
+  import { getErrorMessage, logger } from '$lib/logger'
+
+  import DatabaseNav from './DatabaseNav.svelte'
+  import type { QueryExecResult } from 'sql.js'
 
   const db = new DB()
-  const importer = new Importer({ db })
   const stream = logger.stream
   let connect: Promise<void>
 
   onMount(async () => {
     connect = db.connect()
-    window.importer = importer
   })
 
   let error = ''
-  let results = []
-  let query = 'select * from stops where stop_name like "%train station" limit 100'
+  let results: QueryExecResult[] = []
+  let query = 'select * from stops where stop_name like "%train station%" limit 100'
   const run = () => {
     error = ''
     try {
-      results = db.db.exec(query)
+      results = db.db!.exec(query)
+      console.log(results)
     } catch (err) {
       results = []
-      error = err.message
+      error = getErrorMessage(err)
     }
-  }
-
-  const getDb = async () => {
-    const res = await fetch('/db.bin')
-    const data = res.arrayBuffer()
-    return data
-  }
-
-  const triggerLoad = async () => {
-    const dbData = await getDb()
-    await connect
-    console.time('load db')
-    db.load(dbData)
-    console.timeEnd('load db')
-  }
-
-  const triggerImport = async () => {
-    importer.run()
-  }
-
-  const triggerSave = async () => {
-    const handle = await showSaveFilePicker()
-    const data = db.db.export()
-    const stream = await handle.createWritable()
-    await stream.write(data.buffer)
-    await stream.close()
-    console.log('done!')
   }
 </script>
 
@@ -63,11 +37,7 @@
 {#await connect}
   loading sqllite
 {:then}
-  <div>
-    <button on:click={triggerImport}>trigger import from gtfs.zip</button>
-    <button on:click={triggerSave}>dump db</button>
-    <button on:click={triggerLoad}>load db</button>
-  </div>
+  <DatabaseNav {db} />
   <div>
     <input type="text" bind:value={query} /> <button on:click={run}>run</button>
   </div>
@@ -92,9 +62,6 @@
 {/await}
 
 <style>
-  div {
-    margin-bottom: 1rem;
-  }
   input {
     width: 400px;
   }

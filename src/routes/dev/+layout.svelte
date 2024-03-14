@@ -26,9 +26,8 @@
 
 <style>
   header {
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1.25rem;
     margin-bottom: 0;
-    border-bottom: 1px solid #eee;
     display: flex;
     align-items: center;
     gap: 1rem;
@@ -61,6 +60,6 @@
     text-decoration: underline;
   }
   main {
-    padding: 1rem;
+    padding: 0 1rem;
   }
 </style>

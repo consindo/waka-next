@@ -1,8 +1,11 @@
-import type { DB } from '$lib/db'
-import { DBImport } from './dbImport'
 import { ZipReader } from '@zip.js/zip.js'
-import { schema, type Schema } from './schema'
+
+import type { DB } from '$lib/db'
+import { logger } from '$lib/logger'
+
 import { CsvParser } from './csv'
+import { DBImport } from './dbImport'
+import { schema, type Schema } from './schema'
 
 export class Importer {
   db: DB
@@ -15,17 +18,12 @@ export class Importer {
     this.#dbImport = new DBImport({ db: props.db })
   }
 
-  async download() {
-    const res = await fetch('/gtfs.zip')
-    if (res.body === null) throw 'download failed'
-    return new ZipReader(res.body)
-  }
-
-  async import(files: ZipReader<unknown>, schemas: Schema[]) {
+  async import(stream: ReadableStream<Uint8Array>, schemas: Schema[] = schema) {
+    const files = new ZipReader(stream)
     for await (const file of files.getEntriesGenerator()) {
       const schema = schemas.find((s) => s.filename === file.filename)
       if (schema === undefined || file.getData === undefined) {
-        console.log('skipping', file.filename)
+        logger.info(`(skipping) ${file.filename}`)
         continue
       }
 
@@ -38,16 +36,5 @@ export class Importer {
       this.#dbImport.createTable(schema)
       await this.#dbImport.importTable(schema, parser.readable)
     }
-  }
-
-  async run() {
-    console.time('fetch')
-    const gtfsZip = await this.download()
-    console.timeEnd('fetch')
-
-    console.time('import')
-    await this.import(gtfsZip, schema)
-    console.timeEnd('import')
-    console.log('done!')
   }
 }

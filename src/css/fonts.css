@@ -20,6 +20,11 @@
     U+FFFD;
 }
 
-body, html, input, textarea, select, button {
+body,
+html,
+input,
+textarea,
+select,
+button {
   font-family: 'Figtree', sans-serif;
 }

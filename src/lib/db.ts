@@ -12,6 +12,11 @@ export class DB {
     this.db = new this.sql.Database()
   }
 
+  reset() {
+    if (!this.sql) throw 'DB needs to be connected!'
+    this.db = new this.sql.Database()
+  }
+
   load(data: ArrayBuffer) {
     if (!this.sql) throw 'DB needs to be connected!'
     this.db = new this.sql.Database(new Uint8Array(data))
@@ -20,15 +25,11 @@ export class DB {
   exec(query: string) {
     if (!this.db) throw 'DB needs to be connected!'
     const results = this.db.exec(query)
-    results.forEach((result) => {
-      console.table([result.columns, ...result.values])
-    })
     return results
   }
 
   run(query: string) {
     if (!this.db) throw 'DB needs to be connected!'
-    // console.debug(query)
     this.db.run(query)
   }
 }

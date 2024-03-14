@@ -15,7 +15,7 @@ export class DBImport {
       .flatMap((i) => i.join(' '))
       .join(', ')
     this.db.run(`CREATE TABLE ${schema.table} (${sqlColumns});`)
-    logger.info(`[${schema.table}]: created table`)
+    logger.info(`(${schema.table}): created table`)
   }
 
   parseData = async (
@@ -60,7 +60,7 @@ export class DBImport {
     // return
     result.forEach((batch, index) => {
       this.db.run(`BEGIN;${batch}COMMIT;`) // dramatically increases the speed of sqlite
-      logger.info(`[${schema.table}]: committed batch ${index + 1}/${result.length}`)
+      logger.info(`(${schema.table}) committed batch ${index + 1}/${result.length}`)
     })
   }
 }
