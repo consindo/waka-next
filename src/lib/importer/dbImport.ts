@@ -11,7 +11,9 @@ export class DBImport {
   }
 
   createTable = (schema: Schema) => {
-    const sqlColumns = Object.entries(schema.tableSchema).flatMap((i) => i.join(' ')).join(', ')
+    const sqlColumns = Object.entries(schema.tableSchema)
+      .flatMap((i) => i.join(' '))
+      .join(', ')
     this.db.run(`CREATE TABLE ${schema.table} (${sqlColumns});`)
     logger.info(`[${schema.table}]: created table`)
   }

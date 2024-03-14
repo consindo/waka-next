@@ -16,4 +16,7 @@ export default defineConfig({
       reportOnFailure: true,
     },
   },
+  server: {
+    port: 5180,
+  },
 })

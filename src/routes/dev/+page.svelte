@@ -60,7 +60,6 @@
   <title>waka-next</title>
 </svelte:head>
 
-<h1>waka-next</h1>
 {#await connect}
   loading sqllite
 {:then}
