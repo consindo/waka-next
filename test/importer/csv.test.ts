@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect } from 'vitest'
 
 import { CsvParser } from '../../src/lib/importer/csv'
 
@@ -15,6 +15,7 @@ describe('csv', () => {
 
       const reader = parser.readable.getReader()
       const result: string[] = []
+      // eslint-disable-next-line no-constant-condition
       while (true) {
         const { done, value } = await reader.read()
         if (done) break

@@ -5,19 +5,31 @@
 
   const db = new DB()
   const client = new Client({ db })
-  let connect: Promise<void>
 
   let sqlResult = ''
   onMount(async () => {
-    connect = await db.connect()
+    await db.connect()
     sqlResult = JSON.stringify(client.getStops(), null, 2)
   })
 </script>
 
-<h1>waka-next</h1>
-<p>this is the client, it has a smaller bundle as it does not include the importer</p>
-<a href="/dev">/dev</a>
-
 <div>
-  {sqlResult}
+  <h1>waka:next</h1>
+  <p>this will eventually be the new waka. however it's long way from being done.</p>
+  <ul>
+    <li><a href="/dev">developer console</a></li>
+    <li><a href="https://github.com/consindo/waka-next">github</a></li>
+  </ul>
+  <p>
+    this page has a smaller bundle size as it doesn't include the importer, but still includes
+    sqlite:
+  </p>
+  <code>select 1 as number</code>:
+  <pre>{sqlResult}</pre>
 </div>
+
+<style>
+  div {
+    padding: 1rem;
+  }
+</style>

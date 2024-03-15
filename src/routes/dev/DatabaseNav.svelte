@@ -11,6 +11,7 @@
   let zipElement: HTMLInputElement
   let dbFiles: FileList
   let zipFiles: FileList
+
   $: if (dbFiles && dbFiles.length > 0) {
     ;(async () => {
       const data = await new Response(dbFiles[0]).arrayBuffer()
@@ -25,14 +26,16 @@
       }
     })()
   }
+
   const triggerSave = async () => {
-    const handle = await showSaveFilePicker()
+    const handle = await window.showSaveFilePicker()
     const data = db.db!.export()
     const stream = await handle.createWritable()
     await stream.write(data.buffer)
     await stream.close()
     console.log('done!')
   }
+
   $: if (zipFiles && zipFiles.length > 0) {
     ;(async () => {
       const data = new Response(zipFiles[0])

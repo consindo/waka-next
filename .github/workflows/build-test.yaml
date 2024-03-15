@@ -21,8 +21,9 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
-      # - run: npm run lint
-      # - run: npm run check
+      - run: npm run format # formatting errors shouldn't block a deploy
+      - run: npm run lint
+      - run: npm run check
       - run: npm run build
       - run: npx vitest --coverage.enabled true --reporter=junit --outputFile=./test-output.xml
         env:
