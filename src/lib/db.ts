@@ -1,5 +1,5 @@
 import wasm from 'sql.js/dist/sql-wasm.wasm?url'
-import sqlInit, { type Database } from 'sql.js'
+import sqlInit, { type Database, type SqlValue } from 'sql.js'
 
 export class DB {
   db?: Database
@@ -31,5 +31,17 @@ export class DB {
   run(query: string) {
     if (!this.db) throw 'DB needs to be connected!'
     this.db.run(query)
+  }
+
+  execObject(query: string) {
+    const results = this.exec(query)
+    return results.flatMap((result) =>
+      result.values.map((row) =>
+        row.reduce((acc: Record<string, unknown>, cur: SqlValue, index: number) => {
+          acc[result.columns[index]] = cur
+          return acc
+        }, {})
+      )
+    )
   }
 }

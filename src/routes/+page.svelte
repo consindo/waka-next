@@ -4,12 +4,18 @@
   import { Client } from '$lib/client'
 
   const db = new DB()
-  const client = new Client({ db })
+  const db2 = new DB()
+  const client = new Client()
+  client.addRegion('nz-akl', db)
+  client.addRegion('nz-wlg', db2)
 
   let sqlResult = ''
+  let sqlResult2 = ''
   onMount(async () => {
     await db.connect()
-    sqlResult = JSON.stringify(client.getStops(), null, 2)
+    await db2.connect()
+    sqlResult = JSON.stringify(client.getStops('all'), null, 2)
+    sqlResult2 = JSON.stringify(client.getStops('nz-wlg'), null, 2)
   })
 </script>
 
@@ -26,6 +32,7 @@
   </p>
   <code>select 1 as number</code>:
   <pre>{sqlResult}</pre>
+  <pre>{sqlResult2}</pre>
 </div>
 
 <style>
