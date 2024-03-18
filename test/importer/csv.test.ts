@@ -28,5 +28,23 @@ describe('csv', () => {
         ['g', 'h', 'i'],
       ])
     })
+    it('should parse a csv with only a header line', async () => {
+      const parser = new CsvParser()
+
+      const writer = parser.writable.getWriter()
+      writer.write('col1,col2,col3')
+      writer.close()
+
+      const reader = parser.readable.getReader()
+      const result: string[] = []
+      // eslint-disable-next-line no-constant-condition
+      while (true) {
+        const { done, value } = await reader.read()
+        if (done) break
+        result.push(...value.data)
+        expect(value.schema).toEqual({ col1: 0, col2: 1, col3: 2 })
+      }
+      expect(result).toEqual([])
+    })
   })
 })

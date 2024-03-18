@@ -16,6 +16,6 @@ export class Client {
   }
 
   getStops(prefix: PrefixInput) {
-    return this.#runQuery(prefix, 'select 1 as number')
+    return this.#runQuery(prefix, 'select * from stops')
   }
 }

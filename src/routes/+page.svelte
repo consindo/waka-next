@@ -4,18 +4,16 @@
   import { Client } from '$lib/client'
 
   const db = new DB()
-  const db2 = new DB()
   const client = new Client()
-  client.addRegion('nz-akl', db)
-  client.addRegion('nz-wlg', db2)
+  client.addRegion('zz-sample1', db)
 
   let sqlResult = ''
-  let sqlResult2 = ''
   onMount(async () => {
+    const res = await fetch('/sample-feed-1.bin')
+    const data = await res.arrayBuffer()
     await db.connect()
-    await db2.connect()
+    db.load(data)
     sqlResult = JSON.stringify(client.getStops('all'), null, 2)
-    sqlResult2 = JSON.stringify(client.getStops('nz-wlg'), null, 2)
   })
 </script>
 
@@ -32,7 +30,6 @@
   </p>
   <code>select 1 as number</code>:
   <pre>{sqlResult}</pre>
-  <pre>{sqlResult2}</pre>
 </div>
 
 <style>
