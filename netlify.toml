@@ -1,4 +1,4 @@
 # this is different from the netlify.toml that sveltekit uses to build it
 [build]
-  command = "npm run build:web"
+  command = "npm run build:netlify"
   publish = "apps/web/build"
