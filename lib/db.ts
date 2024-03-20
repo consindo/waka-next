@@ -7,7 +7,7 @@ export class DB {
 
   async connect() {
     this.sql = await sqlInit({
-      locateFile: () => wasm,
+      locateFile: typeof window !== 'undefined' ? () => wasm : undefined,
     })
     this.db = new this.sql.Database()
   }
