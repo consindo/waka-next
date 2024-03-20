@@ -10,6 +10,7 @@
     "build": "npm run build:orchestrator && npm run build:web",
     "build:orchestrator": "cd apps/orchestrator && vite build",
     "build:web": "cd apps/web && vite build",
+    "build:netlify": "npm run build:web && ln -s ./apps/web/.netlify ./.netlify && ln -s ./apps/web/.svelte-kit ./.svelte-kit",
     "preview": "npm run preview:orchestrator & npm run preview:web",
     "preview:orchestrator": "cd apps/orchestrator && vite preview",
     "preview:web": "cd apps/web && vite preview",
