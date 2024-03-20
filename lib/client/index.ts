@@ -1,4 +1,4 @@
-import type { DB } from '$lib/db'
+import type { DB } from '@lib/db'
 
 import getRoutes from './sql/getRoutes.sql?raw'
 import getStops from './sql/getStops.sql?raw'
