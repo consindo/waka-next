@@ -15,7 +15,7 @@ const transformContent = () => {
           csvSchema = inferSchema(chunk)
         } catch {
           // it crashes if the csv header row doesn't have a newline
-          csvSchema = inferSchema(chunk + '\n') 
+          csvSchema = inferSchema(chunk + '\n')
         }
         parser = initParser(csvSchema)
         schema = csvSchema.cols.reduce((acc: CsvSchema, cur: SchemaColumn, index: number) => {

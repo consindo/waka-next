@@ -149,7 +149,7 @@ export const schema: Schema[] = [
       origin_id: SqliteStorageClasses.char,
       destination_id: SqliteStorageClasses.char,
       contains_id: SqliteStorageClasses.char,
-    }
+    },
   },
   {
     filename: 'timeframes.txt',
@@ -159,7 +159,7 @@ export const schema: Schema[] = [
       start_time: SqliteStorageClasses.char,
       end_time: SqliteStorageClasses.char,
       service_id: SqliteStorageClasses.char,
-    }
+    },
   },
   {
     filename: 'fare_media.txt',
@@ -168,7 +168,7 @@ export const schema: Schema[] = [
       fare_media_id: SqliteStorageClasses.char,
       fare_media_name: SqliteStorageClasses.char,
       fare_media_type: SqliteStorageClasses.integer,
-    }
+    },
   },
   {
     filename: 'fare_products.txt',
@@ -179,7 +179,7 @@ export const schema: Schema[] = [
       fare_media_id: SqliteStorageClasses.char,
       amount: SqliteStorageClasses.real,
       currency: SqliteStorageClasses.char,
-    }
+    },
   },
   {
     filename: 'fare_leg_rules.txt',
@@ -192,7 +192,7 @@ export const schema: Schema[] = [
       from_timeframe_group_id: SqliteStorageClasses.char,
       to_timeframe_group_id: SqliteStorageClasses.char,
       fare_product_id: SqliteStorageClasses.char,
-    }
+    },
   },
   {
     filename: 'fare_transfer_rules.txt',
@@ -205,7 +205,7 @@ export const schema: Schema[] = [
       duration_limit_type: SqliteStorageClasses.integer,
       fare_transfer_type: SqliteStorageClasses.integer,
       fare_product_id: SqliteStorageClasses.char,
-    }
+    },
   },
   {
     filename: 'areas.txt',
@@ -213,7 +213,7 @@ export const schema: Schema[] = [
     tableSchema: {
       area_id: SqliteStorageClasses.char,
       area_name: SqliteStorageClasses.char,
-    }
+    },
   },
   {
     filename: 'stop_areas.txt',
@@ -221,7 +221,7 @@ export const schema: Schema[] = [
     tableSchema: {
       area_id: SqliteStorageClasses.char,
       stop_id: SqliteStorageClasses.char,
-    }
+    },
   },
   {
     filename: 'networks.txt',
@@ -229,7 +229,7 @@ export const schema: Schema[] = [
     tableSchema: {
       network_id: SqliteStorageClasses.char,
       network_name: SqliteStorageClasses.char,
-    }
+    },
   },
   {
     filename: 'route_networks.txt',
@@ -237,7 +237,7 @@ export const schema: Schema[] = [
     tableSchema: {
       network_id: SqliteStorageClasses.char,
       route_id: SqliteStorageClasses.char,
-    }
+    },
   },
   {
     filename: 'shapes.txt',
@@ -248,7 +248,7 @@ export const schema: Schema[] = [
       shape_pt_lon: SqliteStorageClasses.real,
       shape_pt_sequence: SqliteStorageClasses.integer,
       shape_dist_traveled: SqliteStorageClasses.real,
-    }
+    },
   },
   {
     filename: 'frequencies.txt',
@@ -259,7 +259,7 @@ export const schema: Schema[] = [
       end_time: SqliteStorageClasses.char,
       headway_secs: SqliteStorageClasses.integer,
       exact_times: SqliteStorageClasses.integer,
-    }
+    },
   },
   {
     filename: 'transfers.txt',
@@ -273,7 +273,7 @@ export const schema: Schema[] = [
       to_trip_id: SqliteStorageClasses.char,
       transfer_type: SqliteStorageClasses.integer,
       min_transfer_time: SqliteStorageClasses.integer,
-    }
+    },
   },
   {
     filename: 'pathways.txt',
@@ -291,7 +291,7 @@ export const schema: Schema[] = [
       min_width: SqliteStorageClasses.real,
       signposted_as: SqliteStorageClasses.char,
       reversed_signposted_as: SqliteStorageClasses.char,
-    }
+    },
   },
   {
     filename: 'levels.txt',
@@ -300,7 +300,7 @@ export const schema: Schema[] = [
       level_id: SqliteStorageClasses.char,
       level_index: SqliteStorageClasses.real,
       level_name: SqliteStorageClasses.char,
-    }
+    },
   },
   {
     filename: 'translations.txt',
@@ -313,7 +313,7 @@ export const schema: Schema[] = [
       record_id: SqliteStorageClasses.char,
       record_sub_id: SqliteStorageClasses.char,
       field_value: SqliteStorageClasses.char,
-    }
+    },
   },
   {
     filename: 'feed_info.txt',
@@ -328,7 +328,7 @@ export const schema: Schema[] = [
       feed_version: SqliteStorageClasses.char,
       feed_contact_email: SqliteStorageClasses.char,
       feed_contact_url: SqliteStorageClasses.char,
-    }
+    },
   },
   {
     filename: 'attributions.txt',
@@ -345,6 +345,6 @@ export const schema: Schema[] = [
       attribution_url: SqliteStorageClasses.char,
       attribution_email: SqliteStorageClasses.char,
       attribution_phone: SqliteStorageClasses.char,
-    }
-  }
+    },
+  },
 ]

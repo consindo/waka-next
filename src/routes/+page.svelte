@@ -28,7 +28,6 @@
     this page has a smaller bundle size as it doesn't include the importer, but still includes
     sqlite:
   </p>
-  <code>select 1 as number</code>:
   <pre>{sqlResult}</pre>
 </div>
 

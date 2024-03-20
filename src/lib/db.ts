@@ -35,13 +35,16 @@ export class DB {
 
   execObject(query: string) {
     const results = this.exec(query)
-    return results.flatMap((result) =>
-      result.values.map((row) =>
+    return results.flatMap((result) => {
+      const casedColumns = result.columns.map((i: string) =>
+        i.toLowerCase().replace(/[-_][a-z]/g, (group: string) => group.slice(-1).toUpperCase())
+      )
+      return result.values.map((row) =>
         row.reduce((acc: Record<string, unknown>, cur: SqlValue, index: number) => {
-          acc[result.columns[index]] = cur
+          acc[casedColumns[index]] = cur
           return acc
         }, {})
       )
-    )
+    })
   }
 }
