@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest'
 
-import { DB } from '../src/lib/db'
+import { DB } from '../../../apps/web/src/lib/db'
 import { QueryExecResult, SqlValue } from 'sql.js'
 
 describe('db', () => {

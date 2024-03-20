@@ -1,5 +1,5 @@
-import type { DB } from '$lib/db'
-import { logger } from '$lib/logger'
+import type { DB } from '../db'
+import { logger } from '../logger'
 
 import { type Schema } from './schema'
 

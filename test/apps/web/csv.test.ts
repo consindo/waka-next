@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 
-import { CsvParser } from '../../src/lib/importer/csv'
+import { CsvParser } from '../../../apps/web/src/lib/importer/csv'
 
 describe('csv', () => {
   describe('CsvParser', () => {

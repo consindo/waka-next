@@ -34,4 +34,5 @@ module.exports = {
     'svelte/valid-compile': 'warn',
     'svelte/no-at-html-tags': 'warn',
   },
+  ignorePatterns: ['**/build/*'],
 }

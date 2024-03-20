@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest'
 
-import { DB } from '../../src/lib/db'
-import { DBImport } from '../../src/lib/importer/dbImport'
-import { schema } from '../../src/lib/importer/schema'
+import { DB } from '../../../apps/web/src/lib/db'
+import { DBImport } from '../../../apps/web/src/lib/importer/dbImport'
+import { schema } from '../../../apps/web/src/lib/importer/schema'
 
 describe('dbImport', () => {
   describe('createTable', () => {
