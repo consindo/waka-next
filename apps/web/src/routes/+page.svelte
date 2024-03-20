@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { DB } from '$lib/db'
-  import { Client } from '$lib/client'
+  import { DB } from '@lib/db'
+  import { Client } from '@lib/client'
 
   const db = new DB()
   const client = new Client()

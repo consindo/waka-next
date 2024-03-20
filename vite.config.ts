@@ -6,7 +6,7 @@ export default defineConfig({
     coverage: {
       reporter: ['text', 'json-summary', 'json', 'html'],
       reportOnFailure: true,
-      exclude: [...configDefaults.coverage.exclude, '**/build/**', '**/.svelte-kit/**'],
+      exclude: [...(configDefaults.coverage.exclude || []), '**/build/**', '**/.svelte-kit/**'],
     },
   },
 })

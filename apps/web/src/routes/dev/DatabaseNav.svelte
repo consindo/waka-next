@@ -1,7 +1,7 @@
 <script lang="ts">
-  import type { DB } from '$lib/db'
-  import { Importer } from '$lib/importer'
-  import { getErrorMessage, logger } from '$lib/logger'
+  import type { DB } from '@lib/db'
+  import { Importer } from '@lib/importer'
+  import { getErrorMessage, logger } from '@lib/logger'
 
   export let db: DB
 

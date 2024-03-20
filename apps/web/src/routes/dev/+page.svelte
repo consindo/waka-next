@@ -1,8 +1,8 @@
 <script lang="ts">
   import { onMount } from 'svelte'
 
-  import { DB } from '$lib/db'
-  import { getErrorMessage, logger } from '$lib/logger'
+  import { DB } from '@lib/db'
+  import { getErrorMessage, logger } from '@lib/logger'
 
   import DatabaseNav from './DatabaseNav.svelte'
   import type { QueryExecResult } from 'sql.js'

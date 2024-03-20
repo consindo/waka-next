@@ -1,7 +1,7 @@
 import { ZipReader } from '@zip.js/zip.js'
 
-import type { DB } from '$lib/db'
-import { logger } from '$lib/logger'
+import type { DB } from '../db'
+import { logger } from '../logger'
 
 import { CsvParser } from './csv'
 import { DBImport } from './dbImport'
