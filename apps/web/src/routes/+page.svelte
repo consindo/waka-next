@@ -1,20 +1,16 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-  import { DB } from '@lib/db'
-  import { Client } from '@lib/client'
+  import { waitForClient } from '../lib/storage.js'
 
-  const db = new DB()
-  const client = new Client()
-  client.addRegion('zz-sample1', db)
+  export let data
 
-  let sqlResult = ''
-  onMount(async () => {
-    const res = await fetch('/sample-feed-1.bin')
-    const data = await res.arrayBuffer()
-    await db.connect()
-    db.load(data)
-    sqlResult = JSON.stringify(client.getStops('all'), null, 2)
-  })
+  let renderedContent = data.data
+  if (renderedContent === null) {
+    onMount(async () => {
+      const client = await waitForClient
+      renderedContent = client.getStops('all')
+    })
+  }
 </script>
 
 <div>
@@ -25,10 +21,16 @@
     <li><a href="https://github.com/consindo/waka-next">github</a></li>
   </ul>
   <p>
-    this page has a smaller bundle size as it doesn't include the importer, but still includes
-    sqlite:
+    this page will prerender and return data via HTTP, and then start downloading the sqlite
+    database in the background for subsequent requests (navigate to another page and then back here,
+    and notice how the provider changes).
   </p>
-  <pre>{sqlResult}</pre>
+  <p>
+    apps/orchestrator is not deployed yet, so it is likely the provider will be 'static' for now
+  </p>
+  <h2>gtfs query results</h2>
+  <p>provider: {data.provider}</p>
+  <pre>{JSON.stringify(renderedContent, undefined, 2)}</pre>
 </div>
 
 <style>
