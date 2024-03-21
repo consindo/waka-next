@@ -16,9 +16,11 @@ export const resolveData = async <Type>(
   } else {
     try {
       const res = await fetch(httpEndpoint)
+      if (!res.ok) throw `http: ${res.status}`
       const data = (await res.json()) as Type
       return { provider: 'server', data }
     } catch (err) {
+      console.error(err)
       if (browser) {
         const client = await waitForClient
         const data = clientQuery(client) as Type
