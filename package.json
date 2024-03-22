@@ -21,6 +21,7 @@
     "format": "prettier --write ."
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.5.3",
     "@sveltejs/adapter-netlify": "^4.1.0",
     "@sveltejs/kit": "^2.5.4",
     "@sveltejs/vite-plugin-svelte": "^3.0.2",

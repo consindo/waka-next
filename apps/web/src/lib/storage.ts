@@ -22,7 +22,7 @@ const createClient = async () => {
   const db = new DB()
 
   try {
-    const res = await fetch(variables.gtfsDbEndpoint)
+    const res = await fetch(variables.gtfsEndpoint + '/gtfs.db')
     if (!res.ok) throw `http: ${res.status}`
     const data = await res.arrayBuffer()
     await db.connect()

@@ -1,4 +1,3 @@
 export const variables = {
-  gtfsDbEndpoint: '/sample-feed-1.bin',
-  gtfsHttpEndpoint: 'http://localhost:5181',
+  gtfsEndpoint: import.meta.env.VITE_GTFS_ENDPOINT || 'http://localhost:5181',
 }
