@@ -3,9 +3,8 @@ import { parse } from 'yaml'
 
 import type { Prefix } from '@lib/client'
 
-import configFile from '../config.yaml?url'
+import { env } from '$env/dynamic/private'
 import sampleGtfs from '../static/sample-feed-1.bin.br?url'
-import { read } from '$app/server'
 
 type RegionConfig = {
   name: string
@@ -40,13 +39,12 @@ const sampleRegions = {
 }
 
 export class ConfigManager {
-  #internalConfig: ConfigurationFile | null = null
+  #internalConfig: ConfigurationFile
   #s3client: S3Client | null = null
 
-  async loadConfig() {
+  constructor() {
     try {
-      const configData = await read(configFile).text();
-      this.#internalConfig = parse(configData)
+      this.#internalConfig = parse(env.WAKA_ORCHESTRATOR_CONFIG)
     } catch (err) {
       console.warn(err)
       console.warn('Could not read configuration file, using sample config.')
@@ -58,7 +56,6 @@ export class ConfigManager {
   }
   
   async getRegions(): Promise<{ regions: { region: string; etag: string; size: number; url: string }[] }> {
-    if (!this.#internalConfig) throw 'loadConfig needs to be run first'
     if (this.#s3client === null) return { regions: sampleRegions.regions }
     const { bucketName } = this.#internalConfig.database!
     const prefix = 'regions/'

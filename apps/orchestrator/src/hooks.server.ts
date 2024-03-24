@@ -13,7 +13,6 @@ const client = new Client()
 const configManager = new ConfigManager()
 
 const loadDb = (async () => {
-  await configManager.loadConfig()
   const regions = await configManager.getRegions()
   await Promise.all(regions.regions.map(async (region) => {
     console.log(`added ${region.region} from ${region.url}`)

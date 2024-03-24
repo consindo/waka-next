@@ -11,6 +11,22 @@ This is a rewrite of Waka. The notable difference is that it now uses sqlite on 
 - `npm run build` to build
 - `npm run preview` for a preview server
 
+## Configuration
+
+To configure the orchestrator, set WAKA_ORCHESTRATOR_CONFIG to:
+
+```
+database:
+  region: ap-southeast-2
+  bucketName: your-s3-bucket-name
+  publicUrl: https://your-bucket-public-url.com/regions
+regions:
+  nz-akl:
+    name: 'Auckland, New Zealand'
+```
+
+You will also need to configure AWS credentials.
+
 ## Application Structure
 
 There's three apps in this repository.
