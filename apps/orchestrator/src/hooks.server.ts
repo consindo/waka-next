@@ -7,7 +7,7 @@ import { DB } from '@lib/db'
 
 import { ConfigManager } from '$lib/configManager'
 
-import gtfs from '../../../static/sample-feed-1.bin.br?url'
+import gtfs from '../static/sample-feed-1.bin.br?url'
 
 const db = new DB()
 const client = new Client()

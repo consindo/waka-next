@@ -11,6 +11,9 @@ const config = {
     adapter: adapter({
       edge: true,
     }),
+    alias: {
+      '@lib': '../../lib',
+    },
   },
 }
 

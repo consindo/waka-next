@@ -10,10 +10,7 @@
     "strict": true,
     "moduleResolution": "bundler",
     "target": "es2020",
-    "baseurl": ".",
-    "paths": {
-      "@lib/*": ["./lib/*"]
-    }
+    "baseurl": "."
   }
   // Path aliases are handled by https://kit.svelte.dev/docs/configuration#alias
   //
