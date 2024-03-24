@@ -46,6 +46,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.540.0",
     "@sveltejs/adapter-node": "^5.0.1",
     "@zip.js/zip.js": "^2.7.40",
     "sql.js": "^1.10.2",

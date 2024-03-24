@@ -7,22 +7,35 @@ import { DB } from '@lib/db'
 
 import { ConfigManager } from '$lib/configManager'
 
-import gtfs from '../static/sample-feed-1.bin.br?url'
-
-const db = new DB()
 const client = new Client()
 
 // adds all the regions specified in the config
 const configManager = new ConfigManager()
-Object.keys(configManager.getConfig().regions).forEach((region: string) => {
-  client.addRegion(region as Prefix, db)
-})
 
 const loadDb = (async () => {
-  const dataBr = await read(gtfs).arrayBuffer()
-  const data = zlib.brotliDecompressSync(dataBr)
-  await db.connect()
-  db.load(data)
+  await configManager.loadConfig()
+  const regions = await configManager.getRegions()
+  await Promise.all(regions.regions.map(async (region) => {
+    console.log(`added ${region.region} from ${region.url}`)
+    // download to local cache
+    let data: ArrayBuffer
+    if (region.url.startsWith('/')) {
+      const dataBr = await read(region.url).arrayBuffer()
+      data = zlib.brotliDecompressSync(dataBr)
+    } else {
+      const res = await fetch(region.url)
+      data = await res.arrayBuffer()
+    }
+
+    // connect to db
+    const db = new DB()
+    await db.connect()
+    db.load(data)
+
+    // done
+    client.addRegion(region.region as Prefix, db)
+
+  }))
 })()
 
 export const handle: Handle = async ({ event, resolve }) => {
