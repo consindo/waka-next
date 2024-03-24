@@ -25,6 +25,7 @@
     "@sveltejs/adapter-netlify": "^4.1.0",
     "@sveltejs/kit": "^2.5.4",
     "@sveltejs/vite-plugin-svelte": "^3.0.2",
+    "@trivago/prettier-plugin-sort-imports": "^4.3.0",
     "@types/eslint": "^8.56.5",
     "@types/sql.js": "^1.4.9",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
@@ -48,6 +49,7 @@
     "@sveltejs/adapter-node": "^5.0.1",
     "@zip.js/zip.js": "^2.7.40",
     "sql.js": "^1.10.2",
-    "udsv": "^0.5.3"
+    "udsv": "^0.5.3",
+    "yaml": "^2.4.1"
   }
 }

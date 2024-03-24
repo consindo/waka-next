@@ -1,6 +1,5 @@
 import type { DB } from '../db'
 import { logger } from '../logger'
-
 import { type Schema } from './schema'
 
 export class DBImport {

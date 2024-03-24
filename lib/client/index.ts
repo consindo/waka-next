@@ -3,7 +3,7 @@ import type { DB } from '@lib/db'
 import getRoutes from './sql/getRoutes.sql?raw'
 import getStops from './sql/getStops.sql?raw'
 
-type Prefix = `${string}-${string}`
+export type Prefix = `${string}-${string}`
 type PrefixInput = Prefix | 'all'
 
 type StopResult = {

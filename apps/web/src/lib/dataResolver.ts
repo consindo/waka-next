@@ -1,6 +1,8 @@
-import { waitForClient, isClientReady, getClient } from '../lib/storage'
 import { browser } from '$app/environment'
+
 import type { Client } from '@lib/client'
+
+import { getClient, isClientReady, waitForClient } from '../lib/storage'
 
 type Fetch = typeof fetch
 

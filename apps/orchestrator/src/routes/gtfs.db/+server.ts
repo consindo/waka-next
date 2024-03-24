@@ -1,4 +1,5 @@
 import { read } from '$app/server'
+
 import gtfs from '../../../static/sample-feed-1.bin.br?url'
 
 export const GET = async () => {

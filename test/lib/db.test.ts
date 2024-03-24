@@ -1,7 +1,7 @@
-import { describe, it, expect, vi } from 'vitest'
+import { QueryExecResult, SqlValue } from 'sql.js'
+import { describe, expect, it, vi } from 'vitest'
 
 import { DB } from '../../lib/db'
-import { QueryExecResult, SqlValue } from 'sql.js'
 
 describe('db', () => {
   describe('execObject', () => {

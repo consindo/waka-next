@@ -1,4 +1,4 @@
-import { inferSchema, initParser, type BaseParse, type Parser, type SchemaColumn } from 'udsv'
+import { type BaseParse, type Parser, type SchemaColumn, inferSchema, initParser } from 'udsv'
 
 const transformContent = () => {
   type CsvSchema = { [key: string]: number }

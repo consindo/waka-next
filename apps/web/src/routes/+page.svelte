@@ -15,10 +15,7 @@
     database in the background for subsequent requests (navigate to another page and then back here,
     and notice how the provider changes).
   </p>
-  <p>
-    apps/orchestrator is not deployed yet, so it is likely the provider will be 'static-server' and
-    'static-client' for now
-  </p>
+  <p></p>
   <h2>gtfs query results - stops</h2>
   <pre>{JSON.stringify(data, undefined, 2)}</pre>
 </div>

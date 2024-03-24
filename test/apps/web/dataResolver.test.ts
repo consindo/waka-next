@@ -1,7 +1,8 @@
-import { describe, it, expect, vi, afterEach } from 'vitest'
 import { browser } from '$app/environment'
-import { isClientReady } from '../../../apps/web/src/lib/storage'
+import { afterEach, describe, expect, it, vi } from 'vitest'
+
 import { resolveData } from '../../../apps/web/src/lib/dataResolver'
+import { isClientReady } from '../../../apps/web/src/lib/storage'
 
 const browserGetter = vi.fn()
 vi.mock('$app/environment', () => ({

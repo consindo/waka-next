@@ -1,5 +1,5 @@
-import wasm from 'sql.js/dist/sql-wasm.wasm?url'
 import sqlInit, { type Database, type SqlValue } from 'sql.js'
+import wasm from 'sql.js/dist/sql-wasm.wasm?url'
 
 export class DB {
   db?: Database

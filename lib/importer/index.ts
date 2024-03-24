@@ -2,10 +2,9 @@ import { ZipReader } from '@zip.js/zip.js'
 
 import type { DB } from '../db'
 import { logger } from '../logger'
-
 import { CsvParser } from './csv'
 import { DBImport } from './dbImport'
-import { schema, type Schema } from './schema'
+import { type Schema, schema } from './schema'
 
 export class Importer {
   db: DB
