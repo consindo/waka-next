@@ -5,7 +5,7 @@ export const getErrorMessage = (error: unknown) => {
   return String(error)
 }
 
-class Logger {
+export class Logger {
   stream = writable('')
 
   info(message: string) {

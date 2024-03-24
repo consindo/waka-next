@@ -14,27 +14,28 @@ const configManager = new ConfigManager()
 
 const loadDb = (async () => {
   const regions = await configManager.getRegions()
-  await Promise.all(regions.regions.map(async (region) => {
-    console.log(`added ${region.region} from ${region.url}`)
-    // download to local cache
-    let data: ArrayBuffer
-    if (region.url.startsWith('/')) {
-      const dataBr = await read(region.url).arrayBuffer()
-      data = zlib.brotliDecompressSync(dataBr)
-    } else {
-      const res = await fetch(region.url)
-      data = await res.arrayBuffer()
-    }
+  await Promise.all(
+    regions.regions.map(async (region) => {
+      console.log(`cached ${region.region} locally from ${region.url}`)
+      // download to local cache
+      let data: ArrayBuffer
+      if (region.url.startsWith('/')) {
+        const dataBr = await read(region.url).arrayBuffer()
+        data = zlib.brotliDecompressSync(dataBr)
+      } else {
+        const res = await fetch(region.url)
+        data = await res.arrayBuffer()
+      }
 
-    // connect to db
-    const db = new DB()
-    await db.connect()
-    db.load(data)
+      // connect to db
+      const db = new DB()
+      await db.connect()
+      db.load(data)
 
-    // done
-    client.addRegion(region.region as Prefix, db)
-
-  }))
+      // done
+      client.addRegion(region.region as Prefix, db)
+    })
+  )
 })()
 
 export const handle: Handle = async ({ event, resolve }) => {

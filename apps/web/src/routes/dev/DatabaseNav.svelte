@@ -29,7 +29,7 @@
 
   const triggerSave = async () => {
     const handle = await window.showSaveFilePicker()
-    const data = db.db!.export()
+    const data = db.export()
     const stream = await handle.createWritable()
     await stream.write(data.buffer)
     await stream.close()

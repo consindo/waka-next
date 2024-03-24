@@ -33,6 +33,11 @@ export class DB {
     this.db.run(query)
   }
 
+  export() {
+    if (!this.db) throw 'DB needs to be connected!'
+    return this.db.export()
+  }
+
   execObject(query: string) {
     const results = this.exec(query)
     return results.flatMap((result) => {
