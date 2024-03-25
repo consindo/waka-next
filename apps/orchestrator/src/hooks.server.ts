@@ -21,7 +21,7 @@ const loadDb = (async () => {
         return
       }
       console.log(`caching ${region.region} locally from ${region.url}`)
-      
+
       // download to local cache
       let data: ArrayBuffer
       if (region.url.startsWith('/')) {

@@ -3,7 +3,7 @@ import { parse } from 'yaml'
 
 import type { Prefix } from '@lib/client'
 
-import sampleGtfs from '../static/sample-feed-1.bin.br?url'
+import sampleGtfs from '../../static/sample-feed-1.bin.br?url'
 import { BucketClient } from './bucketClient'
 import { ImportManager } from './importManager'
 
@@ -69,10 +69,11 @@ export class ConfigManager {
   }
 
   async getRegions(): Promise<{
-    regions: { region: Prefix; etag: string; size: number; url: string }[],
+    regions: { region: Prefix; etag: string; size: number; url: string }[]
     regionsConfig: Record<Prefix, RegionConfig>
   }> {
-    if (this.#bucketClient === null) return { regions: sampleRegions.regions, regionsConfig: this.#internalConfig.regions }
+    if (this.#bucketClient === null)
+      return { regions: sampleRegions.regions, regionsConfig: this.#internalConfig.regions }
     const s3Objects = await this.#bucketClient.listObjects(regionsUrlPrefix)
 
     const regions = await Promise.all(
