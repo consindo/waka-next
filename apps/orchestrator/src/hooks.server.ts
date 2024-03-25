@@ -16,7 +16,12 @@ const loadDb = (async () => {
   const regions = await configManager.getRegions()
   await Promise.all(
     regions.regions.map(async (region) => {
-      console.log(`cached ${region.region} locally from ${region.url}`)
+      if (regions.regionsConfig[region.region].shouldCache === false) {
+        console.log(`skipping cache of ${region.region}, shouldCache=false`)
+        return
+      }
+      console.log(`caching ${region.region} locally from ${region.url}`)
+      
       // download to local cache
       let data: ArrayBuffer
       if (region.url.startsWith('/')) {
@@ -34,6 +39,7 @@ const loadDb = (async () => {
 
       // done
       client.addRegion(region.region as Prefix, db)
+      console.log(`cached ${region.region} into memory`)
     })
   )
 })()

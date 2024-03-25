@@ -5,5 +5,5 @@ import type { RequestHandler } from './$types'
 export const GET: RequestHandler = async ({ locals }) => {
   const { configManager } = locals
   const res = await configManager.getRegions()
-  return json(res)
+  return json({ regions: res.regions })
 }
