@@ -9,6 +9,9 @@ export default {
       emitFile: true,
     }),
   ],
+  build: {
+    assetsInlineLimit: 0,
+  },
   server: {
     port: 5181,
     fs: {
