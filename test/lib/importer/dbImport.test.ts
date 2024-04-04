@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from 'vitest'
 
-import { DB } from '../../lib/db'
-import { DBImport } from '../../lib/importer/dbImport'
-import { schema } from '../../lib/importer/schema'
+import { DB } from '@lib/db'
+import { DBImport } from '@lib/importer/dbImport'
+import { schema } from '@lib/importer/schema'
 
-describe('dbImport', () => {
+describe('importer/dbImport', () => {
   describe('createTable', () => {
     it('should create a table', () => {
       const db = new DB()
@@ -19,4 +19,6 @@ describe('dbImport', () => {
       )
     })
   })
+
+  // todo: tests for parseData & importTable
 })

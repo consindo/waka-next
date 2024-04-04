@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
 
-import { CsvParser } from '../../lib/importer/csv'
+import { CsvParser } from '@lib/importer/csv'
 
-describe('csv', () => {
+describe('importer/csv', () => {
   describe('CsvParser', () => {
     it('should parse a text stream into a csv format', async () => {
       const parser = new CsvParser()

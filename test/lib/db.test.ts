@@ -1,7 +1,7 @@
 import { QueryExecResult, SqlValue } from 'sql.js'
 import { describe, expect, it, vi } from 'vitest'
 
-import { DB } from '../../lib/db'
+import { DB } from '@lib/db'
 
 describe('db', () => {
   describe('execObject', () => {

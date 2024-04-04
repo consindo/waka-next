@@ -1,4 +1,5 @@
 import {
+  CopyObjectCommand,
   HeadObjectCommand,
   ListObjectsCommand,
   PutObjectCommand,
@@ -43,6 +44,16 @@ export class BucketClient {
       ContentType: contentType,
       ContentEncoding: contentEncoding,
       Metadata: metadata,
+    })
+    const data = await this.#s3client.send(command)
+    return data
+  }
+
+  async copyObject(sourceKey: string, targetKey: string) {
+    const command = new CopyObjectCommand({
+      Bucket: this.bucket,
+      CopySource: `/${this.bucket}/${sourceKey}`,
+      Key: targetKey,
     })
     const data = await this.#s3client.send(command)
     return data

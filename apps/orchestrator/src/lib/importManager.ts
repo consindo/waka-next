@@ -1,3 +1,4 @@
+import crypto from 'node:crypto'
 import zlib from 'node:zlib'
 
 import { Client, type Prefix } from '@lib/client'
@@ -8,6 +9,7 @@ import { type Logger, getErrorMessage } from '@lib/logger'
 import { type BucketClient } from './bucketClient'
 
 const regionsUrlPrefix = 'regions/'
+const versionsUrlPrefix = 'versions/'
 
 export class ImportManager {
   prefix: Prefix
@@ -34,37 +36,32 @@ export class ImportManager {
     const prefix = this.prefix
     const db = new DB()
     const importer = new Importer({ db })
+    await db.connect()
+
+    // prepares the logger
     const logger = importer.logger
     const logs: string[] = []
-    await db.connect()
-    logger.stream.set('') // prepares the logger
+    logger.stream.set('')
     const unsubscribeLogs = logger.stream.subscribe((i) =>
       i !== '' ? logs.push(`${new Date().toISOString()} ${i}`) : undefined
     )
 
-    logger.info(`downloading gtfs headers from ${this.importUrl}`)
-    const resHead = await fetch(this.importUrl, {
-      headers: this.importHeaders,
-      method: 'HEAD',
-    })
-    if (!resHead.ok) {
-      logs.push(`received http ${resHead.status} from upstream`)
+    let upstreamEtag: string
+    try {
+      const res = await this.downloadGtfs('HEAD', logger)
+      upstreamEtag = res.headers.get('ETag') || ''
+    } catch (err) {
       unsubscribeLogs()
-
-      return {
-        status: 'error',
-        prefix,
-        logs,
-      }
+      return { status: 'error', prefix, logs }
     }
     logger.info(`gtfs headers download complete`)
 
-    const key = `${regionsUrlPrefix}${prefix}.bin`
-    const upstreamEtag = resHead.headers.get('ETag') || ''
+    const hash = crypto.createHash('md5').update(upstreamEtag).digest('hex')
+    const key = `${versionsUrlPrefix}${prefix}/${hash}.bin`
     if (this.disableEtag === true) {
       logger.info('skipping etag check')
     } else {
-      const result = await this.checkUpstream(key, upstreamEtag, logger)
+      const result = await this.checkExistingVersion(key, upstreamEtag, logger)
       if (result === false) {
         unsubscribeLogs()
         return { status: 'skipped', prefix, logs }
@@ -72,17 +69,14 @@ export class ImportManager {
     }
 
     try {
-      logger.info(`downloading gtfs data from ${this.importUrl}`)
-      const resBody = await fetch(this.importUrl, { headers: this.importHeaders })
-      if (!resHead.ok) throw new Error(`http: ${resBody.status}`)
-      await importer.import(resBody.body!)
+      const res = await this.downloadGtfs('GET', logger)
+      await importer.import(res.body!)
       const client = new Client()
       client.addRegion(prefix, db)
       const bounds = client.getBounds(prefix)[0].bounds
       const compressedFile = await this.compressFile(db.export(), logger)
       await this.uploadFile(key, compressedFile, prefix, upstreamEtag, bounds, logger)
       unsubscribeLogs()
-
       return {
         status: 'success',
         prefix,
@@ -91,7 +85,6 @@ export class ImportManager {
     } catch (err) {
       unsubscribeLogs()
       logs.push(getErrorMessage(err))
-
       return {
         status: 'error',
         prefix,
@@ -100,7 +93,20 @@ export class ImportManager {
     }
   }
 
-  async checkUpstream(key: string, upstreamEtag: string, logger: Logger) {
+  async downloadGtfs(method: 'GET' | 'HEAD', logger: Logger) {
+    logger.info(`requesting ${method} gtfs from ${this.importUrl}`)
+    const res = await fetch(this.importUrl, {
+      headers: this.importHeaders,
+      method,
+    })
+    if (!res.ok) {
+      logger.info(`received http ${res.status} from upstream`)
+      throw new Error(`http: ${res.status}`)
+    }
+    return res
+  }
+
+  async checkExistingVersion(key: string, upstreamEtag: string, logger: Logger) {
     try {
       const existingMetadata = await this.#bucketClient!.getObjectMetadata(key)
       const existingEtag = existingMetadata.Metadata!['upstream-etag'] || ''
@@ -109,12 +115,11 @@ export class ImportManager {
           `upstream gtfs content has not changed, skipping import (etag: ${upstreamEtag})`
         )
         return false
-      } else {
-        logger.info(`new gtfs data (etag: ${upstreamEtag})`)
       }
     } catch (err) {
-      logger.info(`could not find an existing import`)
+      logger.info(`no existing import found at ${key}`)
     }
+    logger.info(`new etag (etag: ${upstreamEtag})`)
     return true
   }
 
@@ -143,5 +148,12 @@ export class ImportManager {
       'upstream-etag': upstreamEtag,
     })
     logger.info('upload to s3 complete')
+  }
+
+  async setActiveVersion(version: string) {
+    const prefix = this.prefix
+    const sourceKey = `${versionsUrlPrefix}${prefix}/${version}.bin`
+    const targetKey = `${regionsUrlPrefix}${prefix}.bin`
+    await this.#bucketClient!.copyObject(sourceKey, targetKey)
   }
 }

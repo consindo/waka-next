@@ -49,6 +49,7 @@ const sampleRegions = {
 }
 
 const regionsUrlPrefix = 'regions/'
+const versionsUrlPrefix = 'versions/'
 
 export class ConfigManager {
   #internalConfig: ConfigurationFile
@@ -121,5 +122,29 @@ export class ConfigManager {
       region.gtfsZipDisableEtag || false
     )
     return importManager.checkAndDownloadUpdate()
+  }
+
+  async getVersions(prefix: Prefix) {
+    if (this.#bucketClient === null) return { versions: [] }
+    const keyPrefix = versionsUrlPrefix + prefix
+    const s3Objects = await this.#bucketClient.listObjects(keyPrefix)
+    const versions = (s3Objects.Contents || []).map((i) => {
+      return {
+        prefix,
+        // remove the key, leading slash, and .bin
+        version: (i.Key || '').slice(keyPrefix.length + 1, -4),
+        date: i.LastModified?.toISOString(),
+        url: i.Key,
+        etag: JSON.parse(i.ETag!),
+        size: i.Size || 0,
+      }
+    })
+    return { versions }
+  }
+
+  async setActiveVersion(prefix: Prefix, version: string) {
+    const sourceKey = `${versionsUrlPrefix}${prefix}/${version}.bin`
+    const targetKey = `${regionsUrlPrefix}${prefix}.bin`
+    await this.#bucketClient!.copyObject(sourceKey, targetKey)
   }
 }
