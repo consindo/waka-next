@@ -38,7 +38,11 @@ const sampleRegions = {
     {
       region: 'zz-sample1' as Prefix,
       etag: 'e699729a3825e2fcf048a63a6ef138de',
-      size: 45056,
+      bounds: [
+        [-116.40094, 36.915684],
+        [-117.13316, 36.42529],
+      ],
+      size: 2323,
       url: sampleGtfs,
     },
   ],
@@ -80,12 +84,14 @@ export class ConfigManager {
       (s3Objects.Contents || []).flatMap(async (i) => {
         const data = await this.#bucketClient?.getObjectMetadata(i.Key!)
         const region = (data?.Metadata || {})['waka-region'] as Prefix
+        const bounds = (data?.Metadata || {})['waka-bounds'] as string
         if (this.#internalConfig.regions[region] === undefined) return []
         if (i.Size === 0) return [] // filters out folders
         return [
           {
             region,
             etag: JSON.parse(i.ETag!),
+            bounds: JSON.parse(bounds || '[[0,0],[0,0]]'),
             size: i.Size || 0,
             url: `${this.#internalConfig!.database!.publicUrl}/${i.Key!.substring(regionsUrlPrefix.length)}`,
           },

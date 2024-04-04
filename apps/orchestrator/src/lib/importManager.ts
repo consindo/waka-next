@@ -1,6 +1,6 @@
 import zlib from 'node:zlib'
 
-import type { Prefix } from '@lib/client'
+import { Client, type Prefix } from '@lib/client'
 import { DB } from '@lib/db'
 import { Importer } from '@lib/importer'
 import { type Logger, getErrorMessage } from '@lib/logger'
@@ -76,8 +76,11 @@ export class ImportManager {
       const resBody = await fetch(this.importUrl, { headers: this.importHeaders })
       if (!resHead.ok) throw new Error(`http: ${resBody.status}`)
       await importer.import(resBody.body!)
+      const client = new Client()
+      client.addRegion(prefix, db)
+      const bounds = client.getBounds(prefix)[0].bounds
       const compressedFile = await this.compressFile(db.export(), logger)
-      await this.uploadFile(key, compressedFile, prefix, upstreamEtag, logger)
+      await this.uploadFile(key, compressedFile, prefix, upstreamEtag, bounds, logger)
       unsubscribeLogs()
 
       return {
@@ -130,11 +133,13 @@ export class ImportManager {
     data: Uint8Array,
     prefix: string,
     upstreamEtag: string,
+    bounds: [[number, number], [number, number]],
     logger: Logger
   ) {
     logger.info(`uploading to s3 as ${key}`)
     await this.#bucketClient!.putObject(key, data, 'application/x-sqlite3', 'br', {
       'waka-region': prefix,
+      'waka-bounds': JSON.stringify(bounds),
       'upstream-etag': upstreamEtag,
     })
     logger.info('upload to s3 complete')
