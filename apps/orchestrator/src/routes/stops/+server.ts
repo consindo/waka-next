@@ -4,6 +4,6 @@ import type { RequestHandler } from './$types'
 
 export const GET: RequestHandler = async ({ locals }) => {
   const { client } = locals
-  const routes = client.getBounds('all')
-  return json(routes)
+  const stops = client.getStops('all')
+  return json(stops)
 }

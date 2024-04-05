@@ -41,7 +41,7 @@ const sampleRegions = {
       bounds: [
         [-116.40094, 36.915684],
         [-117.13316, 36.42529],
-      ],
+      ] as [number, number][],
       size: 2323,
       url: sampleGtfs,
     },
@@ -74,7 +74,13 @@ export class ConfigManager {
   }
 
   async getRegions(): Promise<{
-    regions: { region: Prefix; etag: string; size: number; url: string }[]
+    regions: {
+      region: Prefix
+      etag: string
+      size: number
+      url: string
+      bounds: [number, number][]
+    }[]
     regionsConfig: Record<Prefix, RegionConfig>
   }> {
     if (this.#bucketClient === null)
@@ -94,7 +100,7 @@ export class ConfigManager {
             etag: JSON.parse(i.ETag!),
             bounds: JSON.parse(bounds || '[[0,0],[0,0]]'),
             size: i.Size || 0,
-            url: `${this.#internalConfig!.database!.publicUrl}/${i.Key!.substring(regionsUrlPrefix.length)}`,
+            url: `${this.#internalConfig!.database!.publicUrl}/${i.Key}`,
           },
         ]
       })
@@ -134,12 +140,16 @@ export class ConfigManager {
         // remove the key, leading slash, and .bin
         version: (i.Key || '').slice(keyPrefix.length + 1, -4),
         date: i.LastModified?.toISOString(),
-        url: i.Key,
+        url: `${this.#internalConfig!.database!.publicUrl}/${i.Key}`,
         etag: JSON.parse(i.ETag!),
         size: i.Size || 0,
       }
     })
     return { versions }
+  }
+
+  getConfiguredRegions() {
+    return this.#internalConfig.regions
   }
 
   async setActiveVersion(prefix: Prefix, version: string) {

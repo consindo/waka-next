@@ -2,7 +2,8 @@
   import { page } from '$app/stores'
 
   const links = [
-    { name: 'query', href: '/dev' },
+    { name: 'query', href: '/dev/query' },
+    { name: 'orchestrator', href: '/dev/orchestrator' },
     { name: 'client', href: '/' },
   ]
 </script>
@@ -13,7 +14,11 @@
     <ul>
       {#each links as link}
         <li>
-          <a href={link.href} class:selected={link.href === $page.url.pathname}>{link.name}</a>
+          <a
+            href={link.href}
+            class:selected={$page.url.pathname.startsWith(link.href) && link.href.length > 1}
+            >{link.name}</a
+          >
         </li>
       {/each}
     </ul>
@@ -51,10 +56,10 @@
     font-size: 15px;
     text-decoration: none;
     color: #222;
-    font-weight: 500;
+    font-weight: 450;
   }
   a.selected {
-    font-weight: 600;
+    font-weight: 650;
   }
   a:hover {
     text-decoration: underline;

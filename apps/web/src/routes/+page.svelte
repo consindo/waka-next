@@ -6,7 +6,7 @@
   <h1>waka:next</h1>
   <p>this will eventually be the new waka. however it's long way from being done.</p>
   <ul>
-    <li><a href="/dev">developer console</a></li>
+    <li><a href="/dev/query">developer console</a></li>
     <li><a href="https://github.com/consindo/waka-next">github</a></li>
     <li><a href="/sample">another gtfs route</a></li>
   </ul>
