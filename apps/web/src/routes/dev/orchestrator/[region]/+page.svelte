@@ -39,8 +39,10 @@
           ).toFixed(2)}MB)
         </dd>
       </dl>
+      <button on:click={() => window.location.reload()}>refresh</button>
     {:else}
       <p>Region {data.id} is inactive.</p>
+      <button on:click={() => window.location.reload()}>refresh</button>
     {/if}
     <h2>versions</h2>
     <form method="POST" action="?/import">

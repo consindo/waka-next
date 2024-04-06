@@ -13,6 +13,8 @@ This is a rewrite of Waka. The notable difference is that it now uses sqlite on 
 
 ## Configuration
 
+The orchestrator will start without any configuration and serve the sample configuration. However, if you do not set up AWS credentials (S3), imports on the server will not work. However, you can still use the Waka dev tools in the client to test imports locally.
+
 To configure the orchestrator, set WAKA_ORCHESTRATOR_CONFIG to:
 
 ```
@@ -25,7 +27,9 @@ regions:
     name: 'Auckland, New Zealand'
 ```
 
-You will also need to configure AWS credentials.
+You will also need to set a `WAKA_ORCHESTRATOR_ACCESS_TOKEN` to the administrator bearer token that you want to use. Multiple tokens are not currently supported.
+
+The `WAKA_ORCHESTRATOR_CACHE_PERIOD` variable can also be set to a number in milliseconds to reduce the number of reads from S3.
 
 ## Application Structure
 

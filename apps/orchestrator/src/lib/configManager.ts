@@ -24,6 +24,17 @@ type ConfigurationFile = {
   } | null
 }
 
+export type RegionResult = {
+  regions: {
+    region: Prefix
+    etag: string
+    size: number
+    url: string
+    bounds: [number, number][]
+  }[]
+  regionsConfig: Record<Prefix, RegionConfig>
+}
+
 const sampleRegions = {
   config: {
     regions: {
@@ -73,16 +84,7 @@ export class ConfigManager {
     }
   }
 
-  async getRegions(): Promise<{
-    regions: {
-      region: Prefix
-      etag: string
-      size: number
-      url: string
-      bounds: [number, number][]
-    }[]
-    regionsConfig: Record<Prefix, RegionConfig>
-  }> {
+  async getRegions(): Promise<RegionResult> {
     if (this.#bucketClient === null)
       return { regions: sampleRegions.regions, regionsConfig: this.#internalConfig.regions }
     const s3Objects = await this.#bucketClient.listObjects(regionsUrlPrefix)
