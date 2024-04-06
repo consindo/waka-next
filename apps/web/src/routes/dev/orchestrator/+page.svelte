@@ -1,6 +1,8 @@
 <script lang="ts">
+  import type { PageData } from './$types'
+
   import RegionList from './RegionList.svelte'
-  export let data
+  export let data: PageData
 </script>
 
 <div class="container">

@@ -1,6 +1,9 @@
 <script lang="ts">
+  import type { PageData } from './$types'
   import RegionList from '../RegionList.svelte'
-  export let data
+  export let data: PageData
+
+  let token = ''
 
   const formatUrl = (url: string) => {
     if (url.includes('//')) {
@@ -40,6 +43,24 @@
       <p>Region {data.id} is inactive.</p>
     {/if}
     <h2>versions</h2>
+    <form method="POST" action="?/import">
+      <p>
+        <input type="text" name="token" placeholder="auth token" bind:value={token} />
+        <button disabled={token === ''}>check & import new version</button>
+      </p>
+      {#if data.importResult}
+        <div class="logs">
+          <h3>import result</h3>
+          <p>
+            <strong>prefix:</strong>
+            {data.importResult.prefix}<br />
+            <strong>status:</strong>
+            {data.importResult.status}
+          </p>
+          <pre>{data.importResult.logs.join('\n')}</pre>
+        </div>
+      {/if}
+    </form>
     {#if data.versions.length === 0}
       <p>No available versions.</p>
     {/if}
@@ -56,6 +77,13 @@
             2
           )}MB)
         </dd>
+        <form method="POST" action="?/activate">
+          <p>
+            <input type="hidden" name="token" bind:value={token} />
+            <input type="hidden" name="version" value={version.version} />
+            <button disabled={token === ''}>set active</button>
+          </p>
+        </form>
       </dl>
     {/each}
   </div>
@@ -66,8 +94,26 @@
     display: flex;
     gap: 2rem;
   }
+  .active {
+    overflow-y: hidden;
+  }
+  .logs {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    background: #f9f9f9;
+    border: 1px solid rgba(0, 0, 0, 0.075);
+    box-shadow:
+      0 3px 6px -1px rgba(0, 0, 0, 0.05),
+      0 2px 4px -2px rgba(0, 0, 0, 0.05);
+  }
+  pre {
+    overflow-y: scroll;
+  }
   h3 {
     font-size: 1rem;
+  }
+  strong {
+    font-weight: 600;
   }
   dl {
     margin: 0 0 1.75rem;

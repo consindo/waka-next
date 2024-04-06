@@ -61,7 +61,7 @@ export class ImportManager {
     if (this.disableEtag === true) {
       logger.info('skipping etag check')
     } else {
-      const result = await this.checkExistingVersion(key, upstreamEtag, logger)
+      const result = await this.checkExistingVersion(key, upstreamEtag, logger, hash)
       if (result === false) {
         unsubscribeLogs()
         return { status: 'skipped', prefix, logs }
@@ -106,14 +106,13 @@ export class ImportManager {
     return res
   }
 
-  async checkExistingVersion(key: string, upstreamEtag: string, logger: Logger) {
+  async checkExistingVersion(key: string, upstreamEtag: string, logger: Logger, hash: string) {
     try {
       const existingMetadata = await this.#bucketClient!.getObjectMetadata(key)
       const existingEtag = existingMetadata.Metadata!['upstream-etag'] || ''
       if (upstreamEtag === existingEtag) {
-        logger.info(
-          `upstream gtfs content has not changed, skipping import (etag: ${upstreamEtag})`
-        )
+        logger.info(`upstream gtfs content has not changed, skipping import`)
+        logger.info(`(version: ${hash}, upstream-etag: ${upstreamEtag})`)
         return false
       }
     } catch (err) {
