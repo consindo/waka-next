@@ -11,7 +11,7 @@ primary_region = 'syd'
 
 [mounts]
   source = 'cache'
-  destination = '/cache'
+  destination = '/app/cache'
 
 [env]
   WAKA_ORCHESTRATOR_CONFIG="""\
@@ -26,7 +26,6 @@ regions:
   nz-akl:
     name: Auckland, New Zealand
     gtfsZipUrl: https://gtfs.at.govt.nz/gtfs.zip
-    shouldCache: true
 """
 
 [http_service]
