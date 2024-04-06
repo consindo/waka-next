@@ -5,6 +5,7 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3'
+import { env } from '$env/dynamic/private'
 
 export class BucketClient {
   bucket: string
@@ -12,7 +13,8 @@ export class BucketClient {
 
   constructor(bucket: string, region: string) {
     this.bucket = bucket
-    this.#s3client = new S3Client({ region })
+    const endpoint = env.AWS_S3_ENDPOINT
+    this.#s3client = new S3Client({ region, endpoint })
   }
 
   async listObjects(prefix: string = '') {
