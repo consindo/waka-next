@@ -1,5 +1,10 @@
 <script lang="ts">
+  import { goto } from '$app/navigation'
+  import { createClient } from '$lib/storage'
   import type { PageData } from './$types'
+
+  import type { Prefix } from '@lib/client'
+
   import RegionList from '../RegionList.svelte'
   export let data: PageData
 
@@ -11,6 +16,26 @@
     }
     return url
   }
+  const formatSize = (size: number) => {
+    if (size > 1024 * 1024) {
+      return (size / 1024 / 1024).toFixed(2) + 'MB'
+    } else {
+      return (size / 1024).toFixed(2) + 'KB'
+    }
+  }
+
+  const loadDb =
+    (version: { prefix: string; version: string; url: string }) =>
+    async (e: MouseEvent & { currentTarget: HTMLButtonElement }) => {
+      e.preventDefault()
+
+      // hack
+      e.currentTarget.disabled = true
+      e.currentTarget.innerText = 'loading...'
+
+      await createClient(version.prefix as Prefix, version.version, version.url)
+      goto(`/dev/query?db=${encodeURIComponent(`${version.prefix}:${version.version}`)}`)
+    }
 </script>
 
 <div class="container">
@@ -32,14 +57,18 @@
         <dd>{JSON.stringify(data.activeRegion.bounds)}</dd>
         <dt>url</dt>
         <dd>
-          <a href={data.activeRegion.url}>{formatUrl(data.activeRegion.url)}</a> ({(
-            data.activeRegion.size /
-            1024 /
-            1024
-          ).toFixed(2)}MB)
+          <a href={data.activeRegion.url}>{formatUrl(data.activeRegion.url)}</a>
+          {formatSize(data.activeRegion.size)}
         </dd>
       </dl>
       <button on:click={() => window.location.reload()}>refresh</button>
+      <button
+        on:click={loadDb({
+          prefix: data.id,
+          version: 'live',
+          url: data.activeRegion.url,
+        })}>load into client</button
+      >
     {:else}
       <p>Region {data.id} is inactive.</p>
       <button on:click={() => window.location.reload()}>refresh</button>
@@ -75,18 +104,18 @@
         <dd>{version.etag}</dd>
         <dt>url</dt>
         <dd>
-          <a href={version.url}>{formatUrl(version.url)}</a> ({(version.size / 1024 / 1024).toFixed(
-            2
-          )}MB)
+          <a href={version.url}>{formatUrl(version.url)}</a>
+          {formatSize(version.size)}
         </dd>
-        <form method="POST" action="?/activate">
-          <p>
-            <input type="hidden" name="token" bind:value={token} />
-            <input type="hidden" name="version" value={version.version} />
-            <button disabled={token === ''}>set active</button>
-          </p>
-        </form>
       </dl>
+      <form method="POST" action="?/activate">
+        <p>
+          <input type="hidden" name="token" bind:value={token} />
+          <input type="hidden" name="version" value={version.version} />
+          <button type="submit" disabled={token === ''}>set active</button>
+          <button on:click={loadDb(version)}>load into client</button>
+        </p>
+      </form>
     {/each}
   </div>
 </div>
@@ -113,12 +142,13 @@
   }
   h3 {
     font-size: 1rem;
+    margin-top: 2rem;
   }
   strong {
     font-weight: 600;
   }
   dl {
-    margin: 0 0 1.75rem;
+    margin: 0 0 1rem;
     display: grid;
     grid-template-columns: 100px 2fr;
     gap: 0.25rem;
@@ -126,5 +156,8 @@
   }
   dt {
     font-weight: 500;
+  }
+  button {
+    display: inline-block;
   }
 </style>

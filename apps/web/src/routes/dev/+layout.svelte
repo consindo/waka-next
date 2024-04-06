@@ -2,21 +2,18 @@
   import { page } from '$app/stores'
 
   const links = [
-    { name: 'query', href: '/dev/query' },
     { name: 'orchestrator', href: '/dev/orchestrator' },
-    { name: 'client', href: '/' },
+    { name: 'sql', href: '/dev/query' },
   ]
 </script>
 
 <header>
-  <h1>waka:next</h1>
+  <h1><a href="/">waka:next</a></h1>
   <nav>
     <ul>
       {#each links as link}
         <li>
-          <a
-            href={link.href}
-            class:selected={$page.url.pathname.startsWith(link.href) && link.href.length > 1}
+          <a href={link.href} class:selected={$page.url.pathname.startsWith(link.href)}
             >{link.name}</a
           >
         </li>
@@ -38,7 +35,6 @@
     gap: 1rem;
   }
   h1 {
-    color: rgba(0, 0, 0, 0.6);
     letter-spacing: -0.7px;
     margin: 0;
     font-size: 1.5rem;
@@ -53,8 +49,11 @@
     gap: 0.5rem;
   }
   a {
-    font-size: 15px;
+    color: rgba(0, 0, 0, 0.6);
     text-decoration: none;
+  }
+  li a {
+    font-size: 15px;
     color: #222;
     font-weight: 450;
   }

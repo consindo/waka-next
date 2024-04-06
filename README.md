@@ -13,9 +13,9 @@ This is a rewrite of Waka. The notable difference is that it now uses sqlite on 
 
 ## Configuration
 
-The orchestrator will start without any configuration and serve the sample configuration. However, if you do not set up AWS credentials (S3), imports on the server will not work. However, you can still use the Waka dev tools in the client to test imports locally.
+_The orchestrator will start without any configuration and serve the sample configuration._ However, if you do not set up AWS credentials (S3), imports on the server will not work but you can still use the Waka dev tools in the client to test imports locally. If you're not using S3 (e.g Cloudflare R2) you can set `AWS_S3_ENDPOINT`.
 
-To configure the orchestrator, set WAKA_ORCHESTRATOR_CONFIG to:
+To configure the orchestrator, set `WAKA_ORCHESTRATOR_CONFIG` to:
 
 ```
 database:
@@ -25,6 +25,7 @@ database:
 regions:
   nz-akl:
     name: 'Auckland, New Zealand'
+    gtfsZipUrl: https://gtfs.at.govt.nz/gtfs.zip
 ```
 
 You will also need to set a `WAKA_ORCHESTRATOR_ACCESS_TOKEN` to the administrator bearer token that you want to use. Multiple tokens are not currently supported.
@@ -36,7 +37,7 @@ The `WAKA_ORCHESTRATOR_CACHE_PERIOD` variable can also be set to a number in mil
 There's three apps in this repository.
 
 - **lib**: The library for importing, manipulating, and querying GTFS. This will eventually be published as a NPM module that runs on both client and server.
-- **apps/orchestrator**: The server that will eventually download & parse GTFS files and serve them to users. It will also provide an HTTP API so queries can be run without downloading the whole database.
+- **apps/orchestrator**: The server that downloads, parses GTFS files and serves them to users. It also provides a HTTP API so queries can be run without downloading the whole database.
 - **apps/web**: The new web frontend. It can download and query the sqlite database directly, or use server side rendering to grab the data from the orchestrator's HTTP API.
 
 ## Notes

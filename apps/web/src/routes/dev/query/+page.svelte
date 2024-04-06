@@ -1,23 +1,34 @@
 <script lang="ts">
   import { onMount } from 'svelte'
-
   import { DB } from '@lib/db'
   import { getErrorMessage, logger } from '@lib/logger'
+
+  import { page } from '$app/stores'
+  import { getDatabases } from '$lib/storage'
 
   import DatabaseNav from './DatabaseNav.svelte'
   import type { QueryExecResult } from 'sql.js'
 
-  const db = new DB()
+  const emptyDb = new DB()
+  let db = emptyDb
+  const requestedDb = $page.url.searchParams.get('db')
+
   const stream = logger.stream
   let connect: Promise<void>
 
   onMount(async () => {
     connect = db.connect()
+    await connect
+
+    // sets the db from the query param
+    if (requestedDb != null && getDatabases()[requestedDb] !== undefined) {
+      db = getDatabases()[requestedDb]
+    }
   })
 
   let error = ''
   let results: QueryExecResult[] = []
-  let query = 'select * from stops where stop_name like "%train station%" limit 100'
+  let query = 'select * from stops limit 100'
   const run = () => {
     error = ''
     try {
@@ -28,6 +39,11 @@
       error = getErrorMessage(err)
     }
   }
+
+  const triggerDatabaseChange = (event: CustomEvent<string>) => {
+    if (event.detail === 'empty-db') return (db = emptyDb)
+    db = getDatabases()[event.detail]
+  }
 </script>
 
 <svelte:head>
@@ -37,7 +53,7 @@
 {#await connect}
   loading sqllite
 {:then}
-  <DatabaseNav {db} />
+  <DatabaseNav {db} on:databaseChange={triggerDatabaseChange} dbName={requestedDb} />
   <div>
     <input type="text" bind:value={query} /> <button on:click={run}>run</button>
   </div>

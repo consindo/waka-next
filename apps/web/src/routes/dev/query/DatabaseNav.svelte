@@ -1,10 +1,14 @@
 <script lang="ts">
+  import { createEventDispatcher } from 'svelte'
   import type { DB } from '@lib/db'
   import { Importer } from '@lib/importer'
   import { getErrorMessage, logger } from '@lib/logger'
 
-  export let db: DB
+  import { getDatabases } from '$lib/storage'
 
+  export let db: DB, dbName: string | null
+
+  const dispatch = createEventDispatcher<{ databaseChange: string }>()
   const importer = new Importer({ db })
 
   let dbElement: HTMLInputElement
@@ -48,12 +52,23 @@
       }
     })()
   }
+
+  const triggerChange = (e: Event & { currentTarget: HTMLSelectElement }) => {
+    dispatch('databaseChange', e.currentTarget.value)
+  }
 </script>
 
 <nav>
   <div>
-    <select>
-      <option>default-db</option>
+    <select
+      on:change={triggerChange}
+      value={Object.keys(getDatabases()).includes(dbName || '') ? dbName : 'empty-db'}
+    >
+      <option>empty-db</option>
+      {#each Object.keys(getDatabases()) as key}
+        <option>{key}</option>
+      {/each}
+      }
     </select>
   </div>
   <div>

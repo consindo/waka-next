@@ -1,3 +1,4 @@
+import { env } from '$env/dynamic/private'
 import {
   CopyObjectCommand,
   HeadObjectCommand,
@@ -5,7 +6,6 @@ import {
   PutObjectCommand,
   S3Client,
 } from '@aws-sdk/client-s3'
-import { env } from '$env/dynamic/private'
 
 export class BucketClient {
   bucket: string

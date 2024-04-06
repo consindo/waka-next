@@ -14,7 +14,8 @@ primary_region = 'syd'
   destination = '/app/cache'
 
 [env]
-  WAKA_ORCHESTRATOR_CONFIG="""\
+  WAKA_ORCHESTRATOR_CACHE_PERIOD = "30000"
+  WAKA_ORCHESTRATOR_CONFIG = """\
 database:
   region: auto
   bucketName: waka-next
