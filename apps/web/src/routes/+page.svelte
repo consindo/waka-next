@@ -1,5 +1,7 @@
 <script lang="ts">
-  export let data
+  import type { PageData } from './$types'
+
+  export let data: PageData
 </script>
 
 <div>
@@ -8,16 +10,20 @@
   <ul>
     <li><a href="/dev/orchestrator">developer console</a></li>
     <li><a href="https://github.com/consindo/waka-next">github</a></li>
-    <li><a href="/sample">another gtfs route</a></li>
   </ul>
-  <p>
-    this page will prerender and return data via HTTP, and then start downloading the sqlite
-    database in the background for subsequent requests (navigate to another page and then back here,
-    and notice how the provider changes).
-  </p>
-  <p></p>
-  <h2>gtfs query results - stops</h2>
-  <pre>{JSON.stringify(data, undefined, 2)}</pre>
+  <h2>available regions</h2>
+  <p>waka currently loads the first region to your device by default</p>
+  <ul>
+    {#each data.regions as region}
+      <li>
+        {region.region}
+        <ul>
+          <li><a href="/{region.region}/stops">stops</a></li>
+          <li><a href="/{region.region}/routes">routes</a></li>
+        </ul>
+      </li>
+    {/each}
+  </ul>
 </div>
 
 <style>

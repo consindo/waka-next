@@ -2,8 +2,9 @@ import { browser } from '$app/environment'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
 import { resolveData } from '../../../apps/web/src/lib/dataResolver'
-import { isClientReady } from '../../../apps/web/src/lib/storage'
+import { isClientReady, waitForClient } from '../../../apps/web/src/lib/storage'
 
+const prefix = 'sample-region'
 const browserGetter = vi.fn()
 vi.mock('$app/environment', () => ({
   get browser() {
@@ -14,7 +15,7 @@ vi.mock('@lib/client', () => ({}))
 vi.mock('../../../apps/web/src/lib/storage', () => ({
   isClientReady: vi.fn(),
   getClient: vi.fn(),
-  waitForClient: true,
+  waitForClient: vi.fn(),
 }))
 
 describe('DataResolver', () => {
@@ -29,7 +30,7 @@ describe('DataResolver', () => {
       expect(browser).toEqual(true)
       isClientReady.mockReturnValue(true)
 
-      const data = await resolveData('', () => 'clientData', vi.fn())
+      const data = await resolveData(prefix, '', () => 'clientData', vi.fn())
       expect(data).toEqual({ provider: 'client', data: 'clientData' })
     })
 
@@ -38,6 +39,7 @@ describe('DataResolver', () => {
       isClientReady.mockReturnValue(false)
 
       const data = await resolveData(
+        prefix,
         '',
         vi.fn(),
         vi.fn(() => ({ ok: true, json: () => 'serverData' }))
@@ -50,6 +52,7 @@ describe('DataResolver', () => {
       isClientReady.mockReturnValue(false)
 
       const data = await resolveData(
+        prefix,
         '',
         vi.fn(),
         vi.fn(() => ({ ok: true, json: () => 'serverData' }))
@@ -62,6 +65,7 @@ describe('DataResolver', () => {
       isClientReady.mockReturnValue(false)
 
       const data = await resolveData(
+        prefix,
         '',
         vi.fn(),
         vi.fn(() => ({ ok: false }))
@@ -72,13 +76,31 @@ describe('DataResolver', () => {
     it('should wait for the client if the server gets an error and is running in the browser', async () => {
       browserGetter.mockReturnValue(true)
       isClientReady.mockReturnValue(false)
+      waitForClient.mockReturnValue(true)
 
       const data = await resolveData(
+        prefix,
         '',
         () => 'clientData',
         vi.fn(() => ({ ok: false }))
       )
       expect(data).toEqual({ provider: 'static-client', data: 'clientData' })
+    })
+
+    it('should return an error if the server and the client data gets an error running in the browser', async () => {
+      browserGetter.mockReturnValue(true)
+      isClientReady.mockReturnValue(false)
+      waitForClient.mockImplementation(() => {
+        throw new Error()
+      })
+
+      const data = await resolveData(
+        prefix,
+        '',
+        vi.fn(),
+        vi.fn(() => ({ ok: false }))
+      )
+      expect(data).toEqual({ provider: 'static-error', data: null })
     })
   })
 })

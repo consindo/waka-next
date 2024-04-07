@@ -67,7 +67,9 @@ export const loadDb = async (client: Client, regions: RegionResult) => {
   )
 
   const allFiles = await fs.readdir(cacheDir)
-  const deletionCandidates = allFiles.filter(i => i.endsWith('.bin') && !Object.values(loadedVersions).includes(i.slice(0, -4)))
+  const deletionCandidates = allFiles.filter(
+    (i) => i.endsWith('.bin') && !Object.values(loadedVersions).includes(i.slice(0, -4))
+  )
   for (const file of deletionCandidates) {
     console.log('deleted', file, 'from cache')
     await fs.rm(path.join(cacheDir, file))

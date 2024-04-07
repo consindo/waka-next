@@ -49,3 +49,4 @@ This is designed to eventually run fully offline - this is how static GTFS data 
 1. If the sqlite db is already downloaded to the client, query from that (provider: client)
 2. If it's not, query the data via HTTP from `apps/orchestrator` - this is also run when server side rendering (provider: server)
 3. If the HTTP request fails, wait until the sqlite db is downloaded, and then query on that (provider: static)
+4. If that fails, the request is rejected

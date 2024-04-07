@@ -45,6 +45,10 @@ export class Client {
     this.db[prefix] = db
   }
 
+  hasRegion(prefix: Prefix) {
+    return this.db[prefix] !== undefined
+  }
+
   getBounds(prefix: PrefixInput): BoundsResult[] {
     const result = this.runQuery(prefix, getBounds) as {
       prefix: Prefix
