@@ -12,7 +12,7 @@
     <li><a href="https://github.com/consindo/waka-next">github</a></li>
   </ul>
   <h2>available regions</h2>
-  <p>waka currently loads the first region to your device by default</p>
+  <p>waka currently loads any regions that are in your current location</p>
   <ul>
     {#each data.regions as region}
       <li>
