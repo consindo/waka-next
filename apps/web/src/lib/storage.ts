@@ -17,7 +17,7 @@ let regions: Region[] = []
 let globalClient: Client
 const databases: Record<string, DB> = {}
 
-const saveData =
+const saveData = (): boolean =>
   browser && 'connection' in navigator && (navigator.connection as { saveData: boolean }).saveData
 
 // allows a function to wait for a function to be ready (i.e after page load)
@@ -37,7 +37,7 @@ export const waitForClient = (prefix: Prefix) => {
     } else {
       getRegions(fetch).then((regions) => {
         const region = regions.find((i) => i.region === prefix)
-        if (region === undefined || saveData) {
+        if (region === undefined || saveData()) {
           rejectRequest()
         } else {
           createClient(region.region, 'live', region.url).catch(() => rejectRequest())
@@ -57,7 +57,7 @@ export const getDatabases = () => {
   return databases
 }
 
-export const getRegions = async (fetch: Fetch) => {
+export const getRegions = async (fetch: Fetch, loadRegion = createClient) => {
   if (regions.length > 0) return regions // don't refresh until page reload
 
   const data = await fetch('/api/regions').then((r) => r.json())
@@ -65,7 +65,7 @@ export const getRegions = async (fetch: Fetch) => {
 
   // loads all regions that are in the area if the low data mode isn't on
   const geo: { latitude: number; longitude: number } = data.userLocation
-  if (browser && !saveData && geo.latitude !== 0 && geo.longitude !== 0) {
+  if (browser && !saveData() && geo.latitude !== 0 && geo.longitude !== 0) {
     regions
       .filter(
         (i) =>
@@ -75,7 +75,7 @@ export const getRegions = async (fetch: Fetch) => {
           geo.latitude > i.bounds[1][1]
       )
       .forEach((region) => {
-        createClient(region.region, 'live', region.url)
+        loadRegion(region.region, 'live', region.url)
       })
   }
 
