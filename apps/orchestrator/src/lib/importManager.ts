@@ -1,5 +1,12 @@
 import crypto from 'node:crypto'
 import zlib from 'node:zlib'
+import fs from 'node:fs'
+import asyncFs from 'node:fs/promises'
+import path from 'node:path'
+import { Readable } from 'stream'
+import { finished } from 'stream/promises'
+import { type ReadableStream as NodeWebReadableStream } from 'stream/web';
+import { exec } from 'child_process'
 
 import { Client, type Prefix } from '@lib/client'
 import { DB } from '@lib/db'
@@ -17,19 +24,22 @@ export class ImportManager {
   importUrl: string
   importHeaders: Record<string, string>
   disableEtag: boolean
+  gtfsTidyOptions: string | false
 
   constructor(
     prefix: Prefix,
     bucketClient: BucketClient,
     importUrl: string,
     importHeaders: Record<string, string>,
-    disableEtag: boolean
+    disableEtag: boolean,
+    gtfsTidyOptions: string | false
   ) {
     this.prefix = prefix
     this.#bucketClient = bucketClient
     this.importUrl = importUrl
     this.importHeaders = importHeaders
     this.disableEtag = disableEtag
+    this.gtfsTidyOptions = gtfsTidyOptions
   }
 
   async checkAndDownloadUpdate(): Promise<{ status: string; prefix: Prefix; logs: string[] }> {
@@ -70,7 +80,11 @@ export class ImportManager {
 
     try {
       const res = await this.downloadGtfs('GET', logger)
-      await importer.import(res.body!)
+      let tidiedGtfs = res.body!
+      if (this.gtfsTidyOptions !== false) {
+        tidiedGtfs = await this.tidyGtfs(prefix, res, logger)
+      }
+      await importer.import(tidiedGtfs)
       const client = new Client()
       client.addRegion(prefix, db)
       const bounds = client.getBounds(prefix)[0].bounds
@@ -154,5 +168,44 @@ export class ImportManager {
     const sourceKey = `${versionsUrlPrefix}${prefix}/${version}.bin`
     const targetKey = `${regionsUrlPrefix}${prefix}.bin`
     await this.#bucketClient!.copyObject(sourceKey, targetKey)
+  }
+
+  async tidyGtfs(name: string, res: Response, logger: Logger) {
+    // creates the local cache folder
+    const cacheDir = 'cache'
+    try {
+      await asyncFs.access(cacheDir)
+    } catch (err) {
+      await asyncFs.mkdir(cacheDir)
+    }
+
+    logger.info('starting tidy of gtfs data')
+
+    const filename = path.join(cacheDir, `${name}.zip`)
+    const optimizedFilename = path.join(cacheDir, `${name}.optimized.zip`)
+    const fileStream = fs.createWriteStream(filename, { flags: 'w' }) // overwrite any existing file
+    await finished(Readable.fromWeb(res.body as NodeWebReadableStream<Uint8Array>).pipe(fileStream))
+
+    logger.info(`invoking gtfstidy -${this.gtfsTidyOptions}`) 
+    let finalFile: string
+    try {
+      await new Promise<void>((resolve, reject) => {
+        exec(`gtfstidy -${this.gtfsTidyOptions} ${filename} --zip-compression-level 0 -o ${optimizedFilename}`, (err, stdout, stderror) => {
+          if (err) {
+            logger.error(stderror.trim())
+            logger.error(JSON.stringify(err))
+            return reject()
+          }
+          logger.info(stdout.trim())
+          resolve()
+        })
+      })
+      finalFile = optimizedFilename
+    } catch {
+      finalFile = filename 
+    }
+
+    const stream = fs.createReadStream(finalFile)
+    return Readable.toWeb(stream) as ReadableStream<Uint8Array>
   }
 }

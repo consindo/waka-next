@@ -15,9 +15,9 @@ This is a rewrite of Waka. The notable difference is that it now uses sqlite on 
 
 _The orchestrator will start without any configuration and serve the sample configuration._ However, if you do not set up AWS credentials (S3), imports on the server will not work but you can still use the Waka dev tools in the client to test imports locally. If you're not using S3 (e.g Cloudflare R2) you can set `AWS_S3_ENDPOINT`.
 
-To configure the orchestrator, set `WAKA_ORCHESTRATOR_CONFIG` to:
+To configure the orchestrator, set `WAKA_ORCHESTRATOR_CONFIG` to something like:
 
-```
+```yaml
 database:
   region: ap-southeast-2
   bucketName: your-s3-bucket-name
@@ -26,6 +26,11 @@ regions:
   nz-akl:
     name: 'Auckland, New Zealand'
     gtfsZipUrl: https://gtfs.at.govt.nz/gtfs.zip
+  zz-sample1:
+    name: Sample Region
+    gtfsZipUrl: https://next.waka.app/sample-feed-1.zip
+    gtfsZipDisableEtag: true
+    gtfsTidyOptions: false # set to false if gtfstidy is not installed
 ```
 
 You will also need to set a `WAKA_ORCHESTRATOR_ACCESS_TOKEN` to the administrator bearer token that you want to use. Multiple tokens are not currently supported.

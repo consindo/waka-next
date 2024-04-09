@@ -13,6 +13,7 @@ type RegionConfig = {
   gtfsZipUrl: string
   gtfsZipHeaders?: Record<string, string>
   gtfsZipDisableEtag?: boolean
+  gtfsTidyOptions?: string | false
 }
 
 type ConfigurationFile = {
@@ -127,7 +128,8 @@ export class ConfigManager {
       this.#bucketClient,
       region.gtfsZipUrl,
       region.gtfsZipHeaders || {},
-      region.gtfsZipDisableEtag || false
+      region.gtfsZipDisableEtag || false,
+      region.gtfsTidyOptions === undefined ? 'SCRmTcsOeD' : region.gtfsTidyOptions
     )
     return importManager.checkAndDownloadUpdate()
   }

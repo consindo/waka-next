@@ -12,7 +12,6 @@ WORKDIR /app
 # Set production environment
 ENV NODE_ENV="production"
 
-
 # Throw-away build stage to reduce size of final image
 FROM base as build
 
@@ -29,6 +28,11 @@ RUN npm run build:orchestrator
 # Remove development dependencies
 RUN npm prune --omit=dev
 
+# Install gtfstidy
+FROM golang:1.18-alpine as gtfstidy
+RUN apk add --no-cache git libc-dev
+RUN go install github.com/patrickbr/gtfstidy@25d4d6d1079a5926d9a558546bbe36d5b4cdb45f
+
 # Final stage for app image
 FROM base
 
@@ -36,6 +40,9 @@ FROM base
 COPY --from=build /app/package.json /app
 COPY --from=build /app/node_modules /app/node_modules
 COPY --from=build /app/apps/orchestrator/build /app
+
+# Copy gtfstidy
+COPY --from=gtfstidy /go/bin/gtfstidy /bin
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
