@@ -3,8 +3,8 @@
     { method: 'get', url: '/regions' },
     { method: 'get', url: '/regions/all' },
     { method: 'get', url: '/[region]' },
-    { method: 'post', url: '/[region]/admin/activate' },
-    { method: 'post', url: '/[region]/admin/import' },
+    { method: 'post', url: '/admin/[region]/activate' },
+    { method: 'post', url: '/admin/[region]/import' },
   ]
 </script>
 

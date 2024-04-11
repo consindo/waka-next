@@ -9,9 +9,14 @@ primary_region = 'syd'
 [build]
   dockerfile = "apps/orchestrator/Dockerfile"
 
+[processes]
+  app = "node index.js"
+  admin = "node index.js"
+
 [mounts]
   source = 'cache'
   destination = '/app/cache'
+  processes = ['app']
 
 [env]
   WAKA_ORCHESTRATOR_CACHE_PERIOD = "30000"
@@ -36,6 +41,17 @@ regions:
   auto_start_machines = true
   min_machines_running = 0
   processes = ['app']
+
+[[services]]
+  internal_port = 8080
+  protocol = "tcp"
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['admin']
+  [[services.ports]]
+    handlers = ["http"]
+    port = 5000
 
 [[vm]]
   memory = '1gb'

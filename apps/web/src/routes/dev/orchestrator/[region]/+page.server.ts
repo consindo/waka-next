@@ -12,7 +12,7 @@ export const actions = {
     const { region } = params
     const data = await request.formData()
     const token = data.get('token')
-    const result = await fetch(`/api/${region}/admin/import`, {
+    const result = await fetch(`/api/admin/${region}/import`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({}),
@@ -24,7 +24,7 @@ export const actions = {
     const data = await request.formData()
     const token = data.get('token')
     const version = data.get('version')
-    await fetch(`/api/${region}/admin/activate`, {
+    await fetch(`/api/admin/${region}/activate`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
       body: JSON.stringify({ version }),
