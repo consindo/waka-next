@@ -25,7 +25,7 @@ export const loadDb = async (client: Client, regions: RegionResult) => {
       if (loadedVersions[prefix] === region.etag) {
         return // already loaded in
       }
-      if (regions.regionsConfig[prefix].shouldCache === false) {
+      if (process.env.WAKA_ORCHESTRATOR_NO_CACHE || regions.regionsConfig[prefix].shouldCache === false) {
         console.log(`skipping cache of ${prefix}, shouldCache=false`)
         return
       }

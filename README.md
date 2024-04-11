@@ -26,6 +26,7 @@ regions:
   nz-akl:
     name: 'Auckland, New Zealand'
     gtfsZipUrl: https://gtfs.at.govt.nz/gtfs.zip
+    shouldCache: false # defaults to true. false means the orchestrator won't load the region on launch.
   zz-sample1:
     name: Sample Region
     gtfsZipUrl: https://next.waka.app/sample-feed-1.zip
@@ -36,6 +37,8 @@ regions:
 You will also need to set a `WAKA_ORCHESTRATOR_ACCESS_TOKEN` to the administrator bearer token that you want to use. Multiple tokens are not currently supported.
 
 The `WAKA_ORCHESTRATOR_CACHE_PERIOD` variable can also be set to a number in milliseconds to reduce the number of reads from S3.
+
+The `WAKA_ORCHESTRATOR_NO_CACHE` variable can be used to set shouldCache to false globally.
 
 ## Application Structure
 
