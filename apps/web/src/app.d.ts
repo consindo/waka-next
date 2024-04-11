@@ -8,7 +8,6 @@ declare global {
       importResult?: {
         [region: string]: {
           status: string
-          prefix: string
           logs: string[]
         }
       }

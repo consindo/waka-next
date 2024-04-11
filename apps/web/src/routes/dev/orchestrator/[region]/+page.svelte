@@ -83,8 +83,6 @@
         <div class="logs">
           <h3>import result</h3>
           <p>
-            <strong>prefix:</strong>
-            {data.importResult.prefix}<br />
             <strong>status:</strong>
             {data.importResult.status}
           </p>

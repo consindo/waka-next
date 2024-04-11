@@ -10,6 +10,7 @@ declare global {
     interface Locals {
       client: Client
       configManager: ConfigManager
+      jobs: Promise<void>[]
     }
     // interface PageData {}
     // interface PageState {}

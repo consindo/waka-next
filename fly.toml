@@ -5,6 +5,8 @@
 
 app = 'waka-next-orchestrator'
 primary_region = 'syd'
+kill_signal = "SIGINT"
+kill_timeout = 300 # this is so any pending imports can finish
 
 [build]
   dockerfile = "apps/orchestrator/Dockerfile"

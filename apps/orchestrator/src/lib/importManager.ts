@@ -1,12 +1,12 @@
+import { exec } from 'child_process'
 import crypto from 'node:crypto'
-import zlib from 'node:zlib'
 import fs from 'node:fs'
 import asyncFs from 'node:fs/promises'
 import path from 'node:path'
+import zlib from 'node:zlib'
 import { Readable } from 'stream'
 import { finished } from 'stream/promises'
-import { type ReadableStream as NodeWebReadableStream } from 'stream/web';
-import { exec } from 'child_process'
+import { type ReadableStream as NodeWebReadableStream } from 'stream/web'
 
 import { Client, type Prefix } from '@lib/client'
 import { DB } from '@lib/db'
@@ -186,23 +186,26 @@ export class ImportManager {
     const fileStream = fs.createWriteStream(filename, { flags: 'w' }) // overwrite any existing file
     await finished(Readable.fromWeb(res.body as NodeWebReadableStream<Uint8Array>).pipe(fileStream))
 
-    logger.info(`invoking gtfstidy -${this.gtfsTidyOptions}`) 
+    logger.info(`invoking gtfstidy -${this.gtfsTidyOptions}`)
     let finalFile: string
     try {
       await new Promise<void>((resolve, reject) => {
-        exec(`gtfstidy -${this.gtfsTidyOptions} ${filename} --zip-compression-level 0 -o ${optimizedFilename}`, (err, stdout, stderror) => {
-          if (err) {
-            logger.error(stderror.trim())
-            logger.error(JSON.stringify(err))
-            return reject()
+        exec(
+          `gtfstidy -${this.gtfsTidyOptions} ${filename} --zip-compression-level 0 -o ${optimizedFilename}`,
+          (err, stdout, stderror) => {
+            if (err) {
+              logger.error(stderror.trim())
+              logger.error(JSON.stringify(err))
+              return reject()
+            }
+            logger.info(stdout.trim())
+            resolve()
           }
-          logger.info(stdout.trim())
-          resolve()
-        })
+        )
       })
       finalFile = optimizedFilename
     } catch {
-      finalFile = filename 
+      finalFile = filename
     }
 
     const stream = fs.createReadStream(finalFile)
