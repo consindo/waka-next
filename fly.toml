@@ -11,7 +11,7 @@ primary_region = 'syd'
 
 [processes]
   app = "node index.js"
-  admin = "bash -c 'WAKA_ORCHESTRATOR_NO_CACHE=true node index.js'"
+  admin = "sh -c 'WAKA_ORCHESTRATOR_NO_CACHE=true node index.js'"
 
 [mounts]
   source = 'cache'
