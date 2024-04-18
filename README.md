@@ -40,6 +40,12 @@ The `WAKA_ORCHESTRATOR_CACHE_PERIOD` variable can also be set to a number in mil
 
 The `WAKA_ORCHESTRATOR_NO_CACHE` variable can be used to set shouldCache to false globally.
 
+## Scheduling Updates
+
+```bash
+fly machine run alpine --entrypoint "sh -c 'apk add --no-cache curl && curl -X POST -H \"Authorization: Bearer \$WAKA_ORCHESTRATOR_ACCESS_TOKEN\" https://waka-next-orchestrator.fly.dev:5000/admin/schedule-update'" --schedule hourly
+```
+
 ## Application Structure
 
 There's three apps in this repository.

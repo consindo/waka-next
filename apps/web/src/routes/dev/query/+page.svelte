@@ -44,6 +44,12 @@
     if (event.detail === 'empty-db') return (db = emptyDb)
     db = getDatabases()[event.detail]
   }
+
+  const triggerKeyup = (e: KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      run()
+    }
+  }
 </script>
 
 <svelte:head>
@@ -55,7 +61,8 @@
 {:then}
   <DatabaseNav {db} on:databaseChange={triggerDatabaseChange} dbName={requestedDb} />
   <div>
-    <input type="text" bind:value={query} /> <button on:click={run}>run</button>
+    <input type="text" bind:value={query} on:keypress={triggerKeyup} />
+    <button on:click={run}>run</button>
   </div>
   <div>{$stream}</div>
   <div>{error}</div>

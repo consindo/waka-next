@@ -5,6 +5,7 @@ import { type Logger, logger } from '../logger'
 import { CsvParser } from './csv'
 import { DBImport } from './dbImport'
 import { type Schema, schema } from './schema'
+import { importShapes } from './shapes'
 
 export class Importer {
   db: DB
@@ -19,8 +20,13 @@ export class Importer {
     this.#dbImport = new DBImport({ db: props.db })
   }
 
-  async import(stream: ReadableStream<Uint8Array>, schemas: Schema[] = schema) {
+  async import(
+    stream: ReadableStream<Uint8Array>,
+    schemas: Schema[] = schema,
+    useShapesBlob: boolean = false
+  ) {
     logger.info('reading zip')
+    let shapesStream: ReadableStream | null = null
     const files = new ZipReader(stream)
     for await (const file of files.getEntriesGenerator()) {
       const schema = schemas.find((s) => s.filename === file.filename)
@@ -35,9 +41,27 @@ export class Importer {
       decoder.readable.pipeThrough(parser)
       file.getData(decoder)
 
+      if (useShapesBlob === true && schema.table === 'shapes') {
+        logger.info(`(skipping) ${file.filename} sqlite - writing wkb`)
+        shapesStream = parser.readable
+        continue
+      }
+
       this.#dbImport.createTable(schema)
       await this.#dbImport.importTable(schema, parser.readable)
     }
+
+    let shapesBlob: Blob | null = null
+    if (shapesStream) {
+      logger.info('importing shapes to blob')
+      shapesBlob = await importShapes(shapesStream)
+    }
+
     logger.info('import complete')
+
+    return {
+      db: this.db,
+      shapes: shapesBlob,
+    }
   }
 }
