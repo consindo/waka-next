@@ -51,7 +51,7 @@ export const importShapes = async (data: ReadableStream): Promise<Blob> => {
   const geojson = await parseData(data)
   const writer = new TarWriter()
   Object.keys(geojson).forEach((i) => {
-    writer.addFile(`${i}.wkb`, createWkb(geojson[i]))
+    writer.addFile(`${btoa(i)}.wkb`, createWkb(geojson[i]))
   })
   const tar = await writer.write()
   return tar

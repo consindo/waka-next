@@ -60,6 +60,19 @@
           <a href={data.activeRegion.url}>{formatUrl(data.activeRegion.url)}</a>
           {formatSize(data.activeRegion.size)}
         </dd>
+        {#if data.activeRegion.shapesEtag}
+          <dt>shapes etag</dt>
+          <dd>{data.activeRegion.shapesEtag}</dd>
+        {/if}
+        {#if data.activeRegion.shapesUrl}
+          <dt>shapes url</dt>
+          <dd>
+            <a href={data.activeRegion.shapesUrl}>{formatUrl(data.activeRegion.shapesUrl)}</a>
+            {#if data.activeRegion.shapesSize}
+              {formatSize(data.activeRegion.shapesSize)}
+            {/if}
+          </dd>
+        {/if}
       </dl>
       <button on:click={() => window.location.reload()}>refresh</button>
       <button
@@ -105,6 +118,19 @@
           <a href={version.url}>{formatUrl(version.url)}</a>
           {formatSize(version.size)}
         </dd>
+        {#if version.shapesEtag}
+          <dt>shapes etag</dt>
+          <dd>{version.shapesEtag}</dd>
+        {/if}
+        {#if version.shapesUrl}
+          <dt>shapes url</dt>
+          <dd>
+            <a href={version.shapesUrl}>{formatUrl(version.shapesUrl)}</a>
+            {#if version.shapesSize}
+              {formatSize(version.shapesSize)}
+            {/if}
+          </dd>
+        {/if}
       </dl>
       <form method="POST" action="?/activate">
         <p>

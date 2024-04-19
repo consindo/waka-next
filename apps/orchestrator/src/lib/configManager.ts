@@ -62,6 +62,8 @@ const sampleRegions = {
 
 const regionsUrlPrefix = 'regions/'
 const versionsUrlPrefix = 'versions/'
+const dbSuffix = '.bin'
+const shapesSuffix = '.shapes.tar.br'
 
 export class ConfigManager {
   #internalConfig: ConfigurationFile
@@ -97,13 +99,22 @@ export class ConfigManager {
         const bounds = (data?.Metadata || {})['waka-bounds'] as string
         if (this.#internalConfig.regions[region] === undefined) return []
         if (i.Size === 0) return [] // filters out folders
+        if (i.Key?.endsWith(shapesSuffix)) return [] // filters out shape files
+        const shapesKey = `${regionsUrlPrefix}${region}${shapesSuffix}`
+        console.log(i.Key, shapesKey)
+        const shape = s3Objects.Contents!.find((i) => i.Key === shapesKey)
         return [
           {
             region,
-            etag: JSON.parse(i.ETag!),
             bounds: JSON.parse(bounds || '[[0,0],[0,0]]'),
-            size: i.Size || 0,
             url: `${this.#internalConfig!.database!.publicUrl}/${i.Key}`,
+            etag: JSON.parse(i.ETag!),
+            size: i.Size || 0,
+            shapesUrl: shape
+              ? `${this.#internalConfig!.database!.publicUrl}/${shape.Key}`
+              : undefined,
+            shapesEtag: shape ? JSON.parse(shape.ETag!) : undefined,
+            shapesSize: shape ? shape.Size || 0 : undefined,
           },
         ]
       })
@@ -136,19 +147,29 @@ export class ConfigManager {
 
   async getVersions(prefix: Prefix) {
     if (this.#bucketClient === null) return { versions: [] }
-    const keyPrefix = versionsUrlPrefix + prefix
+    const keyPrefix = `${versionsUrlPrefix}${prefix}/`
     const s3Objects = await this.#bucketClient.listObjects(keyPrefix)
-    const versions = (s3Objects.Contents || []).map((i) => {
-      return {
-        prefix,
-        // remove the key, leading slash, and .bin
-        version: (i.Key || '').slice(keyPrefix.length + 1, -4),
-        date: i.LastModified?.toISOString(),
-        url: `${this.#internalConfig!.database!.publicUrl}/${i.Key}`,
-        etag: JSON.parse(i.ETag!),
-        size: i.Size || 0,
-      }
-    })
+    const versions = (s3Objects.Contents || [])
+      .filter((i) => i.Key?.endsWith(dbSuffix))
+      .map((i) => {
+        const version = (i.Key || '').slice(keyPrefix.length, -4)
+        const shapesKey = `${keyPrefix}${version}${shapesSuffix}`
+        const shape = s3Objects.Contents!.find((i) => i.Key === shapesKey)
+        return {
+          prefix,
+          // remove the key, leading slash, and .bin
+          version,
+          date: i.LastModified?.toISOString(),
+          url: `${this.#internalConfig!.database!.publicUrl}/${i.Key}`,
+          etag: JSON.parse(i.ETag!),
+          size: i.Size || 0,
+          shapesUrl: shape
+            ? `${this.#internalConfig!.database!.publicUrl}/${shape.Key}`
+            : undefined,
+          shapesEtag: shape ? JSON.parse(shape.ETag!) : undefined,
+          shapesSize: shape ? shape.Size || 0 : undefined,
+        }
+      })
     return { versions }
   }
 
@@ -157,8 +178,19 @@ export class ConfigManager {
   }
 
   async setActiveVersion(prefix: Prefix, version: string) {
-    const sourceKey = `${versionsUrlPrefix}${prefix}/${version}.bin`
-    const targetKey = `${regionsUrlPrefix}${prefix}.bin`
-    await this.#bucketClient!.copyObject(sourceKey, targetKey)
+    const dbSourceKey = `${versionsUrlPrefix}${prefix}/${version}${dbSuffix}`
+    const dbTargetKey = `${regionsUrlPrefix}${prefix}${dbSuffix}`
+    const shapesSourceKey = `${versionsUrlPrefix}${prefix}/${version}${shapesSuffix}`
+    const shapesTargetKey = `${regionsUrlPrefix}${prefix}${shapesSuffix}`
+    await this.#bucketClient!.copyObject(dbSourceKey, dbTargetKey)
+    try {
+      await this.#bucketClient!.copyObject(shapesSourceKey, shapesTargetKey)
+    } catch (err) {
+      if (err instanceof Error && err.name === 'NoSuchKey') {
+        console.log(`${version} does not have a ${shapesSuffix}`)
+      } else {
+        throw err
+      }
+    }
   }
 }

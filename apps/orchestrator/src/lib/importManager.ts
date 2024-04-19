@@ -15,7 +15,6 @@ import { type Logger, getErrorMessage } from '@lib/logger'
 
 import { type BucketClient } from './bucketClient'
 
-const regionsUrlPrefix = 'regions/'
 const versionsUrlPrefix = 'versions/'
 
 export class ImportManager {
@@ -67,11 +66,12 @@ export class ImportManager {
     logger.info(`gtfs headers download complete`)
 
     const hash = crypto.createHash('md5').update(upstreamEtag).digest('hex')
-    const key = `${versionsUrlPrefix}${prefix}/${hash}.bin`
+    const dbKey = `${versionsUrlPrefix}${prefix}/${hash}.bin`
+    const shapesKey = `${versionsUrlPrefix}${prefix}/${hash}.shapes.tar.br`
     if (this.disableEtag === true) {
       logger.info('skipping etag check')
     } else {
-      const result = await this.checkExistingVersion(key, upstreamEtag, logger, hash)
+      const result = await this.checkExistingVersion(dbKey, upstreamEtag, logger, hash)
       if (result === false) {
         unsubscribeLogs()
         return { status: 'skipped', prefix, logs }
@@ -84,12 +84,16 @@ export class ImportManager {
       if (this.gtfsTidyOptions !== false) {
         tidiedGtfs = await this.tidyGtfs(prefix, res, logger)
       }
-      await importer.import(tidiedGtfs)
+      const importedFiles = await importer.import(tidiedGtfs, undefined, true)
       const client = new Client()
       client.addRegion(prefix, db)
       const bounds = client.getBounds(prefix)[0].bounds
-      const compressedFile = await this.compressFile(db.export(), logger)
-      await this.uploadFile(key, compressedFile, prefix, upstreamEtag, bounds, logger)
+      const dbExport = db.export()
+      const shapesExport = await importedFiles.shapes!.arrayBuffer()
+      const compressedDb = await this.compressFile(dbExport, logger)
+      const compressedShapes = await this.compressFile(shapesExport, logger)
+      await this.uploadFile(dbKey, compressedDb, prefix, upstreamEtag, bounds, logger)
+      await this.uploadFile(shapesKey, compressedShapes, prefix, upstreamEtag, bounds, logger)
       unsubscribeLogs()
       return {
         status: 'success',
@@ -136,7 +140,7 @@ export class ImportManager {
     return true
   }
 
-  async compressFile(data: Uint8Array, logger: Logger) {
+  async compressFile(data: zlib.InputType, logger: Logger) {
     const quality = 5
     logger.info(`compressing database with brotli level ${quality}`)
     return zlib.brotliCompressSync(data, {
@@ -161,13 +165,6 @@ export class ImportManager {
       'upstream-etag': upstreamEtag,
     })
     logger.info('upload to s3 complete')
-  }
-
-  async setActiveVersion(version: string) {
-    const prefix = this.prefix
-    const sourceKey = `${versionsUrlPrefix}${prefix}/${version}.bin`
-    const targetKey = `${regionsUrlPrefix}${prefix}.bin`
-    await this.#bucketClient!.copyObject(sourceKey, targetKey)
   }
 
   async tidyGtfs(name: string, res: Response, logger: Logger) {

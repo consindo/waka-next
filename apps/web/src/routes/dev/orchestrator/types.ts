@@ -2,9 +2,12 @@ import type { Prefix } from '@lib/client'
 
 export type ActiveRegion = {
   region: Prefix
+  url: string
   etag: string
   size: number
-  url: string
+  shapesUrl?: string
+  shapesEtag?: string
+  shapesSize?: number
   bounds: [number, number][]
 }
 
@@ -20,4 +23,7 @@ export type Version = {
   url: string
   etag: string
   size: number
+  shapesUrl?: string
+  shapesEtag?: string
+  shapesSize?: number
 }
