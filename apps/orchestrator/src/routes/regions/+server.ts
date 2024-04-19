@@ -1,8 +1,8 @@
 import { env } from '$env/dynamic/private'
 import { json } from '@sveltejs/kit'
 
-import type { RegionResult } from '$lib/configManager'
 import { loadDb } from '$lib/loadDb'
+import type { RegionResult } from '$lib/types'
 
 import type { RequestHandler } from './$types'
 

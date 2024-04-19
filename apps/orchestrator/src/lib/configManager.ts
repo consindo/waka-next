@@ -6,35 +6,7 @@ import type { Prefix } from '@lib/client'
 import sampleGtfs from '../../static/sample-feed-1.bin.br?url'
 import { BucketClient } from './bucketClient'
 import { ImportManager } from './importManager'
-
-type RegionConfig = {
-  name: string
-  shouldCache?: boolean
-  gtfsZipUrl: string
-  gtfsZipHeaders?: Record<string, string>
-  gtfsZipDisableEtag?: boolean
-  gtfsTidyOptions?: string | false
-}
-
-type ConfigurationFile = {
-  regions: Record<Prefix, RegionConfig>
-  database: {
-    bucketName: string
-    region: string
-    publicUrl: string
-  } | null
-}
-
-export type RegionResult = {
-  regions: {
-    region: Prefix
-    etag: string
-    size: number
-    url: string
-    bounds: [number, number][]
-  }[]
-  regionsConfig: Record<Prefix, RegionConfig>
-}
+import type { ConfigurationFile, RegionResult, VersionResult } from './types'
 
 const sampleRegions = {
   config: {
@@ -101,7 +73,6 @@ export class ConfigManager {
         if (i.Size === 0) return [] // filters out folders
         if (i.Key?.endsWith(shapesSuffix)) return [] // filters out shape files
         const shapesKey = `${regionsUrlPrefix}${region}${shapesSuffix}`
-        console.log(i.Key, shapesKey)
         const shape = s3Objects.Contents!.find((i) => i.Key === shapesKey)
         return [
           {
@@ -124,13 +95,13 @@ export class ConfigManager {
 
   async checkForUpdate(
     prefix: Prefix
-  ): Promise<{ status: string; prefix: Prefix; logs: string[] }> {
+  ): Promise<{ status: string; region: Prefix; logs: string[] }> {
     if (!this.#bucketClient) throw 'No database configured'
     const region = this.#internalConfig.regions[prefix]
     if (region === undefined) {
       return {
         status: 'not found',
-        prefix,
+        region: prefix,
         logs: [],
       }
     }
@@ -145,7 +116,7 @@ export class ConfigManager {
     return importManager.checkAndDownloadUpdate()
   }
 
-  async getVersions(prefix: Prefix) {
+  async getVersions(prefix: Prefix): Promise<VersionResult> {
     if (this.#bucketClient === null) return { versions: [] }
     const keyPrefix = `${versionsUrlPrefix}${prefix}/`
     const s3Objects = await this.#bucketClient.listObjects(keyPrefix)
@@ -156,7 +127,7 @@ export class ConfigManager {
         const shapesKey = `${keyPrefix}${version}${shapesSuffix}`
         const shape = s3Objects.Contents!.find((i) => i.Key === shapesKey)
         return {
-          prefix,
+          region: prefix,
           // remove the key, leading slash, and .bin
           version,
           date: i.LastModified?.toISOString(),

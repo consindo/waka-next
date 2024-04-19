@@ -17,7 +17,7 @@ export type InactiveRegion = {
 }
 
 export type Version = {
-  prefix: Prefix
+  region: Prefix
   version: string
   date: string
   url: string

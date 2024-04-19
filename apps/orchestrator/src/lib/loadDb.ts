@@ -6,7 +6,7 @@ import zlib from 'node:zlib'
 import type { Client, Prefix } from '@lib/client'
 import { DB } from '@lib/db'
 
-import type { RegionResult } from './configManager'
+import type { RegionResult } from './types'
 
 const loadedVersions: Record<Prefix, string> = {}
 

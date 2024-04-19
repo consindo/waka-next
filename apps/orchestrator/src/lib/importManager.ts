@@ -41,7 +41,7 @@ export class ImportManager {
     this.gtfsTidyOptions = gtfsTidyOptions
   }
 
-  async checkAndDownloadUpdate(): Promise<{ status: string; prefix: Prefix; logs: string[] }> {
+  async checkAndDownloadUpdate(): Promise<{ status: string; region: Prefix; logs: string[] }> {
     const prefix = this.prefix
     const db = new DB()
     const importer = new Importer({ db })
@@ -61,7 +61,7 @@ export class ImportManager {
       upstreamEtag = res.headers.get('ETag') || ''
     } catch (err) {
       unsubscribeLogs()
-      return { status: 'error', prefix, logs }
+      return { status: 'error', region: prefix, logs }
     }
     logger.info(`gtfs headers download complete`)
 
@@ -74,7 +74,7 @@ export class ImportManager {
       const result = await this.checkExistingVersion(dbKey, upstreamEtag, logger, hash)
       if (result === false) {
         unsubscribeLogs()
-        return { status: 'skipped', prefix, logs }
+        return { status: 'skipped', region: prefix, logs }
       }
     }
 
@@ -97,7 +97,7 @@ export class ImportManager {
       unsubscribeLogs()
       return {
         status: 'success',
-        prefix,
+        region: prefix,
         logs,
       }
     } catch (err) {
@@ -105,7 +105,7 @@ export class ImportManager {
       logs.push(getErrorMessage(err))
       return {
         status: 'error',
-        prefix,
+        region: prefix,
         logs,
       }
     }

@@ -25,7 +25,7 @@
   }
 
   const loadDb =
-    (version: { prefix: string; version: string; url: string }) =>
+    (version: { region: string; version: string; url: string }) =>
     async (e: MouseEvent & { currentTarget: HTMLButtonElement }) => {
       e.preventDefault()
 
@@ -33,8 +33,8 @@
       e.currentTarget.disabled = true
       e.currentTarget.innerText = 'loading...'
 
-      await createClient(version.prefix as Prefix, version.version, version.url)
-      goto(`/dev/query?db=${encodeURIComponent(`${version.prefix}:${version.version}`)}`)
+      await createClient(version.region as Prefix, version.version, version.url)
+      goto(`/dev/query?db=${encodeURIComponent(`${version.region}:${version.version}`)}`)
     }
 </script>
 
@@ -77,7 +77,7 @@
       <button on:click={() => window.location.reload()}>refresh</button>
       <button
         on:click={loadDb({
-          prefix: data.id,
+          region: data.id,
           version: 'live',
           url: data.activeRegion.url,
         })}>load into client</button
