@@ -45,6 +45,7 @@ export class BucketClient {
       Body: body,
       ContentType: contentType,
       ContentEncoding: contentEncoding,
+      CacheControl: contentEncoding ? 'no-transform' : undefined,
       Metadata: metadata,
     })
     const data = await this.#s3client.send(command)
