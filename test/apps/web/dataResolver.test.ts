@@ -42,7 +42,7 @@ describe('DataResolver', () => {
         prefix,
         '',
         vi.fn(),
-        vi.fn(() => ({ ok: true, json: () => 'serverData' }))
+        vi.fn(() => ({ ok: true, json: () => 'serverData', headers: { get: () => 'application/json' } }))
       )
       expect(data).toEqual({ provider: 'server', data: 'serverData' })
     })
@@ -55,7 +55,7 @@ describe('DataResolver', () => {
         prefix,
         '',
         vi.fn(),
-        vi.fn(() => ({ ok: true, json: () => 'serverData' }))
+        vi.fn(() => ({ ok: true, json: () => 'serverData', headers: { get: () => 'application/json' } }))
       )
       expect(data).toEqual({ provider: 'server', data: 'serverData' })
     })

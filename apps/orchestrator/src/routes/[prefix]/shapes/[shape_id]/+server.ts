@@ -8,14 +8,19 @@ import type { RequestHandler } from './$types'
 
 export const GET: RequestHandler = async ({ locals, params }) => {
   const { client } = locals
-  const shape = client.getShape(params.prefix as Prefix, params.shape_id)
-
   try {
-    const file = await fs.open(shape!)
-    const stream = file.createReadStream()
-    const webstream = Readable.toWeb(stream) as ReadableStream
-    return new Response(webstream)
+    const shape = await client.getShape(params.prefix as Prefix, params.shape_id)
+    if (typeof shape === 'string') {
+      const file = await fs.open(shape!)
+      const stream = file.createReadStream()
+      const webstream = Readable.toWeb(stream) as ReadableStream
+      return new Response(webstream, { headers: { 'content-type': 'application/octet-stream' } })
+    }
+    return json(shape)
   } catch (err) {
-    return json({ error: 'not found' }, { status: 404 })
+    if ((err as Error).message === 'not found') {
+      return json({ code: 404, error: 'not found' }, { status: 404 })
+    }
+    throw err
   }
 }

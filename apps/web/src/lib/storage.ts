@@ -8,9 +8,13 @@ import { variables } from './variables'
 type Fetch = typeof fetch
 type Region = {
   region: Prefix
-  etag: string
   bounds: [[number, number], [number, number]]
   url: string
+  etag: string
+  size: number
+  shapesUrl?: string
+  shapesEtag?: string
+  shapesSize?: number
 }
 
 let regions: Region[] = []
@@ -75,14 +79,19 @@ export const getRegions = async (fetch: Fetch, loadRegion = createClient) => {
           geo.latitude > i.bounds[1][1]
       )
       .forEach((region) => {
-        loadRegion(region.region, 'live', region.url)
+        loadRegion(region.region, 'live', region.url, region.shapesUrl)
       })
   }
 
   return regions
 }
 
-export const createClient = async (prefix: Prefix, version: string, url: string) => {
+export const createClient = async (
+  prefix: Prefix,
+  version: string,
+  url: string,
+  shapesUrl?: string
+) => {
   console.log('loading gtfs for', `${prefix}:${version}`)
   const db = new DB()
 
@@ -104,13 +113,20 @@ export const createClient = async (prefix: Prefix, version: string, url: string)
       globalClient = new Client()
     }
     globalClient.addRegion(prefix, db)
+    console.log('offline gtfs client ready')
+
+    let shapesData: Blob | undefined
+    if (shapesUrl) {
+      const shapesRes = await fetch(shapesUrl)
+      shapesData = await shapesRes.blob()
+    }
+    globalClient.addRegion(prefix, db, shapesData)
+    console.log('offline shapes ready')
 
     // resolve a promise if something is waiting on it
     if (resolvers[prefix]) {
       resolvers[prefix](globalClient)
     }
-
-    console.log('offline gtfs client ready')
   } catch (err) {
     throw { message: 'could not load gtfs db on client', err }
   }

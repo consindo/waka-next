@@ -1,7 +1,13 @@
+import { TarReader } from '@gera2ld/tarjs'
+import { parseSync } from '@loaders.gl/core'
+import { WKBLoader } from '@loaders.gl/wkt'
+import type { Feature } from 'geojson'
+
 import type { DB } from '@lib/db'
 
 import getBounds from './sql/getBounds.sql?raw'
 import getRoutes from './sql/getRoutes.sql?raw'
+import getShape from './sql/getShape.sql?raw'
 import getStops from './sql/getStops.sql?raw'
 
 export type Prefix = `${string}-${string}`
@@ -37,9 +43,11 @@ export class Client {
   db: Record<Prefix, DB> = {}
   shapes: Record<Prefix, Blob | string> = {}
 
-  runQuery = (prefix: PrefixInput, query: string): unknown => {
+  runQuery = (prefix: PrefixInput, query: string, params?: string[]): unknown => {
     const databases: Prefix[] = prefix === 'all' ? (Object.keys(this.db) as Prefix[]) : [prefix]
-    return databases.flatMap((i) => this.db[i].execObject(query).map((j) => ({ prefix: i, ...j })))
+    return databases.flatMap((i) =>
+      this.db[i].execObject(query, params).map((j) => ({ prefix: i, ...j }))
+    )
   }
 
   addRegion(prefix: Prefix, db: DB, shapes?: Blob | string) {
@@ -83,17 +91,40 @@ export class Client {
     return this.runQuery(prefix, getRoutes) as RouteResult[]
   }
 
-  getShape(prefix: PrefixInput, shapeId: string) {
-    if (prefix === 'all') return // need to handle this seperately
-
+  async getShape(prefix: Prefix, shapeId: string): Promise<Feature | string> {
     const shapesDb = this.shapes[prefix]
     if (shapesDb === undefined) {
-      // todo: run a db query if the shapes aren't there
+      try {
+        const results = this.runQuery(prefix, getShape, [shapeId]) as {
+          shapePtLat: number
+          shapePtLon: number
+        }[]
+        if (results.length > 0) {
+          return {
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates: results.map((i) => [i.shapePtLon, i.shapePtLat]),
+            },
+          } as Feature
+        }
+        throw new Error('not found')
+      } catch (err) {
+        throw new Error('not found')
+      }
     } else {
       if (typeof shapesDb === 'string') {
         return `${shapesDb}${btoa(shapeId)}.wkb`
       } else {
-        // todo: read tar if it's local
+        const blob = await TarReader.load(shapesDb)
+        const buffer = await blob.getFileBlob(btoa(shapeId) + '.wkb').arrayBuffer()
+        const geometry = parseSync(buffer, WKBLoader, { wkb: { shape: 'geojson-geometry' } })
+        return {
+          type: 'Feature',
+          properties: {},
+          geometry,
+        } as Feature
       }
     }
   }

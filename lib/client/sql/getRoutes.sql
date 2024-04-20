@@ -4,6 +4,8 @@ SELECT route_short_name,
        route_type,
        route_color,
        route_desc,
-       route_id
+       routes.route_id,
+       trips.shape_id
 FROM routes
-ORDER BY route_type
+LEFT JOIN trips ON routes.route_id = trips.route_id
+ORDER BY route_type LIMIT 100

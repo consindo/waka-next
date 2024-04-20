@@ -22,9 +22,9 @@ export class DB {
     this.db = new this.sql.Database(new Uint8Array(data))
   }
 
-  exec(query: string) {
+  exec(query: string, params?: string[]) {
     if (!this.db) throw 'DB needs to be connected!'
-    const results = this.db.exec(query)
+    const results = this.db.exec(query, params)
     return results
   }
 
@@ -38,8 +38,8 @@ export class DB {
     return this.db.export()
   }
 
-  execObject(query: string) {
-    const results = this.exec(query)
+  execObject(query: string, params?: string[]) {
+    const results = this.exec(query, params)
     return results.flatMap((result) => {
       const casedColumns = result.columns.map((i: string) =>
         i.toLowerCase().replace(/[-_][a-z]/g, (group: string) => group.slice(-1).toUpperCase())
