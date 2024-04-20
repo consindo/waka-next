@@ -35,14 +35,23 @@ type RouteResult = {
 
 export class Client {
   db: Record<Prefix, DB> = {}
+  shapes: Record<Prefix, Blob | string> = {}
 
   runQuery = (prefix: PrefixInput, query: string): unknown => {
     const databases: Prefix[] = prefix === 'all' ? (Object.keys(this.db) as Prefix[]) : [prefix]
     return databases.flatMap((i) => this.db[i].execObject(query).map((j) => ({ prefix: i, ...j })))
   }
 
-  addRegion(prefix: Prefix, db: DB) {
+  addRegion(prefix: Prefix, db: DB, shapes?: Blob | string) {
     this.db[prefix] = db
+
+    // shapes can either be a
+    // - blob - the tar itself,
+    // - string - the path on disk
+    // - undefined - read the shapes table in sqlite
+    if (shapes) {
+      this.shapes[prefix] = shapes
+    }
   }
 
   hasRegion(prefix: Prefix) {
@@ -72,5 +81,20 @@ export class Client {
 
   getRoutes(prefix: PrefixInput): RouteResult[] {
     return this.runQuery(prefix, getRoutes) as RouteResult[]
+  }
+
+  getShape(prefix: PrefixInput, shapeId: string) {
+    if (prefix === 'all') return // need to handle this seperately
+
+    const shapesDb = this.shapes[prefix]
+    if (shapesDb === undefined) {
+      // todo: run a db query if the shapes aren't there
+    } else {
+      if (typeof shapesDb === 'string') {
+        return `${shapesDb}${btoa(shapeId)}.wkb`
+      } else {
+        // todo: read tar if it's local
+      }
+    }
   }
 }

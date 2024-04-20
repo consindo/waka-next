@@ -85,6 +85,7 @@ export class ImportManager {
         tidiedGtfs = await this.tidyGtfs(prefix, res, logger)
       }
       const importedFiles = await importer.import(tidiedGtfs, undefined, true)
+      // todo: delete gtfs files once done
       const client = new Client()
       client.addRegion(prefix, db)
       const bounds = client.getBounds(prefix)[0].bounds

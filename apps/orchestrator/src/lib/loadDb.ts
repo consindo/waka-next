@@ -1,4 +1,5 @@
 import { read } from '$app/server'
+import { exec } from 'child_process'
 import fs from 'node:fs/promises'
 import path from 'node:path'
 import zlib from 'node:zlib'
@@ -33,28 +34,35 @@ export const loadDb = async (client: Client, regions: RegionResult) => {
         return
       }
 
-      let data: ArrayBuffer
       const localFilename = path.join(cacheDir, region.etag + '.bin')
-      try {
-        await fs.access(localFilename)
-        console.log(`loading ${prefix} locally from ${localFilename}`)
-        data = await fs.readFile(localFilename)
-      } catch (err) {
-        console.log(`downloading ${prefix} from ${region.url}`)
+      const data = await dlOrCache(`${prefix}.db`, localFilename, region.url)
 
-        // download to local cache
-        if (region.url.startsWith('/')) {
-          const dataBr = await read(region.url).arrayBuffer()
-          data = zlib.brotliDecompressSync(dataBr)
-        } else {
-          const res = await fetch(region.url)
-          data = await res.arrayBuffer()
+      let shapesDir: string | undefined = undefined
+      if (region.shapesUrl) {
+        const shapesFilename = path.join(cacheDir, region.etag + '.shapes.tar.br')
+        shapesDir = path.join(cacheDir, region.etag + '.shapes/')
+        await dlOrCache(`${prefix}.shapes`, shapesFilename, region.shapesUrl)
+
+        try {
+          await fs.access(shapesDir)
+        } catch (err) {
+          await fs.mkdir(shapesDir)
+
+          // tar should already be decompressed with brotli
+          await new Promise<void>((resolve, reject) => {
+            exec(
+              `tar -xf ${path.resolve(shapesFilename)} -C ${path.resolve(shapesDir!)}`,
+              (err) => {
+                if (err) {
+                  console.error(err)
+                  return reject(err)
+                }
+                resolve()
+              }
+            )
+          })
+          console.log(`extracted ${prefix} shapes to cache`)
         }
-
-        // cache for later
-        fs.writeFile(localFilename, Buffer.from(data)).then(() => {
-          console.log(`saved ${prefix} to ${localFilename}`)
-        })
       }
 
       // connect to db
@@ -63,7 +71,7 @@ export const loadDb = async (client: Client, regions: RegionResult) => {
       db.load(data)
 
       // done
-      client.addRegion(prefix, db)
+      client.addRegion(prefix, db, shapesDir)
       loadedVersions[prefix] = region.etag
       console.log(`loaded ${prefix} into memory db`)
     })
@@ -77,4 +85,30 @@ export const loadDb = async (client: Client, regions: RegionResult) => {
     console.log('deleted', file, 'from cache')
     await fs.rm(path.join(cacheDir, file))
   }
+}
+
+const dlOrCache = async (id: string, localFilename: string, url: string) => {
+  let data: ArrayBuffer
+  try {
+    await fs.access(localFilename)
+    console.log(`loading ${id} locally from ${localFilename}`)
+    data = await fs.readFile(localFilename)
+  } catch (err) {
+    console.log(`downloading ${id} from ${url}`)
+
+    // download to local cache
+    if (url.startsWith('/')) {
+      const dataBr = await read(url).arrayBuffer()
+      data = zlib.brotliDecompressSync(dataBr)
+    } else {
+      const res = await fetch(url)
+      data = await res.arrayBuffer()
+    }
+
+    // cache for later
+    fs.writeFile(localFilename, Buffer.from(data)).then(() => {
+      console.log(`saved ${id} to ${localFilename}`)
+    })
+  }
+  return data
 }
