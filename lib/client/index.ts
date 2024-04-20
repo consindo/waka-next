@@ -39,11 +39,23 @@ type RouteResult = {
   routeId: string
 }
 
+export enum ClientErrors {
+  NotFound = 'NOT_FOUND',
+  RegionNotFound = 'REGION_NOT_FOUND',
+}
+
+const GetError = (code: ClientErrors) => {
+  const err = new Error(code) as App.Error
+  err.code = code
+  return err
+}
+
 export class Client {
   db: Record<Prefix, DB> = {}
   shapes: Record<Prefix, Blob | string> = {}
 
   runQuery = (prefix: PrefixInput, query: string, params?: string[]): unknown => {
+    if (prefix !== 'all' && !this.hasRegion(prefix)) throw GetError(ClientErrors.RegionNotFound)
     const databases: Prefix[] = prefix === 'all' ? (Object.keys(this.db) as Prefix[]) : [prefix]
     return databases.flatMap((i) =>
       this.db[i].execObject(query, params).map((j) => ({ prefix: i, ...j }))
@@ -92,6 +104,7 @@ export class Client {
   }
 
   async getShape(prefix: Prefix, shapeId: string): Promise<Feature | string> {
+    if (!this.hasRegion(prefix)) throw GetError(ClientErrors.RegionNotFound)
     const shapesDb = this.shapes[prefix]
     if (shapesDb === undefined) {
       try {
@@ -109,16 +122,21 @@ export class Client {
             },
           } as Feature
         }
-        throw new Error('not found')
-      } catch (err) {
-        throw new Error('not found')
+        throw GetError(ClientErrors.NotFound)
+      } catch {
+        throw GetError(ClientErrors.NotFound)
       }
     } else {
       if (typeof shapesDb === 'string') {
         return `${shapesDb}${btoa(shapeId)}.wkb`
       } else {
         const blob = await TarReader.load(shapesDb)
-        const buffer = await blob.getFileBlob(btoa(shapeId) + '.wkb').arrayBuffer()
+        let buffer: ArrayBuffer
+        try {
+          buffer = await blob.getFileBlob(btoa(shapeId) + '.wkb').arrayBuffer()
+        } catch {
+          throw GetError(ClientErrors.NotFound)
+        }
         const geometry = parseSync(buffer, WKBLoader, { wkb: { shape: 'geojson-geometry' } })
         return {
           type: 'Feature',

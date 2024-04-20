@@ -30,6 +30,13 @@ describe('client', () => {
       expect(result[0]).toEqual({ number: 1, prefix: region })
       expect(result[1]).toEqual({ number: 1, prefix: 'sample-region2' })
     })
+    it('should throw an error if the region does not exist', () => {
+      const client = new Client()
+      client.addRegion(region, db)
+      expect(() => client.runQuery('region-2', 'select 1 as number')).toThrowError(
+        'REGION_NOT_FOUND'
+      )
+    })
   })
   describe('getBounds', () => {
     it('should return bounds for a feed', () => {

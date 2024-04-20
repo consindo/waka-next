@@ -6,7 +6,12 @@ import type { ConfigManager } from '$lib/configManager'
 // for information about these interfaces
 declare global {
   namespace App {
-    // interface Error {}
+    interface Error {
+      name: string
+      message: string
+      stack?: string
+      code?: number | string
+    }
     interface Locals {
       client: Client
       configManager: ConfigManager

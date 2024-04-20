@@ -3,7 +3,7 @@ import { parseSync } from '@loaders.gl/core'
 import { WKBLoader } from '@loaders.gl/wkt'
 import type { Feature } from 'geojson'
 
-import type { Client, Prefix } from '@lib/client'
+import { type Client, ClientErrors, type Prefix } from '@lib/client'
 
 import { getClient, isClientReady, waitForClient } from '../lib/storage'
 
@@ -14,14 +14,25 @@ export const resolveData = async <Type>(
   httpEndpoint: string,
   clientQuery: (client: Client) => Type,
   fetch: Fetch
-): Promise<{ provider: string; data: Type | null }> => {
+): Promise<{ provider: string; data: Type | null; error?: string }> => {
   if (browser && isClientReady(prefix, fetch)) {
     const client = getClient()
-    const data = (await clientQuery(client)) as Type
-    return { provider: 'client', data }
+    try {
+      const data = (await clientQuery(client)) as Type
+      return { provider: 'client', data }
+    } catch (err) {
+      if ((err as App.Error).code === ClientErrors.NotFound) {
+        return { provider: 'client', error: ClientErrors.NotFound, data: null }
+      } else if ((err as App.Error).code === ClientErrors.RegionNotFound) {
+        return { provider: 'client', error: ClientErrors.RegionNotFound, data: null }
+      }
+      throw err
+    }
   } else {
     try {
       const res = await fetch(`/api/${prefix}${httpEndpoint}`)
+      if (res.status === 404)
+        return { provider: 'server', error: ClientErrors.NotFound, data: null }
       if (!res.ok) throw `http: ${res.status}`
       // assumes it's a wkb
       if (res.headers.get('Content-Type') === 'application/octet-stream') {

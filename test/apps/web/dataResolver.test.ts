@@ -34,6 +34,54 @@ describe('DataResolver', () => {
       expect(data).toEqual({ provider: 'client', data: 'clientData' })
     })
 
+    it('should catch client not found errors', async () => {
+      browserGetter.mockReturnValue(true)
+      expect(browser).toEqual(true)
+      isClientReady.mockReturnValue(true)
+
+      const data = await resolveData(
+        prefix,
+        '',
+        () => {
+          const err = new Error()
+          err.code = 'NOT_FOUND'
+          throw err
+        },
+        vi.fn()
+      )
+      expect(data).toEqual({ provider: 'client', error: 'NOT_FOUND', data: null })
+
+      const data2 = await resolveData(
+        prefix,
+        '',
+        () => {
+          const err = new Error()
+          err.code = 'REGION_NOT_FOUND'
+          throw err
+        },
+        vi.fn()
+      )
+      expect(data2).toEqual({ provider: 'client', error: 'REGION_NOT_FOUND', data: null })
+    })
+
+    it('should throw client exceptions', async () => {
+      browserGetter.mockReturnValue(true)
+      expect(browser).toEqual(true)
+      isClientReady.mockReturnValue(true)
+
+      const data = resolveData(
+        prefix,
+        '',
+        () => {
+          const err = new Error()
+          err.code = 'Unhandled Exception'
+          throw err
+        },
+        vi.fn()
+      )
+      await expect(() => data).rejects.toThrowError()
+    })
+
     it('should return data from the server if running on server', async () => {
       browserGetter.mockReturnValue(false)
       isClientReady.mockReturnValue(false)
@@ -42,7 +90,11 @@ describe('DataResolver', () => {
         prefix,
         '',
         vi.fn(),
-        vi.fn(() => ({ ok: true, json: () => 'serverData', headers: { get: () => 'application/json' } }))
+        vi.fn(() => ({
+          ok: true,
+          json: () => 'serverData',
+          headers: { get: () => 'application/json' },
+        }))
       )
       expect(data).toEqual({ provider: 'server', data: 'serverData' })
     })
@@ -55,9 +107,26 @@ describe('DataResolver', () => {
         prefix,
         '',
         vi.fn(),
-        vi.fn(() => ({ ok: true, json: () => 'serverData', headers: { get: () => 'application/json' } }))
+        vi.fn(() => ({
+          ok: true,
+          json: () => 'serverData',
+          headers: { get: () => 'application/json' },
+        }))
       )
       expect(data).toEqual({ provider: 'server', data: 'serverData' })
+    })
+
+    it('should return a 404 if the server encounters a 404 ', async () => {
+      browserGetter.mockReturnValue(false)
+      isClientReady.mockReturnValue(false)
+
+      const data = await resolveData(
+        prefix,
+        '',
+        vi.fn(),
+        vi.fn(() => ({ ok: false, status: 404 }))
+      )
+      expect(data).toEqual({ provider: 'server', error: 'NOT_FOUND', data: null })
     })
 
     it('should return empty data if the server encounters an error ', async () => {

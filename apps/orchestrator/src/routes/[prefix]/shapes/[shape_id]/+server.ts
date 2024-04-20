@@ -2,7 +2,7 @@ import { json } from '@sveltejs/kit'
 import fs from 'node:fs/promises'
 import { Readable } from 'node:stream'
 
-import type { Prefix } from '@lib/client'
+import { ClientErrors, type Prefix } from '@lib/client'
 
 import type { RequestHandler } from './$types'
 
@@ -18,8 +18,13 @@ export const GET: RequestHandler = async ({ locals, params }) => {
     }
     return json(shape)
   } catch (err) {
-    if ((err as Error).message === 'not found') {
-      return json({ code: 404, error: 'not found' }, { status: 404 })
+    if (
+      (err as App.Error).message === ClientErrors.NotFound ||
+      (err as App.Error).code === 'ENOENT'
+    ) {
+      return json({ code: 404, error: ClientErrors.NotFound }, { status: 404 })
+    } else if ((err as App.Error).code === ClientErrors.RegionNotFound) {
+      return json({ code: 404, error: ClientErrors.RegionNotFound }, { status: 404 })
     }
     throw err
   }
