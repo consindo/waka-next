@@ -42,5 +42,23 @@ describe('db', () => {
         { c: 3, d: 4 },
       ])
     })
+    it('should convert columns with dates in the name to js date objects', async () => {
+      const db = new DB()
+      db.exec = vi.fn(
+        () =>
+          [
+            {
+              columns: ['a_date', 'b'],
+              values: [
+                ['20021210', 2],
+              ] as SqlValue[][],
+            },
+          ] as QueryExecResult[]
+      )
+      const result = db.execObject('fake query')
+      expect(result).toEqual([
+        { aDate: new Date(Date.parse('2002-12-10')), b: 2 },
+      ])
+    })
   })
 })

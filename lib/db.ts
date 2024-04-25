@@ -1,6 +1,11 @@
 import sqlInit, { type Database, type SqlValue } from 'sql.js'
 import wasm from 'sql.js/dist/sql-wasm.wasm?url'
 
+const parseGtfsDate = (date: string) => {
+  date = date.toString()
+  return new Date(Date.parse(`${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}`))
+}
+
 export class DB {
   db?: Database
   sql?: sqlInit.SqlJsStatic
@@ -46,7 +51,11 @@ export class DB {
       )
       return result.values.map((row) =>
         row.reduce((acc: Record<string, unknown>, cur: SqlValue, index: number) => {
-          acc[casedColumns[index]] = cur
+          if (casedColumns[index].includes('Date')) {
+            acc[casedColumns[index]] = parseGtfsDate(cur as string)
+          } else {
+            acc[casedColumns[index]] = cur
+          }
           return acc
         }, {})
       )

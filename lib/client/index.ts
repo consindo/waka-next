@@ -9,40 +9,12 @@ import getBounds from './sql/getBounds.sql?raw'
 import getRoutes from './sql/getRoutes.sql?raw'
 import getShape from './sql/getShape.sql?raw'
 import getStops from './sql/getStops.sql?raw'
+import getInfoFromFeedInfo from './sql/getInfoFromFeedInfo.sql?raw'
+import getInfoFromCalendar from './sql/getInfoFromCalendar.sql?raw'
+import getTable from './sql/getTable.sql?raw'
+import { BoundsResult, ClientErrors, InfoResult, Prefix, PrefixInput, RouteResult, StopResult } from './types'
 
-export type Prefix = `${string}-${string}`
-type PrefixInput = Prefix | 'all'
-
-type Position = [number, number]
-
-type BoundsResult = {
-  prefix: Prefix
-  bounds: [Position, Position]
-}
-
-type StopResult = {
-  prefix: Prefix
-  stopId: string
-  stopCode: string | null
-  stopDesc: string | null
-  stopLat: number
-  stopLon: number
-}
-
-type RouteResult = {
-  routeShortName: string
-  routeLongName: string
-  agencyId: string
-  routeType: string
-  routeColor: string
-  routeDesc: string
-  routeId: string
-}
-
-export enum ClientErrors {
-  NotFound = 'NOT_FOUND',
-  RegionNotFound = 'REGION_NOT_FOUND',
-}
+export * from './types'
 
 const GetError = (code: ClientErrors) => {
   const err = new Error(code) as App.Error
@@ -54,12 +26,14 @@ export class Client {
   db: Record<Prefix, DB> = {}
   shapes: Record<Prefix, Blob | string> = {}
 
-  runQuery = (prefix: PrefixInput, query: string, params?: string[]): unknown => {
+  runQuery = (prefix: PrefixInput, query: string, params?: string[], flatMap = true): unknown => {
     if (prefix !== 'all' && !this.hasRegion(prefix)) throw GetError(ClientErrors.RegionNotFound)
     const databases: Prefix[] = prefix === 'all' ? (Object.keys(this.db) as Prefix[]) : [prefix]
-    return databases.flatMap((i) =>
-      this.db[i].execObject(query, params).map((j) => ({ prefix: i, ...j }))
-    )
+    const cb = (i: Prefix) => this.db[i].execObject(query, params).map((j) => ({ prefix: i, ...j }))
+    return flatMap ? databases.flatMap(cb) : databases.reduce((acc, cur) => {
+      acc[cur] = cb(cur);
+      return acc;
+    }, {} as Record<Prefix, unknown>)
   }
 
   addRegion(prefix: Prefix, db: DB, shapes?: Blob | string) {
@@ -93,6 +67,22 @@ export class Client {
         [r.minLon, r.minLat],
       ],
     }))
+  }
+
+  getInfo(prefix: PrefixInput): InfoResult[] {
+    const databases = this.runQuery(prefix, getTable, ['feed_info'], false) as Record<Prefix, unknown[]>
+    return (Object.keys(databases) as Prefix[]).flatMap(prefix => {
+      if (databases[prefix].length > 0) {
+        return this.runQuery(prefix, getInfoFromFeedInfo) as InfoResult[]
+      }
+      const calendarInfo = this.runQuery(prefix, getInfoFromCalendar) as { feedStartDate: Date, feedEndDate: Date }[]
+      return {
+        prefix,
+        feedLang: 'en',
+        feedStartDate: calendarInfo[0].feedStartDate,
+        feedEndDate: calendarInfo[0].feedEndDate,
+      }
+    })
   }
 
   getStops(prefix: PrefixInput): StopResult[] {

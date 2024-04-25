@@ -49,4 +49,57 @@ describe('client', () => {
       ])
     })
   })
+  describe('getInfo', () => {
+    it('should return feed info if feed_info does not exist', () => {
+      const client = new Client()
+      client.addRegion(region, db)
+      const info = client.getInfo(region)
+      expect(info).toEqual([{
+        prefix: 'sample-region',
+        feedLang: 'en',
+        feedStartDate: new Date('2007-01-01'),
+        feedEndDate: new Date('2010-12-31'),
+      }])
+    })
+    it('should return feed info from table if it exists', () => {
+      const client = new Client()
+      client.addRegion(region, db)
+      db.execObject(`CREATE TABLE feed_info (
+        feed_publisher_name char,
+        feed_publisher_url char,
+        feed_lang char,
+        default_lang char,
+        feed_start_date char,
+        feed_end_date char,
+        feed_version char,
+        feed_contact_email char,
+        feed_contact_url char
+      );
+      INSERT INTO feed_info VALUES (
+        'example',
+        'example.com',
+        'en',
+        'en',
+        '20000210',
+        '20200210',
+        '12344',
+        'email@example.com',
+        'example2.com'
+      )
+      `)
+      const info = client.getInfo(region)
+      expect(info).toEqual([{
+        prefix: 'sample-region',
+        feedLang: 'en',
+        defaultLang: 'en',
+        feedVersion: '12344',
+        feedPublisherName: 'example',
+        feedPublisherUrl: 'example.com',
+        feedContactUrl: 'example2.com',
+        feedContactEmail: 'email@example.com',
+        feedStartDate: new Date('2000-02-10'),
+        feedEndDate: new Date('2020-02-10'),
+      }])
+    })
+  })
 })
