@@ -19,7 +19,9 @@ export const load: PageLoad = async ({ fetch, params, data }) => {
     activeRegions,
     activeRegion: activeRegions.find((i) => i.region === params.region),
     inactiveRegions,
-    versions: details.versions as Version[],
+    versions: (details.versions as Version[]).toSorted(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    ),
     importResult: (importResult || {})[params.region],
   }
 }

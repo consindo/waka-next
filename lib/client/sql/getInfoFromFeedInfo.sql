@@ -1,1 +1,2 @@
-select * from feed_info limit 1;
+SELECT *
+FROM feed_info LIMIT 1;

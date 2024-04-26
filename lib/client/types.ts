@@ -9,15 +9,15 @@ export enum ClientErrors {
 
 export type InfoResult = {
   prefix: Prefix
-  feedLang: string,
+  feedLang: string
   feedStartDate: Date
   feedEndDate: Date
-  feedPublisherName?: string,
-  feedPublisherUrl?: string,
-  defaultLang?: string,
-  feedVersion?: string,
-  feedContactEmail?: string,
-  feedContactUrl?: string,
+  feedPublisherName?: string
+  feedPublisherUrl?: string
+  defaultLang?: string
+  feedVersion?: string
+  feedContactEmail?: string
+  feedContactUrl?: string
 }
 
 export type BoundsResult = {

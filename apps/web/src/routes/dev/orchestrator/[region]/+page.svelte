@@ -110,7 +110,14 @@
       <h3>{version.version}</h3>
       <dl>
         <dt>date</dt>
-        <dd><time>{new Date(version.date).toLocaleString()}</time></dd>
+        <dd>
+          <time>{new Date(version.date).toLocaleString()}</time>
+          <em
+            >({Math.round(
+              (new Date().getTime() - new Date(version.date).getTime()) / 1000 / 60 / 60 / 24
+            )} days ago)</em
+          >
+        </dd>
         <dt>etag</dt>
         <dd>{version.etag}</dd>
         <dt>url</dt>

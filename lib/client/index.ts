@@ -6,13 +6,21 @@ import type { Feature } from 'geojson'
 import type { DB } from '@lib/db'
 
 import getBounds from './sql/getBounds.sql?raw'
+import getInfoFromCalendar from './sql/getInfoFromCalendar.sql?raw'
+import getInfoFromFeedInfo from './sql/getInfoFromFeedInfo.sql?raw'
 import getRoutes from './sql/getRoutes.sql?raw'
 import getShape from './sql/getShape.sql?raw'
 import getStops from './sql/getStops.sql?raw'
-import getInfoFromFeedInfo from './sql/getInfoFromFeedInfo.sql?raw'
-import getInfoFromCalendar from './sql/getInfoFromCalendar.sql?raw'
 import getTable from './sql/getTable.sql?raw'
-import { BoundsResult, ClientErrors, InfoResult, Prefix, PrefixInput, RouteResult, StopResult } from './types'
+import {
+  type BoundsResult,
+  ClientErrors,
+  type InfoResult,
+  type Prefix,
+  type PrefixInput,
+  type RouteResult,
+  type StopResult,
+} from './types'
 
 export * from './types'
 
@@ -30,10 +38,15 @@ export class Client {
     if (prefix !== 'all' && !this.hasRegion(prefix)) throw GetError(ClientErrors.RegionNotFound)
     const databases: Prefix[] = prefix === 'all' ? (Object.keys(this.db) as Prefix[]) : [prefix]
     const cb = (i: Prefix) => this.db[i].execObject(query, params).map((j) => ({ prefix: i, ...j }))
-    return flatMap ? databases.flatMap(cb) : databases.reduce((acc, cur) => {
-      acc[cur] = cb(cur);
-      return acc;
-    }, {} as Record<Prefix, unknown>)
+    return flatMap
+      ? databases.flatMap(cb)
+      : databases.reduce(
+          (acc, cur) => {
+            acc[cur] = cb(cur)
+            return acc
+          },
+          {} as Record<Prefix, unknown>
+        )
   }
 
   addRegion(prefix: Prefix, db: DB, shapes?: Blob | string) {
@@ -70,12 +83,18 @@ export class Client {
   }
 
   getInfo(prefix: PrefixInput): InfoResult[] {
-    const databases = this.runQuery(prefix, getTable, ['feed_info'], false) as Record<Prefix, unknown[]>
-    return (Object.keys(databases) as Prefix[]).flatMap(prefix => {
+    const databases = this.runQuery(prefix, getTable, ['feed_info'], false) as Record<
+      Prefix,
+      unknown[]
+    >
+    return (Object.keys(databases) as Prefix[]).flatMap((prefix) => {
       if (databases[prefix].length > 0) {
         return this.runQuery(prefix, getInfoFromFeedInfo) as InfoResult[]
       }
-      const calendarInfo = this.runQuery(prefix, getInfoFromCalendar) as { feedStartDate: Date, feedEndDate: Date }[]
+      const calendarInfo = this.runQuery(prefix, getInfoFromCalendar) as {
+        feedStartDate: Date
+        feedEndDate: Date
+      }[]
       return {
         prefix,
         feedLang: 'en',

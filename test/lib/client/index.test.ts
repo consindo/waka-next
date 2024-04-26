@@ -54,12 +54,14 @@ describe('client', () => {
       const client = new Client()
       client.addRegion(region, db)
       const info = client.getInfo(region)
-      expect(info).toEqual([{
-        prefix: 'sample-region',
-        feedLang: 'en',
-        feedStartDate: new Date('2007-01-01'),
-        feedEndDate: new Date('2010-12-31'),
-      }])
+      expect(info).toEqual([
+        {
+          prefix: 'sample-region',
+          feedLang: 'en',
+          feedStartDate: new Date('2007-01-01'),
+          feedEndDate: new Date('2010-12-31'),
+        },
+      ])
     })
     it('should return feed info from table if it exists', () => {
       const client = new Client()
@@ -88,18 +90,20 @@ describe('client', () => {
       )
       `)
       const info = client.getInfo(region)
-      expect(info).toEqual([{
-        prefix: 'sample-region',
-        feedLang: 'en',
-        defaultLang: 'en',
-        feedVersion: '12344',
-        feedPublisherName: 'example',
-        feedPublisherUrl: 'example.com',
-        feedContactUrl: 'example2.com',
-        feedContactEmail: 'email@example.com',
-        feedStartDate: new Date('2000-02-10'),
-        feedEndDate: new Date('2020-02-10'),
-      }])
+      expect(info).toEqual([
+        {
+          prefix: 'sample-region',
+          feedLang: 'en',
+          defaultLang: 'en',
+          feedVersion: '12344',
+          feedPublisherName: 'example',
+          feedPublisherUrl: 'example.com',
+          feedContactUrl: 'example2.com',
+          feedContactEmail: 'email@example.com',
+          feedStartDate: new Date('2000-02-10'),
+          feedEndDate: new Date('2020-02-10'),
+        },
+      ])
     })
   })
 })

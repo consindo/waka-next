@@ -85,16 +85,22 @@ export class ImportManager {
         tidiedGtfs = await this.tidyGtfs(prefix, res, logger)
       }
       const importedFiles = await importer.import(tidiedGtfs, undefined, true)
-      // todo: delete gtfs files once done
       const client = new Client()
       client.addRegion(prefix, db)
       const bounds = client.getBounds(prefix)[0].bounds
+      const { feedStartDate, feedEndDate } = client.getInfo(prefix)[0]
       const dbExport = db.export()
       const shapesExport = await importedFiles.shapes!.arrayBuffer()
       const compressedDb = await this.compressFile(dbExport, logger)
       const compressedShapes = await this.compressFile(shapesExport, logger)
-      await this.uploadFile(dbKey, compressedDb, prefix, upstreamEtag, bounds, logger)
-      await this.uploadFile(shapesKey, compressedShapes, prefix, upstreamEtag, bounds, logger)
+      const metadata = {
+        'waka-region': prefix,
+        'waka-bounds': JSON.stringify(bounds),
+        'waka-dates': JSON.stringify({ feedStartDate, feedEndDate }),
+        'upstream-etag': upstreamEtag,
+      }
+      await this.uploadFile(dbKey, compressedDb, metadata, logger)
+      await this.uploadFile(shapesKey, compressedShapes, metadata, logger)
       unsubscribeLogs()
       return {
         status: 'success',
@@ -154,17 +160,11 @@ export class ImportManager {
   async uploadFile(
     key: string,
     data: Uint8Array,
-    prefix: string,
-    upstreamEtag: string,
-    bounds: [[number, number], [number, number]],
+    metadata: Record<string, string>,
     logger: Logger
   ) {
     logger.info(`uploading to s3 as ${key}`)
-    await this.#bucketClient!.putObject(key, data, 'application/x-sqlite3', 'br', {
-      'waka-region': prefix,
-      'waka-bounds': JSON.stringify(bounds),
-      'upstream-etag': upstreamEtag,
-    })
+    await this.#bucketClient!.putObject(key, data, 'application/x-sqlite3', 'br', metadata)
     logger.info('upload to s3 complete')
   }
 
@@ -205,6 +205,10 @@ export class ImportManager {
     } catch {
       finalFile = filename
     }
+
+    // we don't need the unoptimized file anymore
+    fs.rmSync(filename)
+    logger.info('deleted unoptimized gtfs file')
 
     const stream = fs.createReadStream(finalFile)
     return Readable.toWeb(stream) as ReadableStream<Uint8Array>

@@ -49,16 +49,12 @@ describe('db', () => {
           [
             {
               columns: ['a_date', 'b'],
-              values: [
-                ['20021210', 2],
-              ] as SqlValue[][],
+              values: [['20021210', 2]] as SqlValue[][],
             },
           ] as QueryExecResult[]
       )
       const result = db.execObject('fake query')
-      expect(result).toEqual([
-        { aDate: new Date(Date.parse('2002-12-10')), b: 2 },
-      ])
+      expect(result).toEqual([{ aDate: new Date(Date.parse('2002-12-10')), b: 2 }])
     })
   })
 })

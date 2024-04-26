@@ -77,13 +77,18 @@ export const loadDb = async (client: Client, regions: RegionResult) => {
     })
   )
 
+  const shouldDelete = (name: string, extension: string) =>
+    name.endsWith(extension) &&
+    !Object.values(loadedVersions).includes(name.slice(0, extension.length * -1))
+
   const allFiles = await fs.readdir(cacheDir)
   const deletionCandidates = allFiles.filter(
-    (i) => i.endsWith('.bin') && !Object.values(loadedVersions).includes(i.slice(0, -4))
+    (i) =>
+      shouldDelete(i, '.bin') || shouldDelete(i, '.shapes.tar.br') || shouldDelete(i, '.shapes')
   )
   for (const file of deletionCandidates) {
+    await fs.rm(path.join(cacheDir, file), { recursive: true })
     console.log('deleted', file, 'from cache')
-    await fs.rm(path.join(cacheDir, file))
   }
 }
 

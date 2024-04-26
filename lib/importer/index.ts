@@ -42,7 +42,7 @@ export class Importer {
       file.getData(decoder)
 
       if (useShapesBlob === true && schema.table === 'shapes') {
-        logger.info(`(skipping) ${file.filename} sqlite - writing wkb`)
+        logger.info(`(shapes) skipping ${file.filename} sqlite - writing wkb`)
         shapesStream = parser.readable
         continue
       }
