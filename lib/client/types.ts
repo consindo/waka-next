@@ -12,6 +12,7 @@ export type InfoResult = {
   feedLang: string
   feedStartDate: Date
   feedEndDate: Date
+  feedTimezone: string
   feedPublisherName?: string
   feedPublisherUrl?: string
   defaultLang?: string

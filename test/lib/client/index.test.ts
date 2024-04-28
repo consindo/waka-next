@@ -60,6 +60,7 @@ describe('client', () => {
           feedLang: 'en',
           feedStartDate: new Date('2007-01-01'),
           feedEndDate: new Date('2010-12-31'),
+          feedTimezone: 'America/Los_Angeles',
         },
       ])
     })
@@ -102,6 +103,7 @@ describe('client', () => {
           feedContactEmail: 'email@example.com',
           feedStartDate: new Date('2000-02-10'),
           feedEndDate: new Date('2020-02-10'),
+          feedTimezone: 'America/Los_Angeles',
         },
       ])
     })

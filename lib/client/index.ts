@@ -94,12 +94,14 @@ export class Client {
       const calendarInfo = this.runQuery(prefix, getInfoFromCalendar) as {
         feedStartDate: Date
         feedEndDate: Date
+        feedTimezone: string
       }[]
       return {
         prefix,
         feedLang: 'en',
         feedStartDate: calendarInfo[0].feedStartDate,
         feedEndDate: calendarInfo[0].feedEndDate,
+        feedTimezone: calendarInfo[0].feedTimezone,
       }
     })
   }

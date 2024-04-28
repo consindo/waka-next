@@ -36,6 +36,7 @@ export type VersionResult = {
   versions: {
     region: Prefix
     version: string
+    date: string
     etag: string
     size: number
     url: string

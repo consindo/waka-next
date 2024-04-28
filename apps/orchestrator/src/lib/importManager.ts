@@ -88,7 +88,7 @@ export class ImportManager {
       const client = new Client()
       client.addRegion(prefix, db)
       const bounds = client.getBounds(prefix)[0].bounds
-      const { feedStartDate, feedEndDate } = client.getInfo(prefix)[0]
+      const { feedStartDate, feedEndDate, feedTimezone } = client.getInfo(prefix)[0]
       const dbExport = db.export()
       const shapesExport = await importedFiles.shapes!.arrayBuffer()
       const compressedDb = await this.compressFile(dbExport, logger)
@@ -96,7 +96,7 @@ export class ImportManager {
       const metadata = {
         'waka-region': prefix,
         'waka-bounds': JSON.stringify(bounds),
-        'waka-dates': JSON.stringify({ feedStartDate, feedEndDate }),
+        'waka-dates': JSON.stringify({ feedStartDate, feedEndDate, feedTimezone }),
         'upstream-etag': upstreamEtag,
       }
       await this.uploadFile(dbKey, compressedDb, metadata, logger)

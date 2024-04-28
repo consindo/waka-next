@@ -2,6 +2,7 @@ import { env } from '$env/dynamic/private'
 import { parse } from 'yaml'
 
 import type { Prefix } from '@lib/client'
+import { convertFromTimezone } from '@lib/client/timezone'
 
 import sampleGtfs from '../../static/sample-feed-1.bin.br?url'
 import { BucketClient } from './bucketClient'
@@ -130,7 +131,7 @@ export class ConfigManager {
           region: prefix,
           // remove the key, leading slash, and .bin
           version,
-          date: i.LastModified?.toISOString(),
+          date: i.LastModified!.toISOString(),
           url: `${this.#internalConfig!.database!.publicUrl}/${i.Key}`,
           etag: JSON.parse(i.ETag!),
           size: i.Size || 0,
@@ -163,5 +164,32 @@ export class ConfigManager {
         throw err
       }
     }
+  }
+
+  async determineLatestVersion(prefix: Prefix) {
+    if (!this.#bucketClient) throw 'No database configured'
+    const versions = await this.getVersions(prefix)
+    const candidates = versions.versions.toSorted(
+      (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    )
+
+    let targetVersion: string | null = null
+    for (const version of candidates) {
+      const dbSourceKey = `${versionsUrlPrefix}${prefix}/${version.version}${dbSuffix}`
+      const metadata = await this.#bucketClient.getObjectMetadata(dbSourceKey)
+      if (metadata.Metadata!['waka-dates']) {
+        const { feedStartDate, feedEndDate, feedTimezone } = JSON.parse(
+          metadata.Metadata!['waka-dates']
+        )
+        if (
+          convertFromTimezone(feedTimezone, feedStartDate) < new Date() &&
+          convertFromTimezone(feedTimezone, feedEndDate) > new Date()
+        ) {
+          targetVersion = version.version
+          break
+        }
+      }
+    }
+    return targetVersion
   }
 }
