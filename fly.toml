@@ -24,8 +24,8 @@ kill_timeout = 300 # this is so any pending imports can finish
   WAKA_ORCHESTRATOR_CACHE_PERIOD = "30000"
   WAKA_ORCHESTRATOR_CONFIG = """\
 database:
-  region: auto
-  bucketName: waka-next
+  region: ap-southeast-2
+  bucketName: next.waka.app
   publicUrl: https://static.waka.app
 regions:
   zz-sample1:
