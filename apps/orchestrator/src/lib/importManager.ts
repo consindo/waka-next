@@ -24,6 +24,7 @@ export class ImportManager {
   importHeaders: Record<string, string>
   disableEtag: boolean
   gtfsTidyOptions: string | false
+  disableHead: boolean
 
   constructor(
     prefix: Prefix,
@@ -31,7 +32,8 @@ export class ImportManager {
     importUrl: string,
     importHeaders: Record<string, string>,
     disableEtag: boolean,
-    gtfsTidyOptions: string | false
+    gtfsTidyOptions: string | false,
+    disableHead: boolean
   ) {
     this.prefix = prefix
     this.#bucketClient = bucketClient
@@ -39,6 +41,7 @@ export class ImportManager {
     this.importHeaders = importHeaders
     this.disableEtag = disableEtag
     this.gtfsTidyOptions = gtfsTidyOptions
+    this.disableHead = disableHead
   }
 
   async checkAndDownloadUpdate(): Promise<{ status: string; region: Prefix; logs: string[] }> {
@@ -57,7 +60,7 @@ export class ImportManager {
 
     let upstreamEtag: string
     try {
-      const res = await this.downloadGtfs('HEAD', logger)
+      const res = await this.downloadGtfs(this.disableHead ? 'GET' : 'HEAD', logger)
       upstreamEtag = res.headers.get('ETag') || ''
     } catch (err) {
       unsubscribeLogs()

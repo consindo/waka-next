@@ -30,7 +30,10 @@ regions:
   zz-sample1:
     name: Sample Region
     gtfsZipUrl: https://next.waka.app/sample-feed-1.zip
-    gtfsZipDisableEtag: true
+    gtfsZipDisableEtag: true # set to true if you want to force an import every time
+    gtfsZipDisableHead: true # set to true if the upstream server doesn't suport http HEAD
+    gtfsZipHeaders:
+      Authorization: SECRET.whatever # you can use WAKA_ORCHESTRATOR_SECRETS to substitute secrets
     gtfsTidyOptions: false # set to false if gtfstidy is not installed
 ```
 

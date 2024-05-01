@@ -7,6 +7,7 @@ type RegionConfig = {
   gtfsZipHeaders?: Record<string, string>
   gtfsZipDisableEtag?: boolean
   gtfsTidyOptions?: string | false
+  gtfsZipDisableHead?: boolean
 }
 
 export type ConfigurationFile = {

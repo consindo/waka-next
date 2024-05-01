@@ -7,6 +7,7 @@ import { convertFromTimezone } from '@lib/client/timezone'
 import sampleGtfs from '../../static/sample-feed-1.bin.br?url'
 import { BucketClient } from './bucketClient'
 import { ImportManager } from './importManager'
+import { replaceSecrets } from './replaceSecrets'
 import type { ConfigurationFile, RegionResult, VersionResult } from './types'
 
 const sampleRegions = {
@@ -46,7 +47,9 @@ export class ConfigManager {
     try {
       if (env.WAKA_ORCHESTRATOR_CONFIG === undefined)
         throw Error('ENV WAKA_ORCHESTRATOR_CONFIG not set')
-      this.#internalConfig = parse(env.WAKA_ORCHESTRATOR_CONFIG)
+      const secrets = parse(env.WAKA_ORCHESTRATOR_SECRETS || '{}') as Record<string, string>
+      const config = replaceSecrets(secrets, env.WAKA_ORCHESTRATOR_CONFIG || '')
+      this.#internalConfig = parse(config)
     } catch (err) {
       console.warn(err)
       console.warn('Could not read configuration, using sample config.')
@@ -112,7 +115,8 @@ export class ConfigManager {
       region.gtfsZipUrl,
       region.gtfsZipHeaders || {},
       region.gtfsZipDisableEtag || false,
-      region.gtfsTidyOptions === undefined ? 'SCRmTcsOeD' : region.gtfsTidyOptions
+      region.gtfsTidyOptions === undefined ? 'SCRmTcsOeD' : region.gtfsTidyOptions,
+      region.gtfsZipDisableHead || false
     )
     return importManager.checkAndDownloadUpdate()
   }
