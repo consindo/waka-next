@@ -25,7 +25,7 @@ kill_timeout = 300 # this is so any pending imports can finish
   WAKA_ORCHESTRATOR_CONFIG = """\
 database:
   region: ap-southeast-2
-  bucketName: next.waka.app
+  bucketName: SECRET.bucketName
   publicUrl: https://static.waka.app
 regions:
   zz-sample1:
@@ -34,6 +34,15 @@ regions:
   nz-akl:
     name: Auckland, New Zealand
     gtfsZipUrl: https://gtfs.at.govt.nz/gtfs.zip
+  nz-chc:
+    name: Christchurch, New Zealand
+    gtfsZipDisableHead: true
+    gtfsZipHeaders:
+      Ocp-Apim-Subscription-Key: SECRET.nz-chc
+  nz-wlg:
+    name: Wellington, New Zealand
+    gtfsZipUrl: https://static.opendata.metlink.org.nz/v1/gtfs/full.zip
+
 """
 
 [[services]]
