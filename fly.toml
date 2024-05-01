@@ -36,6 +36,7 @@ regions:
     gtfsZipUrl: https://gtfs.at.govt.nz/gtfs.zip
   nz-chc:
     name: Christchurch, New Zealand
+    gtfsZipUrl: https://apis.metroinfo.co.nz/rti/gtfs/v1/gtfs.zip
     gtfsZipDisableHead: true
     gtfsZipHeaders:
       Ocp-Apim-Subscription-Key: SECRET.nz-chc
