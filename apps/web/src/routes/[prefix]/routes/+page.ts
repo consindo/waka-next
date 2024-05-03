@@ -6,6 +6,6 @@ import type { PageLoad } from './$types'
 
 export const load: PageLoad = async ({ fetch, params }) => {
   const prefix = params.prefix as Prefix
-  const data = resolveData(prefix, `/routes`, (client) => client.getRoutes(prefix), fetch)
+  const data = resolveData(prefix, `/routes`, (client) => ({ routes: client.getRoutes(prefix) }), fetch)
   return data
 }

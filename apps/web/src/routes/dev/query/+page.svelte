@@ -61,7 +61,7 @@
 {:then}
   <DatabaseNav {db} on:databaseChange={triggerDatabaseChange} dbName={requestedDb} />
   <div>
-    <input type="text" bind:value={query} on:keypress={triggerKeyup} />
+    <textarea bind:value={query} on:keypress={triggerKeyup}></textarea>
     <button on:click={run}>run</button>
   </div>
   <div>{$stream}</div>

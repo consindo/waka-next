@@ -36,11 +36,17 @@ export type StopResult = {
 }
 
 export type RouteResult = {
-  routeShortName: string
-  routeLongName: string
-  agencyId: string
-  routeType: string
-  routeColor: string
-  routeDesc: string
   routeId: string
+  agencyId: string
+  routeShortName: string
+  routeLongName?: string
+  routeDesc?: string
+  routeType: number
+  routeUrl?: string
+  routeColor?: string
+  routeTextColor?: string
+  routeSortOrder?: string
+  continuousPickup?: number
+  continuousDropOff?: number
+  networkId?: string
 }

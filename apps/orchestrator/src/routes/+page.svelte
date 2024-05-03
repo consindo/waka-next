@@ -5,6 +5,8 @@
     { method: 'get', url: '/[region]' },
     { method: 'post', url: '/admin/[region]/activate' },
     { method: 'post', url: '/admin/[region]/import' },
+    { method: 'post', url: '/admin/[region]/refresh' },
+    { method: 'post', url: '/admin/schedule-update' },
   ]
 </script>
 
