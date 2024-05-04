@@ -1,5 +1,5 @@
 import { env } from '$env/dynamic/private'
-import { parse } from 'yaml'
+import { parseYAML } from 'confbox'
 
 import type { Prefix } from '@lib/client'
 import { convertFromTimezone } from '@lib/client/timezone'
@@ -47,9 +47,9 @@ export class ConfigManager {
     try {
       if (env.WAKA_ORCHESTRATOR_CONFIG === undefined)
         throw Error('ENV WAKA_ORCHESTRATOR_CONFIG not set')
-      const secrets = parse(env.WAKA_ORCHESTRATOR_SECRETS || '{}') as Record<string, string>
+      const secrets = parseYAML(env.WAKA_ORCHESTRATOR_SECRETS || '{}') as Record<string, string>
       const config = replaceSecrets(secrets, env.WAKA_ORCHESTRATOR_CONFIG || '')
-      this.#internalConfig = parse(config)
+      this.#internalConfig = parseYAML(config)
     } catch (err) {
       console.warn(err)
       console.warn('Could not read configuration, using sample config.')

@@ -32,18 +32,20 @@ regions:
     name: Sample Region
     gtfsZipUrl: https://next.waka.app/sample-feed-1.zip
   nz-akl:
-    name: Auckland, New Zealand
+    name: Auckland Transport, NZ
     gtfsZipUrl: https://gtfs.at.govt.nz/gtfs.zip
   nz-chc:
-    name: Christchurch, New Zealand
+    name: Metro Christchurch, NZ
     gtfsZipUrl: https://apis.metroinfo.co.nz/rti/gtfs/v1/gtfs.zip
     gtfsZipDisableHead: true
     gtfsZipHeaders:
       Ocp-Apim-Subscription-Key: SECRET.nz-chc
+  nz-dud:
+    name: Otago Regional Council, NZ
+    gtfsZipUrl: https://www.orc.govt.nz/transit/google_transit.zip
   nz-wlg:
-    name: Wellington, New Zealand
+    name: Metlink, Greater Wellington, NZ
     gtfsZipUrl: https://static.opendata.metlink.org.nz/v1/gtfs/full.zip
-
 """
 
 [[services]]
