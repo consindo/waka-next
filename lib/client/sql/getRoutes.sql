@@ -18,8 +18,8 @@ FROM trips
 INNER JOIN calendar ON trips.service_id = calendar.service_id
 -- LEFT JOIN calendar_dates ON trips.service_id = calendar_dates.service_id
 INNER JOIN routes ON routes.route_id = trips.route_id
-WHERE route_type LIKE (?)
+WHERE route_type >= (?) AND route_type <= (?)
 GROUP BY routes.route_id
 -- Not perfect because it doesn't account for calendar_dates or frequencies
 -- but should be good enough for a general "popularity" heuristic
-ORDER BY services_count DESC LIMIT 100
+ORDER BY services_count DESC LIMIT (?) OFFSET (?)

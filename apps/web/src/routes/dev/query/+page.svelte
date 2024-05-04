@@ -45,8 +45,8 @@
     db = getDatabases()[event.detail]
   }
 
-  const triggerKeyup = (e: KeyboardEvent) => {
-    if (e.key === 'Enter') {
+  const triggerKeydown = (e: KeyboardEvent) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
       run()
     }
   }
@@ -61,8 +61,8 @@
 {:then}
   <DatabaseNav {db} on:databaseChange={triggerDatabaseChange} dbName={requestedDb} />
   <div>
-    <textarea bind:value={query} on:keypress={triggerKeyup}></textarea>
-    <button on:click={run}>run</button>
+    <textarea bind:value={query} on:keydown={triggerKeydown} rows="5"></textarea>
+    <button on:click={run}>run (ctrl+enter)</button>
   </div>
   <div>{$stream}</div>
   <div>{error}</div>
@@ -85,8 +85,11 @@
 {/await}
 
 <style>
-  input {
+  textarea {
     width: 400px;
+  }
+  button {
+    vertical-align: top;
   }
   table {
     font-family: monospace;

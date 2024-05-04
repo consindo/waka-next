@@ -3,6 +3,7 @@
     { method: 'get', url: '/regions' },
     { method: 'get', url: '/regions/all' },
     { method: 'get', url: '/[region]' },
+    { method: 'get', url: '/[region]/routes' },
     { method: 'post', url: '/admin/[region]/activate' },
     { method: 'post', url: '/admin/[region]/import' },
     { method: 'post', url: '/admin/[region]/refresh' },

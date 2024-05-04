@@ -41,12 +41,12 @@ export class Client {
     return flatMap
       ? databases.flatMap(cb)
       : databases.reduce(
-        (acc, cur) => {
-          acc[cur] = cb(cur)
-          return acc
-        },
-        {} as Record<Prefix, unknown>
-      )
+          (acc, cur) => {
+            acc[cur] = cb(cur)
+            return acc
+          },
+          {} as Record<Prefix, unknown>
+        )
   }
 
   addRegion(prefix: Prefix, db: DB, shapes?: Blob | string) {
@@ -110,8 +110,18 @@ export class Client {
     return this.runQuery(prefix, getStops) as StopResult[]
   }
 
-  getRoutes(prefix: PrefixInput, routeType: string = '%'): RouteResult[] {
-    return this.runQuery(prefix, getRoutes, [routeType]) as RouteResult[]
+  getRoutes(
+    prefix: PrefixInput,
+    limit: number = 100,
+    offset: number = 0,
+    routeTypeMin: number = 0,
+    routeTypeMax: number = 10000
+  ): RouteResult[] {
+    return this.runQuery(
+      prefix,
+      getRoutes,
+      [routeTypeMin, routeTypeMax, limit, offset].map((i) => i.toString())
+    ) as RouteResult[]
   }
 
   async getShape(prefix: Prefix, shapeId: string): Promise<Feature | string> {
