@@ -1,45 +1,19 @@
 <script lang="ts">
   import { page } from '$app/stores'
+  import RouteGroup from './RouteGroup.svelte'
   export let data
-
-  const mapRouteToEmoji = (routeType: number) => {
-    switch (routeType) {
-      case 2:
-        return '🚆'
-      case 4:
-        return '⛴️'
-      default:
-        return '🚍'
-    }
-  }
 </script>
 
 <div>
   <a href="/">home</a>
-  <h2>gtfs query results - routes {$page.params.prefix}</h2>
-  <ul>
-    {#each data?.data?.routes || [] as route}
-      {@const color = route.routeColor !== null ? `background-color: #${route.routeColor};` : ''}
-      {@const textColor = route.routeTextColor !== null ? `color: #${route.routeTextColor};` : ''}
-      <li style={`${color}${textColor}`}>
-        {mapRouteToEmoji(route.routeType)}
-        <strong>{route.routeShortName}</strong>
-        {route.routeLongName ? route.routeLongName : ''}
-      </li>
-    {/each}
-  </ul>
+  <h1>Routes {$page.params.prefix}</h1>
+  {#each data.groups as group}
+    <RouteGroup {group} />
+  {/each}
 </div>
 
 <style>
   div {
     padding: 1rem;
-  }
-  ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-  }
-  li {
-    padding: 0.25rem;
   }
 </style>

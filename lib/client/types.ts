@@ -49,4 +49,5 @@ export type RouteResult = {
   continuousPickup?: number
   continuousDropOff?: number
   networkId?: string
+  servicesCount?: number
 }
