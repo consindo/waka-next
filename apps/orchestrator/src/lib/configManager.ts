@@ -8,7 +8,7 @@ import sampleGtfs from '../../static/sample-feed-1.bin.br?url'
 import { BucketClient } from './bucketClient'
 import { ImportManager } from './importManager'
 import { replaceSecrets } from './replaceSecrets'
-import type { ConfigurationFile, RegionResult, VersionResult } from './types'
+import type { ConfigurationFile, RegionResult, Version, VersionResult } from './types'
 
 const sampleRegions = {
   config: {
@@ -177,7 +177,7 @@ export class ConfigManager {
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     )
 
-    let targetVersion: string | null = null
+    let targetVersion: Version | null = null
     for (const version of candidates) {
       const dbSourceKey = `${versionsUrlPrefix}${prefix}/${version.version}${dbSuffix}`
       const metadata = await this.#bucketClient.getObjectMetadata(dbSourceKey)
@@ -189,7 +189,7 @@ export class ConfigManager {
           convertFromTimezone(feedTimezone, feedStartDate) < new Date() &&
           convertFromTimezone(feedTimezone, feedEndDate) > new Date()
         ) {
-          targetVersion = version.version
+          targetVersion = version
           break
         }
       }

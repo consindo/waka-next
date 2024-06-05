@@ -33,16 +33,18 @@ export type RegionResult = {
   regionsConfig: Record<Prefix, RegionConfig>
 }
 
+export type Version = {
+  region: Prefix
+  version: string
+  date: string
+  etag: string
+  size: number
+  url: string
+  shapesEtag?: string
+  shapesSize?: number
+  shapesUrl?: string
+}
+
 export type VersionResult = {
-  versions: {
-    region: Prefix
-    version: string
-    date: string
-    etag: string
-    size: number
-    url: string
-    shapesEtag?: string
-    shapesSize?: number
-    shapesUrl?: string
-  }[]
+  versions: Version[]
 }
