@@ -2,4 +2,3 @@
 [build]
   command = "npm run build:web"
   publish = "apps/web/build"
-  edge_functions = "apps/web/.netlify/edge-functions"
