@@ -1,7 +1,9 @@
 <script lang="ts">
   import { page } from '$app/stores'
+
   import RouteGroup from './RouteGroup.svelte'
-  export let data
+
+  let { data } = $props()
 </script>
 
 <div>

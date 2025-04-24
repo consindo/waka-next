@@ -1,9 +1,14 @@
 <script lang="ts">
   import type { RouteResult } from '@lib/client'
-  export let group: { name: string; emoji: string; routes: RouteResult[] }
+
+  interface Props {
+    group: { name: string; emoji: string; routes: RouteResult[] }
+  }
+
+  let { group }: Props = $props()
 
   const maxRoutes = 4
-  let isExpanded = false
+  let isExpanded = $state(false)
 </script>
 
 <h2>{group.emoji} {group.name}</h2>
@@ -18,7 +23,7 @@
   {/each}
 </ul>
 {#if !isExpanded && group.routes.length > maxRoutes}
-  <button on:click={() => (isExpanded = true)}>Show More</button>
+  <button onclick={() => (isExpanded = true)}>Show More</button>
 {/if}
 
 <style>

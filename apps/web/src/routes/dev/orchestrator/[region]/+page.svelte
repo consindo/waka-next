@@ -1,14 +1,20 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
-  import { createClient } from '$lib/storage'
-  import type { PageData } from './$types'
 
   import type { Prefix } from '@lib/client'
 
-  import RegionList from '../RegionList.svelte'
-  export let data: PageData
+  import { createClient } from '$lib/storage'
 
-  let token = ''
+  import RegionList from '../RegionList.svelte'
+  import type { PageData } from './$types'
+
+  interface Props {
+    data: PageData
+  }
+
+  let { data }: Props = $props()
+
+  let token = $state('')
 
   const formatUrl = (url: string) => {
     if (url.includes('//')) {
@@ -74,9 +80,9 @@
           </dd>
         {/if}
       </dl>
-      <button on:click={() => window.location.reload()}>refresh</button>
+      <button onclick={() => window.location.reload()}>refresh</button>
       <button
-        on:click={loadDb({
+        onclick={loadDb({
           region: data.id,
           version: 'live',
           url: data.activeRegion.url,
@@ -84,7 +90,7 @@
       >
     {:else}
       <p>Region {data.id} is inactive.</p>
-      <button on:click={() => window.location.reload()}>refresh</button>
+      <button onclick={() => window.location.reload()}>refresh</button>
     {/if}
     <h2>versions</h2>
     <form method="POST" action="?/import">
@@ -144,7 +150,7 @@
           <input type="hidden" name="token" bind:value={token} />
           <input type="hidden" name="version" value={version.version} />
           <button type="submit" disabled={token === ''}>set active</button>
-          <button on:click={loadDb(version)}>load into client</button>
+          <button onclick={loadDb(version)}>load into client</button>
         </p>
       </form>
     {/each}
