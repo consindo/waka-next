@@ -10,12 +10,13 @@ declare global {
       code?: number | string
     }
     interface Locals {
-      importResult?: {
-        [region: string]: {
+      importResult?: Record<
+        string,
+        {
           status: string
           logs: string[]
         }
-      }
+      >
     }
     // interface PageData {}
     // interface PageState {}

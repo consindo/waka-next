@@ -52,6 +52,7 @@ export const resolveData = async <Type>(
           const data = (await clientQuery(client)) as Type
           return { provider: 'static-client', data }
         } catch (err) {
+          console.error(err)
           return { provider: 'static-error', data: null }
         }
       } else {

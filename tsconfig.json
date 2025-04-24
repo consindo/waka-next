@@ -10,7 +10,6 @@
     "strict": true,
     "moduleResolution": "bundler",
     "target": "es2020",
-    "baseurl": ".",
     "paths": {
       "@lib/*": ["./lib/*"]
     }

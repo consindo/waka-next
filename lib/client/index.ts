@@ -112,10 +112,10 @@ export class Client {
 
   getRoutes(
     prefix: PrefixInput,
-    limit: number = 100,
-    offset: number = 0,
-    routeTypeMin: number = 0,
-    routeTypeMax: number = 10000
+    limit = 100,
+    offset = 0,
+    routeTypeMin = 0,
+    routeTypeMax = 10000
   ): RouteResult[] {
     return this.runQuery(
       prefix,

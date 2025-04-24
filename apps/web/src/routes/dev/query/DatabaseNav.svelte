@@ -17,10 +17,10 @@
 
   const importer = new Importer({ db })
 
-  let dbElement: HTMLInputElement = $state()
-  let zipElement: HTMLInputElement = $state()
-  let dbFiles: FileList = $state()
-  let zipFiles: FileList = $state()
+  let dbElement: HTMLInputElement | undefined = $state()
+  let zipElement: HTMLInputElement | undefined = $state()
+  let dbFiles: FileList | undefined = $state()
+  let zipFiles: FileList | undefined = $state()
 
   $effect(() => {
     if (dbFiles && dbFiles.length > 0) {
@@ -58,7 +58,7 @@
     const handle = await window.showSaveFilePicker()
     const data = db.export()
     const stream = await handle.createWritable()
-    await stream.write(data.buffer)
+    await stream.write(data.buffer as ArrayBuffer)
     await stream.close()
     console.log('done!')
   }
@@ -79,10 +79,10 @@
   </div>
   <div>
     <input type="file" bind:this={dbElement} bind:files={dbFiles} />
-    <button onclick={() => dbElement.click()}>load db</button>
+    <button onclick={() => (dbElement ? dbElement.click() : null)}>load db</button>
     <button onclick={triggerSave}>dump db</button>
     <input type="file" bind:this={zipElement} bind:files={zipFiles} accept=".zip,application/zip" />
-    <button onclick={() => zipElement.click()}>import gtfs</button>
+    <button onclick={() => (zipElement ? zipElement.click() : null)}>import gtfs</button>
   </div>
 </nav>
 

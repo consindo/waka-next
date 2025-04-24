@@ -7,10 +7,10 @@ enum SqliteStorageClasses {
   blob = 'BLOB',
 }
 
-export type Schema = {
+export interface Schema {
   filename: string
   table: string
-  tableSchema: { [key: string]: SqliteStorageClasses }
+  tableSchema: Record<string, SqliteStorageClasses>
 }
 
 export const schema: Schema[] = [

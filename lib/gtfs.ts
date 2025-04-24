@@ -1,4 +1,4 @@
-export type Stop = {
+export interface Stop {
   stop_name: string
   parent_station: string
   stop_code: string
