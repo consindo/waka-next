@@ -23,7 +23,7 @@ export class Importer {
   async import(
     stream: ReadableStream<Uint8Array>,
     schemas: Schema[] = schema,
-    useShapesBlob: boolean = false
+    useShapesBlob = false
   ) {
     logger.info('reading zip')
     let shapesStream: ReadableStream | null = null

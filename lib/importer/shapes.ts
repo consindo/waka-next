@@ -4,7 +4,7 @@ import { WKBWriter, WKTWriter } from '@loaders.gl/wkt'
 import type { Feature, LineString } from 'geojson'
 
 export const createWkb = (feature: Feature): ArrayBuffer => {
-  const buffer = encodeSync(feature.geometry, WKBWriter, { wkt: { hasZ: false, hasM: false } })
+  const buffer = encodeSync(feature.geometry, WKBWriter, { wkb: { hasZ: false, hasM: false } })
   return buffer
 }
 

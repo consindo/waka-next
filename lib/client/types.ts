@@ -7,7 +7,7 @@ export enum ClientErrors {
   RegionNotFound = 'REGION_NOT_FOUND',
 }
 
-export type InfoResult = {
+export interface InfoResult {
   prefix: Prefix
   feedLang: string
   feedStartDate: Date
@@ -21,12 +21,12 @@ export type InfoResult = {
   feedContactUrl?: string
 }
 
-export type BoundsResult = {
+export interface BoundsResult {
   prefix: Prefix
   bounds: [Position, Position]
 }
 
-export type StopResult = {
+export interface StopResult {
   prefix: Prefix
   stopId: string
   stopCode: string | null
@@ -35,7 +35,7 @@ export type StopResult = {
   stopLon: number
 }
 
-export type RouteResult = {
+export interface RouteResult {
   routeId: string
   agencyId: string
   routeShortName: string

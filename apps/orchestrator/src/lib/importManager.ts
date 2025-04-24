@@ -62,7 +62,7 @@ export class ImportManager {
     try {
       const res = await this.downloadGtfs(this.disableHead ? 'GET' : 'HEAD', logger)
       upstreamEtag = res.headers.get('ETag') || ''
-    } catch (err) {
+    } catch {
       unsubscribeLogs()
       return { status: 'error', region: prefix, logs }
     }
@@ -143,7 +143,7 @@ export class ImportManager {
         logger.info(`(version: ${hash}, upstream-etag: ${upstreamEtag})`)
         return false
       }
-    } catch (err) {
+    } catch {
       logger.info(`no existing import found at ${key}`)
     }
     logger.info(`new etag (etag: ${upstreamEtag})`)
@@ -176,7 +176,7 @@ export class ImportManager {
     const cacheDir = 'cache'
     try {
       await asyncFs.access(cacheDir)
-    } catch (err) {
+    } catch {
       await asyncFs.mkdir(cacheDir)
     }
 

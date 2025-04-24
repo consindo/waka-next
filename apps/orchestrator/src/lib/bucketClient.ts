@@ -17,7 +17,7 @@ export class BucketClient {
     this.#s3client = new S3Client({ region, endpoint })
   }
 
-  async listObjects(prefix: string = '') {
+  async listObjects(prefix = '') {
     const command = new ListObjectsCommand({
       Bucket: this.bucket,
       Prefix: prefix,

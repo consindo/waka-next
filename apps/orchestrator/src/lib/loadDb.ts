@@ -16,7 +16,7 @@ export const loadDb = async (client: Client, regions: RegionResult) => {
   const cacheDir = 'cache'
   try {
     await fs.access(cacheDir)
-  } catch (err) {
+  } catch {
     await fs.mkdir(cacheDir)
   }
 
@@ -46,6 +46,7 @@ export const loadDb = async (client: Client, regions: RegionResult) => {
         try {
           await fs.access(shapesDir)
         } catch (err) {
+          console.error(err)
           await fs.mkdir(shapesDir)
 
           // tar should already be decompressed with brotli
@@ -97,14 +98,14 @@ const dlOrCache = async (id: string, localFilename: string, url: string) => {
   try {
     await fs.access(localFilename)
     console.log(`loading ${id} locally from ${localFilename}`)
-    data = await fs.readFile(localFilename)
-  } catch (err) {
+    data = (await fs.readFile(localFilename)) as unknown as ArrayBuffer
+  } catch {
     console.log(`downloading ${id} from ${url}`)
 
     // download to local cache
     if (url.startsWith('/')) {
       const dataBr = await read(url).arrayBuffer()
-      data = zlib.brotliDecompressSync(dataBr)
+      data = zlib.brotliDecompressSync(dataBr) as unknown as ArrayBuffer
     } else {
       const res = await fetch(url)
       data = await res.arrayBuffer()

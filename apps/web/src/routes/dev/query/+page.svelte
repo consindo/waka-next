@@ -1,17 +1,18 @@
 <script lang="ts">
+  import { page } from '$app/state'
+  import type { QueryExecResult } from 'sql.js'
   import { onMount } from 'svelte'
+
   import { DB } from '@lib/db'
   import { getErrorMessage, logger } from '@lib/logger'
 
-  import { page } from '$app/stores'
   import { getDatabases } from '$lib/storage'
 
   import DatabaseNav from './DatabaseNav.svelte'
-  import type { QueryExecResult } from 'sql.js'
 
   const emptyDb = new DB()
   let db = emptyDb
-  const requestedDb = $page.url.searchParams.get('db')
+  const requestedDb = page.url.searchParams.get('db')
 
   const stream = logger.stream
   let connect: Promise<void>
@@ -40,9 +41,10 @@
     }
   }
 
-  const triggerDatabaseChange = (event: CustomEvent<string>) => {
-    if (event.detail === 'empty-db') return (db = emptyDb)
-    db = getDatabases()[event.detail]
+  const triggerDatabaseChange = (event: Event & { currentTarget: HTMLSelectElement }) => {
+    const value = event.currentTarget.value
+    if (value === 'empty-db') return (db = emptyDb)
+    db = getDatabases()[value]
   }
 
   const triggerKeydown = (e: KeyboardEvent) => {
@@ -59,7 +61,7 @@
 {#await connect}
   loading sqllite
 {:then}
-  <DatabaseNav {db} on:databaseChange={triggerDatabaseChange} dbName={requestedDb} />
+  <DatabaseNav {db} triggerChange={triggerDatabaseChange} dbName={requestedDb} />
   <div>
     <textarea bind:value={query} on:keydown={triggerKeydown} rows="5"></textarea>
     <button on:click={run}>run (ctrl+enter)</button>
@@ -68,18 +70,22 @@
   <div>{error}</div>
   {#each results as result}
     <table>
-      <tr>
-        {#each result.columns as column}
-          <th>{column}</th>
-        {/each}
-      </tr>
-      {#each result.values as row}
+      <thead>
         <tr>
-          {#each row as value}
-            <td>{value}</td>
+          {#each result.columns as column}
+            <th>{column}</th>
           {/each}
         </tr>
-      {/each}
+      </thead>
+      <tbody>
+        {#each result.values as row}
+          <tr>
+            {#each row as value}
+              <td>{value}</td>
+            {/each}
+          </tr>
+        {/each}
+      </tbody>
     </table>
   {/each}
 {/await}

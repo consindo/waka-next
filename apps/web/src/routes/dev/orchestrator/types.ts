@@ -1,6 +1,6 @@
 import type { Prefix } from '@lib/client'
 
-export type ActiveRegion = {
+export interface ActiveRegion {
   region: Prefix
   url: string
   etag: string
@@ -11,12 +11,12 @@ export type ActiveRegion = {
   bounds: [number, number][]
 }
 
-export type InactiveRegion = {
+export interface InactiveRegion {
   region: Prefix
   name: string
 }
 
-export type Version = {
+export interface Version {
   region: Prefix
   version: string
   date: string

@@ -1,5 +1,11 @@
-<script>
-  import { page } from '$app/stores'
+<script lang="ts">
+  import { page } from '$app/state'
+
+  interface Props {
+    children?: import('svelte').Snippet
+  }
+
+  let { children }: Props = $props()
 
   const links = [
     { name: 'orchestrator', href: '/dev/orchestrator' },
@@ -13,7 +19,7 @@
     <ul>
       {#each links as link}
         <li>
-          <a href={link.href} class:selected={$page.url.pathname.startsWith(link.href)}
+          <a href={link.href} class:selected={page.url.pathname.startsWith(link.href)}
             >{link.name}</a
           >
         </li>
@@ -23,7 +29,7 @@
 </header>
 
 <main>
-  <slot />
+  {@render children?.()}
 </main>
 
 <style>

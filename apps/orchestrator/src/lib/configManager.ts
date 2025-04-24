@@ -55,10 +55,10 @@ export class ConfigManager {
       console.warn('Could not read configuration, using sample config.')
       this.#internalConfig = sampleRegions.config
     }
-    if (this.#internalConfig!.database) {
+    if (this.#internalConfig.database) {
       this.#bucketClient = new BucketClient(
-        this.#internalConfig!.database.bucketName,
-        this.#internalConfig!.database.region
+        this.#internalConfig.database.bucketName,
+        this.#internalConfig.database.region
       )
     }
   }
@@ -70,25 +70,29 @@ export class ConfigManager {
 
     const regions = await Promise.all(
       (s3Objects.Contents || []).flatMap(async (i) => {
-        const data = await this.#bucketClient?.getObjectMetadata(i.Key!)
+        if (i.Key === undefined) throw new Error('s3 key was undefined')
+        if (i.ETag === undefined) throw new Error('s3 etag was undefined')
+        const data = await this.#bucketClient?.getObjectMetadata(i.Key)
         const region = (data?.Metadata || {})['waka-region'] as Prefix
         const bounds = (data?.Metadata || {})['waka-bounds'] as string
         if (this.#internalConfig.regions[region] === undefined) return []
         if (i.Size === 0) return [] // filters out folders
         if (i.Key?.endsWith(shapesSuffix)) return [] // filters out shape files
         const shapesKey = `${regionsUrlPrefix}${region}${shapesSuffix}`
-        const shape = s3Objects.Contents!.find((i) => i.Key === shapesKey)
+        const shape = (s3Objects.Contents || []).find((i) => i.Key === shapesKey)
+
+        if (!this.#internalConfig.database) throw new Error('internalConfig database undefined')
         return [
           {
             region,
             bounds: JSON.parse(bounds || '[[0,0],[0,0]]'),
-            url: `${this.#internalConfig!.database!.publicUrl}/${i.Key}`,
-            etag: JSON.parse(i.ETag!),
+            url: `${this.#internalConfig.database.publicUrl}/${i.Key}`,
+            etag: JSON.parse(i.ETag),
             size: i.Size || 0,
             shapesUrl: shape
-              ? `${this.#internalConfig!.database!.publicUrl}/${shape.Key}`
+              ? `${this.#internalConfig.database.publicUrl}/${shape.Key}`
               : undefined,
-            shapesEtag: shape ? JSON.parse(shape.ETag!) : undefined,
+            shapesEtag: shape ? JSON.parse(shape.ETag || '') : undefined,
             shapesSize: shape ? shape.Size || 0 : undefined,
           },
         ]
@@ -130,19 +134,21 @@ export class ConfigManager {
       .map((i) => {
         const version = (i.Key || '').slice(keyPrefix.length, -4)
         const shapesKey = `${keyPrefix}${version}${shapesSuffix}`
-        const shape = s3Objects.Contents!.find((i) => i.Key === shapesKey)
+        const shape = (s3Objects.Contents || []).find((i) => i.Key === shapesKey)
+
+        if (!i.LastModified) throw new Error('last modified not found')
+        if (!i.ETag) throw new Error('etag not foun d')
+        if (!this.#internalConfig.database) throw new Error('internalConfig database undefined')
         return {
           region: prefix,
           // remove the key, leading slash, and .bin
           version,
-          date: i.LastModified!.toISOString(),
-          url: `${this.#internalConfig!.database!.publicUrl}/${i.Key}`,
-          etag: JSON.parse(i.ETag!),
+          date: i.LastModified.toISOString(),
+          url: `${this.#internalConfig.database.publicUrl}/${i.Key}`,
+          etag: JSON.parse(i.ETag),
           size: i.Size || 0,
-          shapesUrl: shape
-            ? `${this.#internalConfig!.database!.publicUrl}/${shape.Key}`
-            : undefined,
-          shapesEtag: shape ? JSON.parse(shape.ETag!) : undefined,
+          shapesUrl: shape ? `${this.#internalConfig.database.publicUrl}/${shape.Key}` : undefined,
+          shapesEtag: shape ? JSON.parse(shape.ETag || '') : undefined,
           shapesSize: shape ? shape.Size || 0 : undefined,
         }
       })
@@ -158,9 +164,10 @@ export class ConfigManager {
     const dbTargetKey = `${regionsUrlPrefix}${prefix}${dbSuffix}`
     const shapesSourceKey = `${versionsUrlPrefix}${prefix}/${version}${shapesSuffix}`
     const shapesTargetKey = `${regionsUrlPrefix}${prefix}${shapesSuffix}`
-    await this.#bucketClient!.copyObject(dbSourceKey, dbTargetKey)
+    if (!this.#bucketClient) throw new Error('no bucket client')
+    await this.#bucketClient.copyObject(dbSourceKey, dbTargetKey)
     try {
-      await this.#bucketClient!.copyObject(shapesSourceKey, shapesTargetKey)
+      await this.#bucketClient.copyObject(shapesSourceKey, shapesTargetKey)
     } catch (err) {
       if (err instanceof Error && err.name === 'NoSuchKey') {
         console.log(`${version} does not have a ${shapesSuffix}`)
@@ -181,9 +188,10 @@ export class ConfigManager {
     for (const version of candidates) {
       const dbSourceKey = `${versionsUrlPrefix}${prefix}/${version.version}${dbSuffix}`
       const metadata = await this.#bucketClient.getObjectMetadata(dbSourceKey)
-      if (metadata.Metadata!['waka-dates']) {
+      if (!metadata.Metadata) throw new Error('no metadata found')
+      if (metadata.Metadata['waka-dates']) {
         const { feedStartDate, feedEndDate, feedTimezone } = JSON.parse(
-          metadata.Metadata!['waka-dates']
+          metadata.Metadata['waka-dates']
         )
         if (
           convertFromTimezone(feedTimezone, feedStartDate) < new Date() &&

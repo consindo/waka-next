@@ -11,7 +11,7 @@ vi.mock('$app/environment', () => ({
     return browserGetter()
   },
 }))
-vi.mock('@lib/client', () => ({}))
+vi.mock('@lib/client')
 vi.mock('../../../apps/web/src/lib/storage', () => ({
   isClientReady: vi.fn(),
   getClient: vi.fn(),

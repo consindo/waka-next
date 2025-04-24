@@ -1,8 +1,12 @@
 <script lang="ts">
   import type { PageData } from './$types'
-
   import RegionList from './RegionList.svelte'
-  export let data: PageData
+
+  interface Props {
+    data: PageData
+  }
+
+  let { data }: Props = $props()
 </script>
 
 <div class="container">

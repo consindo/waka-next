@@ -1,9 +1,13 @@
 <script lang="ts">
   import type { ActiveRegion, InactiveRegion } from './types'
 
-  export let activeRegions: ActiveRegion[],
-    inactiveRegions: InactiveRegion[],
-    selectedRegion: string = ''
+  interface Props {
+    activeRegions: ActiveRegion[]
+    inactiveRegions: InactiveRegion[]
+    selectedRegion?: string
+  }
+
+  let { activeRegions, inactiveRegions, selectedRegion = '' }: Props = $props()
 </script>
 
 <div class="regions">

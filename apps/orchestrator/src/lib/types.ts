@@ -1,6 +1,6 @@
 import type { Prefix } from '@lib/client'
 
-type RegionConfig = {
+interface RegionConfig {
   name: string
   shouldCache?: boolean
   gtfsZipUrl: string
@@ -10,7 +10,7 @@ type RegionConfig = {
   gtfsZipDisableHead?: boolean
 }
 
-export type ConfigurationFile = {
+export interface ConfigurationFile {
   regions: Record<Prefix, RegionConfig>
   database: {
     bucketName: string
@@ -19,7 +19,7 @@ export type ConfigurationFile = {
   } | null
 }
 
-export type RegionResult = {
+export interface RegionResult {
   regions: {
     region: Prefix
     etag: string
@@ -33,7 +33,7 @@ export type RegionResult = {
   regionsConfig: Record<Prefix, RegionConfig>
 }
 
-export type Version = {
+export interface Version {
   region: Prefix
   version: string
   date: string
@@ -45,6 +45,6 @@ export type Version = {
   shapesUrl?: string
 }
 
-export type VersionResult = {
+export interface VersionResult {
   versions: Version[]
 }

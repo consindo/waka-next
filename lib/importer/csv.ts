@@ -1,12 +1,13 @@
 import { type BaseParse, type Parser, type SchemaColumn, inferSchema, initParser } from 'udsv'
 
 const transformContent = () => {
-  type CsvSchema = { [key: string]: number }
   let parser: Parser | null = null
-  let schema: CsvSchema
+  let schema: Record<string, number>
 
   return {
-    start() {}, // required.
+    start() {
+      return
+    }, // required.
     async transform(chunkPromise: Promise<string>, controller: TransformStreamDefaultController) {
       const chunk = await chunkPromise
       if (parser === null) {
@@ -18,10 +19,13 @@ const transformContent = () => {
           csvSchema = inferSchema(chunk + '\n')
         }
         parser = initParser(csvSchema)
-        schema = csvSchema.cols.reduce((acc: CsvSchema, cur: SchemaColumn, index: number) => {
-          acc[cur.name] = index
-          return acc
-        }, {})
+        schema = csvSchema.cols.reduce(
+          (acc: Record<string, number>, cur: SchemaColumn, index: number) => {
+            acc[cur.name] = index
+            return acc
+          },
+          {}
+        )
       }
 
       parser.chunk(chunk, parser.stringArrs as BaseParse<string>, (data) => {

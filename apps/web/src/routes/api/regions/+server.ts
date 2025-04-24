@@ -2,7 +2,7 @@ import { type RequestHandler, json } from '@sveltejs/kit'
 
 import { variables } from '$lib/variables'
 
-type NetlifyContext = {
+interface NetlifyContext {
   geo: {
     latitude: number
     longitude: number
