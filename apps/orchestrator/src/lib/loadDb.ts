@@ -45,8 +45,7 @@ export const loadDb = async (client: Client, regions: RegionResult) => {
 
         try {
           await fs.access(shapesDir)
-        } catch (err) {
-          console.error(err)
+        } catch {
           await fs.mkdir(shapesDir)
 
           // tar should already be decompressed with brotli

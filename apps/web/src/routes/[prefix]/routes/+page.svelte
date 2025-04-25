@@ -1,15 +1,13 @@
 <script lang="ts">
-  import { page } from '$app/stores'
-
+  import Header from '../../../components/Header.svelte'
   import RouteGroup from './RouteGroup.svelte'
 
   let { data } = $props()
 </script>
 
 <div>
-  <a href="/">home</a>
-  <h1>Routes {$page.params.prefix}</h1>
-  {#each data.groups as group}
+  <Header title="Routes" />
+  {#each data.groups as group (group.name)}
     <RouteGroup {group} />
   {/each}
 </div>

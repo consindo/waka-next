@@ -1,5 +1,20 @@
+:root {
+  --bg: light-dark(oklch(98.5% 0.002 247.839), oklch(98.5% 0.002 247.839));
+  --base-border-radius: 3px;
+
+  --surface-bg: light-dark(#fff, #000);
+  --surface-bg-hover: rgba(55, 53, 47, 0.04);
+  --surface-bg-interactive: #0074e4;
+
+  --surface-border: rgba(0, 0, 0, 0.1);
+
+  --surface-text: light-dark(#09090b, #fafafa);
+}
+
 body,
 html {
   margin: 0;
   padding: 0;
+  background: var(--bg);
+  color: var(--surface-text);
 }

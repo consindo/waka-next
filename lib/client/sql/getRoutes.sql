@@ -11,6 +11,7 @@ SELECT routes.route_id,
        continuous_pickup,
        continuous_drop_off,
        network_id,
+       trip_headsign,
        sum(monday + tuesday + wednesday + thursday + friday + saturday + sunday) as services_count
        -- count(CASE exception_type WHEN 1 THEN 1 ELSE NULL END) AS additions,
        -- count(CASE exception_type WHEN 2 THEN 1 ELSE NULL END) AS removals

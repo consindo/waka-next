@@ -50,4 +50,5 @@ export interface RouteResult {
   continuousDropOff?: number
   networkId?: string
   servicesCount?: number
+  tripShortName?: string
 }
