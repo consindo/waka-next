@@ -26,6 +26,8 @@
     </li>
   {/each}
 </ul>
+
+<!-- TODO: use a <details> element for this -->
 {#if !isExpanded && group.routes.length > maxRoutes}
   <button onclick={() => (isExpanded = true)}>Show More</button>
 {/if}

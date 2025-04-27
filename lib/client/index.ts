@@ -8,7 +8,9 @@ import type { DB } from '@lib/db'
 import getBounds from './sql/getBounds.sql?raw'
 import getInfoFromCalendar from './sql/getInfoFromCalendar.sql?raw'
 import getInfoFromFeedInfo from './sql/getInfoFromFeedInfo.sql?raw'
+import getRoute from './sql/getRoute.sql?raw'
 import getRoutes from './sql/getRoutes.sql?raw'
+import getServices from './sql/getServices.sql?raw'
 import getShape from './sql/getShape.sql?raw'
 import getStops from './sql/getStops.sql?raw'
 import getTable from './sql/getTable.sql?raw'
@@ -19,6 +21,7 @@ import {
   type Prefix,
   type PrefixInput,
   type RouteResult,
+  type ServiceResult,
   type StopResult,
 } from './types'
 
@@ -33,6 +36,7 @@ const GetError = (code: ClientErrors) => {
 export class Client {
   db: Record<Prefix, DB> = {}
   shapes: Record<Prefix, Blob | string> = {}
+  loadedVersions: Record<Prefix, string> = {}
 
   runQuery = (prefix: PrefixInput, query: string, params?: string[], flatMap = true): unknown => {
     if (prefix !== 'all' && !this.hasRegion(prefix)) throw GetError(ClientErrors.RegionNotFound)
@@ -108,6 +112,21 @@ export class Client {
 
   getStops(prefix: PrefixInput): StopResult[] {
     return this.runQuery(prefix, getStops) as StopResult[]
+  }
+
+  getRoute(
+    prefix: PrefixInput,
+    routeId: string
+  ): { route: RouteResult | null; services: ServiceResult[] } {
+    const routeResult = this.runQuery(prefix, getRoute, [routeId]) as RouteResult[]
+    const services = this.runQuery(prefix, getServices, [routeId]) as ServiceResult[]
+
+    let route: RouteResult | null = null
+    if (routeResult.length > 0) {
+      route = routeResult[0]
+      route.servicesCount = services.reduce((acc, cur) => acc + cur.servicesCount, 0)
+    }
+    return { route, services }
   }
 
   getRoutes(

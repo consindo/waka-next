@@ -52,3 +52,10 @@ export interface RouteResult {
   servicesCount?: number
   tripHeadsign?: string
 }
+
+export interface ServiceResult {
+  routeId: string
+  tripHeadsign: string
+  directionId: number
+  servicesCount: number
+}

@@ -9,9 +9,9 @@ import { DB } from '@lib/db'
 
 import type { RegionResult } from './types'
 
-const loadedVersions: Record<Prefix, string> = {}
-
 export const loadDb = async (client: Client, regions: RegionResult) => {
+  const { loadedVersions } = client
+
   // creates the local cache folder
   const cacheDir = 'cache'
   try {
