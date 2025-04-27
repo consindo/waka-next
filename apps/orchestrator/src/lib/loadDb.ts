@@ -48,19 +48,24 @@ export const loadDb = async (client: Client, regions: RegionResult) => {
         } catch {
           await fs.mkdir(shapesDir)
 
-          // tar should already be decompressed with brotli
-          await new Promise<void>((resolve, reject) => {
-            exec(
-              `tar -xf ${path.resolve(shapesFilename)} -C ${path.resolve(shapesDir!)}`,
-              (err) => {
-                if (err) {
-                  console.error(err)
-                  return reject(err)
+          try {
+            // tar should already be decompressed with brotli
+            await new Promise<void>((resolve, reject) => {
+              exec(
+                `tar -xf ${path.resolve(shapesFilename)} -C ${path.resolve(shapesDir!)}`,
+                (err) => {
+                  if (err) {
+                    console.error(err)
+                    return reject(err)
+                  }
+                  resolve()
                 }
-                resolve()
-              }
-            )
-          })
+              )
+            })
+          } catch {
+            console.log(`${shapesFilename} corrupt, deleting`)
+            await fs.rm(path.resolve(shapesFilename))
+          }
           console.log(`extracted ${prefix} shapes to cache`)
         }
       }
