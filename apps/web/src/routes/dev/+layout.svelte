@@ -17,7 +17,7 @@
   <h1><a href="/">waka:next</a></h1>
   <nav>
     <ul>
-      {#each links as link}
+      {#each links as link (link.href)}
         <li>
           <a href={link.href} class:selected={page.url.pathname.startsWith(link.href)}
             >{link.name}</a
@@ -55,12 +55,12 @@
     gap: 0.5rem;
   }
   a {
-    color: rgba(0, 0, 0, 0.6);
+    color: var(--surface-text);
     text-decoration: none;
   }
   li a {
     font-size: 15px;
-    color: #222;
+    color: var(--surface-text);
     font-weight: 450;
   }
   a.selected {

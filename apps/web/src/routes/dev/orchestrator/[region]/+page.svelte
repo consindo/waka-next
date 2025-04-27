@@ -112,7 +112,7 @@
     {#if data.versions.length === 0}
       <p>No available versions.</p>
     {/if}
-    {#each data.versions as version}
+    {#each data.versions as version (version.version)}
       <h3>{version.version}</h3>
       <dl>
         <dt>date</dt>
@@ -168,8 +168,8 @@
   .logs {
     padding: 0.5rem 1rem;
     border-radius: 5px;
-    background: #f9f9f9;
-    border: 1px solid rgba(0, 0, 0, 0.075);
+    background: var(--surface-bg);
+    border: 1px solid var(--surface-border);
     box-shadow:
       0 3px 6px -1px rgba(0, 0, 0, 0.05),
       0 2px 4px -2px rgba(0, 0, 0, 0.05);

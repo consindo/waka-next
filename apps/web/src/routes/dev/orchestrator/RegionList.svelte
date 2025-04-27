@@ -39,10 +39,10 @@
     max-width: 200px;
     min-height: 200px;
     width: 100%;
-    background: #f9f9f9;
+    background: var(--surface-bg-subtle);
     border-radius: 5px;
     padding: 0.5rem;
-    border: 1px solid rgba(0, 0, 0, 0.075);
+    border: 1px solid var(--surface-border);
     box-shadow:
       0 3px 6px -1px rgba(0, 0, 0, 0.05),
       0 2px 4px -2px rgba(0, 0, 0, 0.05);
@@ -51,8 +51,8 @@
     font-size: 14px;
     margin: 0;
     font-weight: 600;
-    color: rgba(0, 0, 0, 0.75);
-    text-shadow: 0 1px 0 #fff;
+    color: var(--surface-text);
+    text-shadow: var(--surface-text-shadow);
     padding: 0.25rem 0.25rem 0;
   }
   ul {
@@ -70,15 +70,15 @@
   a {
     display: block;
     text-decoration: none;
-    color: #000;
+    color: var(--surface-text);
     border: 1px solid transparent;
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
   }
   .selected a,
   a:hover {
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.075);
+    background: var(--surface-bg);
+    border: 1px solid var(--surface-border);
   }
   code {
     font-size: 0.75rem;

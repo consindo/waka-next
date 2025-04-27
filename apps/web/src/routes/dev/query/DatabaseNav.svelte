@@ -89,14 +89,12 @@
 <style>
   nav {
     display: flex;
-    background: #f9f9f9;
+    background: var(--surface-bg-subtle);
     padding: 0.5rem;
     border: 1px solid rgba(0, 0, 0, 0.075);
-    border-radius: 5px;
+    border-radius: calc(var(--base-border-radius) + 1px);
     margin-bottom: 1rem;
-    box-shadow:
-      0 3px 6px -1px rgba(0, 0, 0, 0.05),
-      0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    box-shadow: var(--surface-shadow);
   }
   nav div:first-child {
     flex: 1;
@@ -107,11 +105,11 @@
   nav button,
   nav select {
     border: 0;
-    background: #fff;
+    background: var(--surface-bg);
     font-size: 14px;
     padding: 0.25rem 0.5rem;
-    border: 1px solid rgba(0, 0, 0, 0.075);
-    border-radius: 4px;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--base-border-radius);
   }
   nav button:hover {
     background: rgba(0, 0, 0, 0.025);
