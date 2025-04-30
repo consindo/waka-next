@@ -8,45 +8,63 @@
   }
 
   let { group }: Props = $props()
-
-  const maxRoutes = 4
-  let isExpanded = $state(false)
 </script>
 
-<h2>{group.emoji} {group.name}</h2>
-<ul>
-  {#each group.routes.slice(0, isExpanded ? undefined : maxRoutes) as route (route.routeId)}
-    {@const color = route.routeColor !== null ? `background-color: #${route.routeColor};` : ''}
-    {@const textColor = route.routeTextColor !== null ? `color: #${route.routeTextColor};` : ''}
-    <li>
-      <a href="/{page.params.prefix}/routes/{route.routeId}">
-        <span>{route.routeLongName ?? route.tripHeadsign ?? ''}</span>
-        <strong style={`${color}${textColor}`}>{route.routeShortName}</strong>
-      </a>
-    </li>
-  {/each}
-</ul>
-
-<!-- TODO: use a <details> element for this -->
-{#if !isExpanded && group.routes.length > maxRoutes}
-  <button onclick={() => (isExpanded = true)}>Show More</button>
-{/if}
+<details>
+  <summary>
+    <h2><span>{group.emoji}</span><span>{group.name}</span><small>{group.routes.length}</small></h2>
+  </summary>
+  <ul>
+    {#each group.routes as route (route.routeId)}
+      {@const color = route.routeColor !== null ? `background-color: #${route.routeColor};` : ''}
+      {@const textColor = route.routeTextColor !== null ? `color: #${route.routeTextColor};` : ''}
+      <li>
+        <a href="/{page.params.prefix}/routes/{route.routeId}">
+          <span>{route.routeLongName ?? route.tripHeadsign ?? ''}</span>
+          <strong style={`${color}${textColor}`}>{route.routeShortName}</strong>
+        </a>
+      </li>
+    {/each}
+  </ul>
+</details>
 
 <style>
-  h2 {
-    margin: 1.25em 0 0.5em;
+  details {
+    margin: 0.5rem 0;
+    border-radius: calc(var(--base-border-radius) + 1px);
+    border: 1px solid var(--surface-border);
+    background: var(--surface-bg);
   }
+
+  details summary {
+    padding: 0.5rem 0.75rem;
+    color: var(--surface-text-subtle);
+    cursor: default;
+  }
+  details summary:hover {
+    background: var(--surface-bg-hover);
+  }
+
+  h2 {
+    margin: 0;
+    display: inline-flex;
+    font-size: 1.5rem;
+    line-height: 1.5rem;
+    gap: 0.3em;
+    padding: 0.25rem 0.125rem;
+    color: var(--surface-text);
+  }
+
+  small {
+    color: var(--surface-text-subtle);
+    font-size: 70%;
+  }
+
   ul {
     list-style-type: none;
     padding: 0;
-    margin: 0 0 0.5rem;
-    border: 1px solid var(--surface-border);
-    border-radius: calc(var(--base-border-radius) + 1px);
+    margin: 0;
     overflow: hidden;
-  }
-
-  li:last-child a {
-    border: 0;
   }
 
   a {
@@ -54,9 +72,8 @@
     padding: 0.5rem;
     text-decoration: none;
     align-items: center;
-    background: var(--surface-bg);
     color: var(--surface-text);
-    border-bottom: 1px solid var(--surface-border);
+    border-top: 1px solid var(--surface-border);
     cursor: default;
 
     &:hover {
@@ -71,6 +88,8 @@
       display: inline-block;
       padding: 0.25rem 0.5rem;
       border-radius: var(--base-border-radius);
+      background: var(--surface-bg-hover);
+      color: var(--surface-text-subtle);
     }
   }
 </style>
