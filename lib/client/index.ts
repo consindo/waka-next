@@ -114,12 +114,44 @@ export class Client {
     return this.runQuery(prefix, getStops) as StopResult[]
   }
 
+  /*
+   * Returns infomation about the route and the services that form the route
+   */
   getRoute(
     prefix: PrefixInput,
     routeId: string
   ): { route: RouteResult | null; services: ServiceResult[] } {
     const routeResult = this.runQuery(prefix, getRoute, [routeId]) as RouteResult[]
-    const services = this.runQuery(prefix, getServices, [routeId]) as ServiceResult[]
+    const services = (
+      this.runQuery(prefix, getServices, [routeId]) as {
+        routeId: string
+        tripHeadsign: string
+        directionId: number
+        tripId: string
+        servicesCount: number
+      }[]
+    )
+      .reduce((acc, cur) => {
+        let result = acc.find(
+          (i) => i.tripHeadsign === cur.tripHeadsign && i.directionId === cur.directionId
+        )
+        if (!result) {
+          result = {
+            routeId: cur.routeId,
+            tripHeadsign: cur.tripHeadsign,
+            directionId: cur.directionId,
+            tripIds: [],
+            servicesCount: 0,
+          }
+          acc.push(result)
+        }
+
+        result.tripIds.push(cur.tripId)
+        result.servicesCount += cur.servicesCount
+
+        return acc
+      }, [] as ServiceResult[])
+      .sort((a, b) => b.servicesCount - a.servicesCount)
 
     let route: RouteResult | null = null
     if (routeResult.length > 0) {
@@ -129,6 +161,9 @@ export class Client {
     return { route, services }
   }
 
+  /*
+   * Returns a list of routes
+   */
   getRoutes(
     prefix: PrefixInput,
     limit = 100,

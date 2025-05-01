@@ -8,12 +8,12 @@ export const load: PageLoad = async ({ fetch, params }) => {
   const prefix = params.prefix as Prefix
   const routeId = params.routeid
 
-  const data = await resolveData(
+  const route = await resolveData(
     prefix,
     `/routes/${routeId}`,
     (client) => client.getRoute(prefix, routeId),
     fetch
   )
 
-  return data
+  return { route: route.data?.route, services: route.data?.services }
 }
