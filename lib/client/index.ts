@@ -119,16 +119,18 @@ export class Client {
    */
   getRoute(
     prefix: PrefixInput,
-    routeId: string
+    routeId: string,
+    stopSequence = 1
   ): { route: RouteResult | null; services: ServiceResult[] } {
     const routeResult = this.runQuery(prefix, getRoute, [routeId]) as RouteResult[]
     const services = (
-      this.runQuery(prefix, getServices, [routeId]) as {
+      this.runQuery(prefix, getServices, [routeId, stopSequence.toString()]) as {
         routeId: string
         tripHeadsign: string
         directionId: number
         tripId: string
         servicesCount: number
+        departureTime: string
       }[]
     )
       .reduce((acc, cur) => {
@@ -140,13 +142,16 @@ export class Client {
             routeId: cur.routeId,
             tripHeadsign: cur.tripHeadsign,
             directionId: cur.directionId,
-            tripIds: [],
+            trips: [],
             servicesCount: 0,
           }
           acc.push(result)
         }
 
-        result.tripIds.push(cur.tripId)
+        result.trips.push({
+          id: cur.tripId,
+          departureTime: cur.departureTime,
+        })
         result.servicesCount += cur.servicesCount
 
         return acc

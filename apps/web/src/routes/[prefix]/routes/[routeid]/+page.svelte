@@ -7,7 +7,9 @@
 
   const searchParams = $derived(new URLSearchParams(page.url.search))
   const selectedService = $derived(
-    (data.services || []).find((i) => i.tripIds.includes(searchParams.get('tripId') || ''))
+    (data.services || []).find((i) =>
+      i.trips.find((j) => j.id === searchParams.get('tripId') || '')
+    )
   )
 </script>
 
@@ -23,11 +25,10 @@
         {#each data.services as service, i (i)}
           <li>
             <a
-              href="{page.url.pathname}?tripId={service.tripIds[0]}"
+              href="{page.url.pathname}?tripId={service.trips[0].id}"
               class:selected={selectedService === service}
             >
-              <strong>{service.tripHeadsign}</strong>
-              <p>{service.servicesCount} services</p>
+              {service.tripHeadsign}
             </a>
           </li>
         {/each}
@@ -35,7 +36,11 @@
     </ul>
     {#if searchParams.get('tripId')}
       <h2>Departures</h2>
-      {selectedService?.tripIds.join(', ')}
+      <ul>
+        {#each selectedService?.trips || [] as trip (trip.id)}
+          <li><code>{trip.id} {trip.departureTime}</code></li>
+        {/each}
+      </ul>
     {/if}
   {:else}
     <Header title="Not found" />
@@ -46,13 +51,8 @@
   div {
     padding: 1rem;
   }
-  li {
-    margin-bottom: 1rem;
-  }
   .selected {
     color: #0f0;
-  }
-  p {
-    margin: 0;
+    font-weight: bold;
   }
 </style>
