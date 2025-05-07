@@ -123,40 +123,23 @@ export class Client {
     stopSequence = 1
   ): { route: RouteResult | null; services: ServiceResult[] } {
     const routeResult = this.runQuery(prefix, getRoute, [routeId]) as RouteResult[]
-    const services = (
-      this.runQuery(prefix, getServices, [routeId, stopSequence.toString()]) as {
-        routeId: string
-        tripHeadsign: string
-        directionId: number
-        tripId: string
-        servicesCount: number
-        departureTime: string
-      }[]
-    )
-      .reduce((acc, cur) => {
-        let result = acc.find(
-          (i) => i.tripHeadsign === cur.tripHeadsign && i.directionId === cur.directionId
-        )
-        if (!result) {
-          result = {
-            routeId: cur.routeId,
-            tripHeadsign: cur.tripHeadsign,
-            directionId: cur.directionId,
-            trips: [],
-            servicesCount: 0,
-          }
-          acc.push(result)
-        }
-
-        result.trips.push({
-          id: cur.tripId,
-          departureTime: cur.departureTime,
-        })
-        result.servicesCount += cur.servicesCount
-
-        return acc
-      }, [] as ServiceResult[])
-      .sort((a, b) => b.servicesCount - a.servicesCount)
+    const dateInput = new Date().toISOString().split('T')[0] // probably need to query for today +- 1 day so we don't have to worry about timezones
+    const date = dateInput.split('-').join('')
+    const dayofweek = new Date(dateInput).getDay()
+    const services = this.runQuery(prefix, getServices, [
+      date,
+      routeId,
+      stopSequence.toString(),
+      date,
+      date,
+      dayofweek === 1 ? '1' : '0',
+      dayofweek === 2 ? '1' : '0',
+      dayofweek === 3 ? '1' : '0',
+      dayofweek === 4 ? '1' : '0',
+      dayofweek === 5 ? '1' : '0',
+      dayofweek === 6 ? '1' : '0',
+      dayofweek === 7 ? '1' : '0',
+    ]) as ServiceResult[]
 
     let route: RouteResult | null = null
     if (routeResult.length > 0) {

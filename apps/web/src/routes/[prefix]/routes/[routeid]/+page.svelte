@@ -6,11 +6,6 @@
   let { data } = $props()
 
   const searchParams = $derived(new URLSearchParams(page.url.search))
-  const selectedService = $derived(
-    (data.services || []).find((i) =>
-      i.trips.find((j) => j.id === searchParams.get('tripId') || '')
-    )
-  )
 </script>
 
 <div>
@@ -19,29 +14,23 @@
     <pre>
   {JSON.stringify(data.route, null, 2)}
 </pre>
-    <h2>Services</h2>
+    <h2>Services Today</h2>
     <ul>
       {#if data.services && data.services.length > 0}
         {#each data.services as service, i (i)}
           <li>
             <a
-              href="{page.url.pathname}?tripId={service.trips[0].id}"
-              class:selected={selectedService === service}
+              class:selected={service.tripId === searchParams.get('tripId')}
+              href="{page.url.pathname}?tripId={service.tripId}"
             >
+              <strong>{service.departureTime}</strong>
+              {service.directionId === 1 ? '→' : '←'}
               {service.tripHeadsign}
             </a>
           </li>
         {/each}
       {/if}
     </ul>
-    {#if searchParams.get('tripId')}
-      <h2>Departures</h2>
-      <ul>
-        {#each selectedService?.trips || [] as trip (trip.id)}
-          <li><code>{trip.id} {trip.departureTime}</code></li>
-        {/each}
-      </ul>
-    {/if}
   {:else}
     <Header title="Not found" />
   {/if}
@@ -50,6 +39,9 @@
 <style>
   div {
     padding: 1rem;
+  }
+  a {
+    text-decoration: none;
   }
   .selected {
     color: #0f0;
