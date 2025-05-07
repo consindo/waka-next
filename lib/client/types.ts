@@ -59,4 +59,5 @@ export interface ServiceResult {
   directionId: number
   tripId: string
   departureTime: string
+  timezone: string
 }

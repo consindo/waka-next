@@ -144,7 +144,6 @@ export class Client {
     let route: RouteResult | null = null
     if (routeResult.length > 0) {
       route = routeResult[0]
-      route.servicesCount = services.reduce((acc, cur) => acc + cur.servicesCount, 0)
     }
     return { route, services }
   }

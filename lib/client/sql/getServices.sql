@@ -1,14 +1,17 @@
-SELECT route_id,
+SELECT trips.route_id,
        trip_headsign,
        direction_id,
        trips.trip_id,
-       departure_time
+       departure_time,
+       agency_timezone as timezone
 FROM trips
+INNER JOIN routes ON trips.route_id = routes.route_id
+INNER JOIN agency ON routes.agency_id = agency.agency_id
 INNER JOIN calendar ON trips.service_id = calendar.service_id
 INNER JOIN stop_times ON trips.trip_id = stop_times.trip_id
 LEFT JOIN calendar_dates ON trips.service_id = calendar_dates.service_id
 AND date = (?)
-WHERE route_id = (?)
+WHERE trips.route_id = (?)
   AND stop_sequence = (?)
   AND ((start_date <= (?)
         AND end_date >= (?)
