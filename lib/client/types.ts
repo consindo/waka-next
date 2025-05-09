@@ -58,6 +58,7 @@ export interface ServiceResult {
   tripHeadsign: string
   directionId: number
   tripId: string
+  date: string
   departureTime: string
   timezone: string
 }

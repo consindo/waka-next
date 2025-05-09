@@ -123,23 +123,34 @@ export class Client {
     stopSequence = 1
   ): { route: RouteResult | null; services: ServiceResult[] } {
     const routeResult = this.runQuery(prefix, getRoute, [routeId]) as RouteResult[]
-    const dateInput = new Date().toISOString().split('T')[0] // probably need to query for today +- 1 day so we don't have to worry about timezones
-    const date = dateInput.split('-').join('')
-    const dayofweek = new Date(dateInput).getDay()
-    const services = this.runQuery(prefix, getServices, [
-      date,
-      routeId,
-      stopSequence.toString(),
-      date,
-      date,
-      dayofweek === 1 ? '1' : '0',
-      dayofweek === 2 ? '1' : '0',
-      dayofweek === 3 ? '1' : '0',
-      dayofweek === 4 ? '1' : '0',
-      dayofweek === 5 ? '1' : '0',
-      dayofweek === 6 ? '1' : '0',
-      dayofweek === 7 ? '1' : '0',
-    ]) as ServiceResult[]
+
+    // todo: need to be able to query for a specific date
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
+    const today = new Date()
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    const services = [yesterday, today, tomorrow].flatMap((dateObj) => {
+      const dateInput = dateObj.toISOString().split('T')[0]
+      const date = dateInput.split('-').join('')
+      const dayofweek = new Date(dateInput).getDay()
+      return (
+        this.runQuery(prefix, getServices, [
+          date,
+          routeId,
+          stopSequence.toString(),
+          date,
+          date,
+          dayofweek === 1 ? '1' : '0',
+          dayofweek === 2 ? '1' : '0',
+          dayofweek === 3 ? '1' : '0',
+          dayofweek === 4 ? '1' : '0',
+          dayofweek === 5 ? '1' : '0',
+          dayofweek === 6 ? '1' : '0',
+          dayofweek === 7 ? '1' : '0',
+        ]) as ServiceResult[]
+      ).map((i) => ({ ...i, date: dateInput }))
+    })
 
     let route: RouteResult | null = null
     if (routeResult.length > 0) {

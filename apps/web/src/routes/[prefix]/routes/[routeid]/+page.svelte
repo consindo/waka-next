@@ -14,7 +14,7 @@
     <pre>
   {JSON.stringify(data.route, null, 2)}
 </pre>
-    <h2>Services Today</h2>
+    <h2>Services</h2>
     <ul>
       {#if data.services && data.services.length > 0}
         {#each data.services as service, i (i)}
@@ -23,6 +23,7 @@
               class:selected={service.tripId === searchParams.get('tripId')}
               href="{page.url.pathname}?tripId={service.tripId}"
             >
+              <code>{service.date}</code>
               <strong>{service.departureTime}</strong>
               {service.directionId === 1 ? '→' : '←'}
               {service.tripHeadsign}
