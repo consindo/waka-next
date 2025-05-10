@@ -10,6 +10,7 @@ enum SqliteStorageClasses {
 export interface Schema {
   filename: string
   table: string
+  primaryKey: string[]
   tableSchema: Record<string, SqliteStorageClasses>
 }
 
@@ -17,6 +18,7 @@ export const schema: Schema[] = [
   {
     filename: 'agency.txt',
     table: 'agency',
+    primaryKey: ['agency_id'],
     tableSchema: {
       agency_id: SqliteStorageClasses.char,
       agency_name: SqliteStorageClasses.char,
@@ -31,6 +33,7 @@ export const schema: Schema[] = [
   {
     filename: 'stops.txt',
     table: 'stops',
+    primaryKey: ['stop_id'],
     tableSchema: {
       stop_id: SqliteStorageClasses.char,
       stop_code: SqliteStorageClasses.char,
@@ -52,6 +55,7 @@ export const schema: Schema[] = [
   {
     filename: 'routes.txt',
     table: 'routes',
+    primaryKey: ['route_id'],
     tableSchema: {
       route_id: SqliteStorageClasses.char,
       agency_id: SqliteStorageClasses.char,
@@ -71,6 +75,7 @@ export const schema: Schema[] = [
   {
     filename: 'trips.txt',
     table: 'trips',
+    primaryKey: ['trip_id'],
     tableSchema: {
       route_id: SqliteStorageClasses.char,
       service_id: SqliteStorageClasses.char,
@@ -87,6 +92,7 @@ export const schema: Schema[] = [
   {
     filename: 'stop_times.txt',
     table: 'stop_times',
+    primaryKey: ['trip_id', 'stop_sequence'],
     tableSchema: {
       trip_id: SqliteStorageClasses.char,
       arrival_time: SqliteStorageClasses.char,
@@ -105,6 +111,7 @@ export const schema: Schema[] = [
   {
     filename: 'calendar.txt',
     table: 'calendar',
+    primaryKey: ['service_id'],
     tableSchema: {
       service_id: SqliteStorageClasses.char,
       monday: SqliteStorageClasses.integer,
@@ -121,6 +128,7 @@ export const schema: Schema[] = [
   {
     filename: 'calendar_dates.txt',
     table: 'calendar_dates',
+    primaryKey: ['service_id', 'date'],
     tableSchema: {
       service_id: SqliteStorageClasses.char,
       date: SqliteStorageClasses.char,
@@ -130,6 +138,7 @@ export const schema: Schema[] = [
   {
     filename: 'fare_attributes.txt',
     table: 'fare_attributes',
+    primaryKey: ['fare_id'],
     tableSchema: {
       fare_id: SqliteStorageClasses.char,
       price: SqliteStorageClasses.real,
@@ -143,6 +152,7 @@ export const schema: Schema[] = [
   {
     filename: 'fare_rules.txt',
     table: 'fare_rules',
+    primaryKey: [],
     tableSchema: {
       fare_id: SqliteStorageClasses.char,
       route_id: SqliteStorageClasses.char,
@@ -154,6 +164,7 @@ export const schema: Schema[] = [
   {
     filename: 'timeframes.txt',
     table: 'timeframes',
+    primaryKey: [],
     tableSchema: {
       timeframe_group_id: SqliteStorageClasses.char,
       start_time: SqliteStorageClasses.char,
@@ -164,6 +175,7 @@ export const schema: Schema[] = [
   {
     filename: 'fare_media.txt',
     table: 'fare_media',
+    primaryKey: ['fare_media_id'],
     tableSchema: {
       fare_media_id: SqliteStorageClasses.char,
       fare_media_name: SqliteStorageClasses.char,
@@ -173,6 +185,7 @@ export const schema: Schema[] = [
   {
     filename: 'fare_products.txt',
     table: 'fare_products',
+    primaryKey: [],
     tableSchema: {
       fare_product_id: SqliteStorageClasses.char,
       fare_product_name: SqliteStorageClasses.char,
@@ -184,6 +197,7 @@ export const schema: Schema[] = [
   {
     filename: 'fare_leg_rules.txt',
     table: 'fare_leg_rules',
+    primaryKey: [],
     tableSchema: {
       leg_group_id: SqliteStorageClasses.char,
       network_id: SqliteStorageClasses.char,
@@ -197,6 +211,7 @@ export const schema: Schema[] = [
   {
     filename: 'fare_transfer_rules.txt',
     table: 'fare_transfer_rules',
+    primaryKey: [],
     tableSchema: {
       from_leg_group_id: SqliteStorageClasses.char,
       to_leg_group_id: SqliteStorageClasses.char,
@@ -210,6 +225,7 @@ export const schema: Schema[] = [
   {
     filename: 'areas.txt',
     table: 'areas',
+    primaryKey: ['area_id'],
     tableSchema: {
       area_id: SqliteStorageClasses.char,
       area_name: SqliteStorageClasses.char,
@@ -218,6 +234,7 @@ export const schema: Schema[] = [
   {
     filename: 'stop_areas.txt',
     table: 'stop_areas',
+    primaryKey: [],
     tableSchema: {
       area_id: SqliteStorageClasses.char,
       stop_id: SqliteStorageClasses.char,
@@ -226,6 +243,7 @@ export const schema: Schema[] = [
   {
     filename: 'networks.txt',
     table: 'networks',
+    primaryKey: ['network_id'],
     tableSchema: {
       network_id: SqliteStorageClasses.char,
       network_name: SqliteStorageClasses.char,
@@ -234,6 +252,7 @@ export const schema: Schema[] = [
   {
     filename: 'route_networks.txt',
     table: 'route_networks',
+    primaryKey: ['route_id'],
     tableSchema: {
       network_id: SqliteStorageClasses.char,
       route_id: SqliteStorageClasses.char,
@@ -242,6 +261,7 @@ export const schema: Schema[] = [
   {
     filename: 'shapes.txt',
     table: 'shapes',
+    primaryKey: ['shape_id', 'shape_pt_sequence'],
     tableSchema: {
       shape_id: SqliteStorageClasses.char,
       shape_pt_lat: SqliteStorageClasses.real,
@@ -253,6 +273,7 @@ export const schema: Schema[] = [
   {
     filename: 'frequencies.txt',
     table: 'frequencies',
+    primaryKey: ['trip_id', 'start_time'],
     tableSchema: {
       trip_id: SqliteStorageClasses.char,
       start_time: SqliteStorageClasses.char,
@@ -264,6 +285,7 @@ export const schema: Schema[] = [
   {
     filename: 'transfers.txt',
     table: 'transfers',
+    primaryKey: [],
     tableSchema: {
       from_stop_id: SqliteStorageClasses.char,
       to_stop_id: SqliteStorageClasses.char,
@@ -278,6 +300,7 @@ export const schema: Schema[] = [
   {
     filename: 'pathways.txt',
     table: 'pathways',
+    primaryKey: ['pathway_id'],
     tableSchema: {
       pathway_id: SqliteStorageClasses.char,
       from_stop_id: SqliteStorageClasses.char,
@@ -296,6 +319,7 @@ export const schema: Schema[] = [
   {
     filename: 'levels.txt',
     table: 'levels',
+    primaryKey: ['level_id'],
     tableSchema: {
       level_id: SqliteStorageClasses.char,
       level_index: SqliteStorageClasses.real,
@@ -305,6 +329,7 @@ export const schema: Schema[] = [
   {
     filename: 'translations.txt',
     table: 'translations',
+    primaryKey: [],
     tableSchema: {
       table_name: SqliteStorageClasses.char,
       field_name: SqliteStorageClasses.char,
@@ -318,6 +343,7 @@ export const schema: Schema[] = [
   {
     filename: 'feed_info.txt',
     table: 'feed_info',
+    primaryKey: [],
     tableSchema: {
       feed_publisher_name: SqliteStorageClasses.char,
       feed_publisher_url: SqliteStorageClasses.char,
@@ -333,6 +359,7 @@ export const schema: Schema[] = [
   {
     filename: 'attributions.txt',
     table: 'attributions',
+    primaryKey: ['attribution_id'],
     tableSchema: {
       attribution_id: SqliteStorageClasses.char,
       agency_id: SqliteStorageClasses.char,

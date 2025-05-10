@@ -9,12 +9,19 @@ export class DBImport {
     this.db = props.db
   }
 
+  analyzeTable = (schema: Schema) => {
+    const query = `ANALYZE ${schema.table}`
+    this.db.run(query)
+    logger.info(`(${schema.table}) analyzed table`)
+  }
+
   createTable = (schema: Schema) => {
     const sqlColumns = Object.entries(schema.tableSchema)
       .flatMap((i) => i.join(' '))
       .join(', ')
-    this.db.run(`CREATE TABLE ${schema.table} (${sqlColumns});`)
-    logger.info(`(${schema.table}): created table`)
+    const query = `CREATE TABLE ${schema.table} (${sqlColumns}${schema.primaryKey.length > 0 ? `, PRIMARY KEY (${schema.primaryKey.join(', ')})` : ''});`
+    this.db.run(query)
+    logger.info(`(${schema.table}) created table`)
   }
 
   parseData = async (

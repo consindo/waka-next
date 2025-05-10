@@ -18,7 +18,7 @@ export const load: PageLoad = async ({ fetch, params }) => {
   const groups = structuredClone(defaultRouteGroups)
 
   // todo: regional config
-  if (prefix === 'au-syd') {
+  if (prefix === 'au-nsw') {
     queries.push({ id: 'extended', min: 100, max: 699 })
     queries.push({ id: 'extended-bus', min: 700, max: 711 }) // ignore school bus
     queries.push({ id: 'extended-extra', min: 714, max: 1000 })

@@ -49,6 +49,7 @@ export class Importer {
 
       this.#dbImport.createTable(schema)
       await this.#dbImport.importTable(schema, parser.readable)
+      this.#dbImport.analyzeTable(schema)
     }
 
     let shapesBlob: Blob | null = null
