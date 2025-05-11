@@ -14,6 +14,7 @@ import getServices from './sql/getServices.sql?raw'
 import getShape from './sql/getShape.sql?raw'
 import getStops from './sql/getStops.sql?raw'
 import getTable from './sql/getTable.sql?raw'
+import getTimetable from './sql/getTimetable.sql?raw'
 import {
   type BoundsResult,
   ClientErrors,
@@ -23,6 +24,7 @@ import {
   type RouteResult,
   type ServiceResult,
   type StopResult,
+  type TimetableResult,
 } from './types'
 
 export * from './types'
@@ -218,5 +220,12 @@ export class Client {
         } as Feature
       }
     }
+  }
+
+  /*
+   * Returns the stop times for a particular trip
+   */
+  getTimetable(prefix: PrefixInput, tripId: string): TimetableResult[] {
+    return this.runQuery(prefix, getTimetable, [tripId]) as TimetableResult[]
   }
 }

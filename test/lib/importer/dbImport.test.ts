@@ -28,9 +28,7 @@ describe('importer/dbImport', () => {
       expect(table).not.toBe(undefined)
 
       dbImport.analyzeTable(table!)
-      expect(db.run).toBeCalledWith(
-        'ANALYZE calendar_dates;'
-      )
+      expect(db.run).toBeCalledWith('ANALYZE calendar_dates;')
     })
   })
 

@@ -98,7 +98,7 @@ export const schema: Schema[] = [
       arrival_time: SqliteStorageClasses.char,
       departure_time: SqliteStorageClasses.char,
       stop_id: SqliteStorageClasses.char,
-      stop_sequence: SqliteStorageClasses.char,
+      stop_sequence: SqliteStorageClasses.integer,
       stop_headsign: SqliteStorageClasses.char,
       pickup_type: SqliteStorageClasses.integer,
       drop_off_type: SqliteStorageClasses.integer,

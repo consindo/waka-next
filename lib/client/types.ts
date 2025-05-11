@@ -62,3 +62,23 @@ export interface ServiceResult {
   departureTime: string
   timezone: string
 }
+
+export interface TimetableResult {
+  trip_id: string
+  arrival_time?: string
+  departure_time?: string
+  stop_sequence: number
+  stop_headsign?: string
+  pickup_type?: number
+  drop_off_type?: number
+  continuous_pickup?: number
+  continuous_drop_off?: number
+  shape_dist_traveled?: number
+  timepoint?: number
+  stop_id?: string
+  stop_code?: string
+  stop_name?: string
+  parent_stop_id?: string
+  parent_stop_code?: string
+  parent_stop_name?: string
+}

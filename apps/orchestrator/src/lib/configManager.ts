@@ -119,7 +119,7 @@ export class ConfigManager {
       region.gtfsZipUrl,
       region.gtfsZipHeaders || {},
       region.gtfsZipDisableEtag || false,
-      region.gtfsTidyOptions === undefined ? 'SCRmTcsOeD' : region.gtfsTidyOptions,
+      region.gtfsTidyOptions === undefined ? 'SCRmcsOeD' : region.gtfsTidyOptions,
       region.gtfsZipDisableHead || false
     )
     return importManager.checkAndDownloadUpdate()
