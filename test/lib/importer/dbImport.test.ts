@@ -15,7 +15,21 @@ describe('importer/dbImport', () => {
 
       dbImport.createTable(table!)
       expect(db.run).toBeCalledWith(
-        'CREATE TABLE calendar_dates (service_id CHAR, date CHAR, exception_type INTEGER);'
+        'CREATE TABLE calendar_dates (service_id CHAR, date CHAR, exception_type INTEGER, PRIMARY KEY (service_id, date));'
+      )
+    })
+  })
+  describe('analyzeTable', () => {
+    it('should run sqlite analyze', () => {
+      const db = new DB()
+      db.run = vi.fn()
+      const dbImport = new DBImport({ db })
+      const table = schema.find((i) => i.table === 'calendar_dates')
+      expect(table).not.toBe(undefined)
+
+      dbImport.analyzeTable(table!)
+      expect(db.run).toBeCalledWith(
+        'ANALYZE calendar_dates;'
       )
     })
   })

@@ -10,7 +10,7 @@ export class DBImport {
   }
 
   analyzeTable = (schema: Schema) => {
-    const query = `ANALYZE ${schema.table}`
+    const query = `ANALYZE ${schema.table};`
     this.db.run(query)
     logger.info(`(${schema.table}) analyzed table`)
   }
