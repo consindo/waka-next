@@ -8,7 +8,7 @@ export const GET: RequestHandler = async ({ locals, params }) => {
   const { client } = locals
 
   try {
-    const timetable = client.getTimetable(params.prefix as Prefix, params.trip_id)
+    const { timetable } = client.getTimetable(params.prefix as Prefix, params.trip_id)
     return json({ timetable })
   } catch (err) {
     if ((err as App.Error).code === ClientErrors.RegionNotFound) {

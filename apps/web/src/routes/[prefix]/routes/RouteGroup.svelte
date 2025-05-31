@@ -19,7 +19,7 @@
       {@const color = route.routeColor !== null ? `background-color: #${route.routeColor};` : ''}
       {@const textColor = route.routeTextColor !== null ? `color: #${route.routeTextColor};` : ''}
       <li>
-        <a href="/{page.params.prefix}/routes/{route.routeId}">
+        <a href="/{route.prefix}/routes/{route.routeId}">
           <span>{route.routeLongName ?? route.tripHeadsign ?? ''}</span>
           <strong style={`${color}${textColor}`}>{route.routeShortName}</strong>
         </a>

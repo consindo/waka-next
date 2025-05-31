@@ -225,7 +225,8 @@ export class Client {
   /*
    * Returns the stop times for a particular trip
    */
-  getTimetable(prefix: PrefixInput, tripId: string): TimetableResult[] {
-    return this.runQuery(prefix, getTimetable, [tripId]) as TimetableResult[]
+  getTimetable(prefix: PrefixInput, tripId: string): { timetable: TimetableResult[] } {
+    const timetable = this.runQuery(prefix, getTimetable, [tripId]) as TimetableResult[]
+    return { timetable }
   }
 }

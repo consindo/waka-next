@@ -8,37 +8,54 @@
   const searchParams = $derived(new URLSearchParams(page.url.search))
 </script>
 
-<div>
+<div class="page">
   {#if data.route}
     <Header title={page.params.routeid} />
     <pre>
   {JSON.stringify(data.route, null, 2)}
 </pre>
-    <h2>Services</h2>
-    <ul>
-      {#if data.services && data.services.length > 0}
-        {#each data.services as service, i (i)}
-          <li>
-            <a
-              class:selected={service.tripId === searchParams.get('tripId')}
-              href="{page.url.pathname}?tripId={service.tripId}"
-            >
-              <code>{service.date}</code>
-              <strong>{service.departureTime}</strong>
-              {service.directionId === 1 ? '→' : '←'}
-              {service.tripHeadsign}
-            </a>
-          </li>
-        {/each}
-      {/if}
-    </ul>
+    <div class="content">
+      <div>
+        <h2>Services</h2>
+        <ul>
+          {#if data.services && data.services.length > 0}
+            {#each data.services as service, i (i)}
+              <li>
+                <a
+                  class:selected={service.tripId === searchParams.get('tripId')}
+                  href="{page.url.pathname}?tripId={service.tripId}"
+                >
+                  <code>{service.date}</code>
+                  <strong>{service.departureTime}</strong>
+                  {service.directionId === 1 ? '→' : '←'}
+                  {service.tripHeadsign}
+                </a>
+              </li>
+            {/each}
+          {/if}
+        </ul>
+      </div>
+      <div>
+        <h2>Stop Times</h2>
+        <ul>
+          {#each data.timetable as time, i (i)}
+            <li>
+              <a href="/{time.prefix}/stops/{time.parentStopCode || time.stopCode}">
+                {time.departureTime}
+                {time.parentStopName || time.stopName}
+              </a>
+            </li>
+          {/each}
+        </ul>
+      </div>
+    </div>
   {:else}
     <Header title="Not found" />
   {/if}
 </div>
 
 <style>
-  div {
+  .page {
     padding: 1rem;
   }
   a {
@@ -47,5 +64,8 @@
   .selected {
     color: #0f0;
     font-weight: bold;
+  }
+  .content {
+    display: flex;
   }
 </style>

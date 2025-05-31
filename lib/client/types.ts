@@ -36,6 +36,7 @@ export interface StopResult {
 }
 
 export interface RouteResult {
+  prefix: Prefix
   routeId: string
   agencyId: string
   routeShortName: string
@@ -54,6 +55,7 @@ export interface RouteResult {
 }
 
 export interface ServiceResult {
+  prefix: Prefix
   routeId: string
   tripHeadsign: string
   directionId: number
@@ -64,21 +66,22 @@ export interface ServiceResult {
 }
 
 export interface TimetableResult {
-  trip_id: string
-  arrival_time?: string
-  departure_time?: string
-  stop_sequence: number
-  stop_headsign?: string
-  pickup_type?: number
-  drop_off_type?: number
-  continuous_pickup?: number
-  continuous_drop_off?: number
-  shape_dist_traveled?: number
+  prefix: Prefix
+  tripId: string
+  arrivalTime?: string
+  departureTime?: string
+  stopSequence: number
+  stopHeadsign?: string
+  pickupType?: number
+  dropOffType?: number
+  continuousPickup?: number
+  continuousDropOff?: number
+  shapeDistTraveled?: number
   timepoint?: number
-  stop_id?: string
-  stop_code?: string
-  stop_name?: string
-  parent_stop_id?: string
-  parent_stop_code?: string
-  parent_stop_name?: string
+  stopId?: string
+  stopCode?: string
+  stopName?: string
+  parentStopId?: string
+  parentStopCode?: string
+  parentStopName?: string
 }
