@@ -17,6 +17,6 @@ SELECT trip_id,
        parent_stop.stop_name AS parent_stop_name
 FROM stop_times
 INNER JOIN stops ON stop_times.stop_id = stops.stop_id
-INNER JOIN stops AS parent_stop ON stops.parent_station = parent_stop.stop_id
+LEFT JOIN stops AS parent_stop ON stops.parent_station = parent_stop.stop_id
 WHERE trip_id = (?)
 ORDER BY stop_sequence ASC
