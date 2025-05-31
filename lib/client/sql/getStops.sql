@@ -4,4 +4,8 @@ SELECT stop_id,
        stop_desc,
        stop_lat,
        stop_lon
-FROM stops LIMIT 100
+FROM stops
+WHERE parent_station IS NULL
+  AND (stop_name LIKE (?)
+       OR stop_code LIKE (?))
+LIMIT 100

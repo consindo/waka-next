@@ -29,8 +29,9 @@ export interface BoundsResult {
 export interface StopResult {
   prefix: Prefix
   stopId: string
-  stopCode: string | null
-  stopDesc: string | null
+  stopCode?: string
+  stopName?: string
+  stopDesc?: string
   stopLat: number
   stopLon: number
 }

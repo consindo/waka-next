@@ -112,8 +112,8 @@ export class Client {
     })
   }
 
-  getStops(prefix: PrefixInput): StopResult[] {
-    return this.runQuery(prefix, getStops) as StopResult[]
+  getStops(prefix: PrefixInput, searchTerm: string): StopResult[] {
+    return this.runQuery(prefix, getStops, [`%${searchTerm}%`, `%${searchTerm}%`]) as StopResult[]
   }
 
   /*

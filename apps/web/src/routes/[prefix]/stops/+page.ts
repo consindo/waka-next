@@ -4,8 +4,14 @@ import { resolveData } from '$lib/dataResolver'
 
 import type { PageLoad } from './$types'
 
-export const load: PageLoad = async ({ fetch, params }) => {
+export const load: PageLoad = async ({ fetch, params, url }) => {
   const prefix = params.prefix as Prefix
-  const data = resolveData(prefix, `/stops`, (client) => client.getStops(prefix), fetch)
-  return data
+  const query = url.searchParams.get('q') || ''
+  const stops = await resolveData(
+    prefix,
+    `/stops?q=${encodeURIComponent(query)}`,
+    (client) => client.getStops(prefix, query),
+    fetch
+  )
+  return { stops: stops.data || [] }
 }
