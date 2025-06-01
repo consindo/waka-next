@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { page } from '$app/state'
-
   import type { RouteResult } from '@lib/client'
 
   interface Props {
