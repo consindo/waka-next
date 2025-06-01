@@ -13,6 +13,7 @@ import getRoutes from './sql/getRoutes.sql?raw'
 import getServices from './sql/getServices.sql?raw'
 import getShape from './sql/getShape.sql?raw'
 import getStop from './sql/getStop.sql?raw'
+import getStopTimes from './sql/getStopTimes.sql?raw'
 import getStops from './sql/getStops.sql?raw'
 import getTable from './sql/getTable.sql?raw'
 import getTimetable from './sql/getTimetable.sql?raw'
@@ -263,6 +264,32 @@ export class Client {
         ),
     }
 
-    return { stopInfo }
+    const yesterday = new Date()
+    yesterday.setDate(yesterday.getDate() - 1)
+    const today = new Date()
+    const tomorrow = new Date()
+    tomorrow.setDate(tomorrow.getDate() + 1)
+    const stopTimes = [yesterday, today, tomorrow].flatMap((dateObj) => {
+      const dateInput = dateObj.toISOString().split('T')[0]
+      const date = dateInput.split('-').join('')
+      const dayofweek = new Date(dateInput).getDay()
+      return (
+        this.runQuery(prefix, getStopTimes, [
+          date,
+          stopId,
+          date,
+          date,
+          dayofweek === 1 ? '1' : '0',
+          dayofweek === 2 ? '1' : '0',
+          dayofweek === 3 ? '1' : '0',
+          dayofweek === 4 ? '1' : '0',
+          dayofweek === 5 ? '1' : '0',
+          dayofweek === 6 ? '1' : '0',
+          dayofweek === 7 ? '1' : '0',
+        ]) as ServiceResult[]
+      ).map((i) => ({ ...i, date: dateInput }))
+    })
+
+    return { stopInfo, stopTimes }
   }
 }
