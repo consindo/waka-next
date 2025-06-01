@@ -40,7 +40,7 @@
         <ul>
           {#each data.timetable as time, i (i)}
             <li>
-              <a href="/{time.prefix}/stops/{time.parentStopCode || time.stopCode}">
+              <a href="/{time.prefix}/stops/{time.parentStopId || time.stopId}">
                 {time.departureTime}
                 {time.parentStopName || time.stopName}
               </a>

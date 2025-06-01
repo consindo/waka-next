@@ -12,6 +12,7 @@ import getRoute from './sql/getRoute.sql?raw'
 import getRoutes from './sql/getRoutes.sql?raw'
 import getServices from './sql/getServices.sql?raw'
 import getShape from './sql/getShape.sql?raw'
+import getStop from './sql/getStop.sql?raw'
 import getStops from './sql/getStops.sql?raw'
 import getTable from './sql/getTable.sql?raw'
 import getTimetable from './sql/getTimetable.sql?raw'
@@ -24,6 +25,7 @@ import {
   type RouteResult,
   type ServiceResult,
   type StopResult,
+  type StopsResult,
   type TimetableResult,
 } from './types'
 
@@ -112,8 +114,8 @@ export class Client {
     })
   }
 
-  getStops(prefix: PrefixInput, searchTerm: string): StopResult[] {
-    return this.runQuery(prefix, getStops, [`%${searchTerm}%`, `%${searchTerm}%`]) as StopResult[]
+  getStops(prefix: PrefixInput, searchTerm: string): StopsResult[] {
+    return this.runQuery(prefix, getStops, [`%${searchTerm}%`, `%${searchTerm}%`]) as StopsResult[]
   }
 
   /*
@@ -228,5 +230,39 @@ export class Client {
   getTimetable(prefix: PrefixInput, tripId: string): { timetable: TimetableResult[] } {
     const timetable = this.runQuery(prefix, getTimetable, [tripId]) as TimetableResult[]
     return { timetable }
+  }
+
+  /*
+   * Returns the stop times for a particular stop
+   */
+  getStop(prefix: PrefixInput, stopId: string) {
+    const stops = this.runQuery(prefix, getStop, [stopId]) as StopResult[]
+    if (stops.length === 0) throw GetError(ClientErrors.NotFound)
+    const stopInfo = {
+      stopId: stops[0].parentStopId,
+      stopCode: stops[0].parentStopCode,
+      stopName: stops[0].parentStopName,
+      stopLat: stops[0].stopLat,
+      stopLon: stops[0].stopLon,
+      parentStation: stops[0].parentStation,
+      childStops: stops
+        .flatMap((i) => {
+          if (!i.stopId) return []
+          return [
+            {
+              stopId: i.stopId,
+              stopName: i.stopName,
+              platformCode: i.platformCode,
+            },
+          ]
+        })
+        .sort((a, b) =>
+          (a.platformCode || a.stopId).localeCompare(b.platformCode || b.stopId, 'en', {
+            numeric: true,
+          })
+        ),
+    }
+
+    return { stopInfo }
   }
 }

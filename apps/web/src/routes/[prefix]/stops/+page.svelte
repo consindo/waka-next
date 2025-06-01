@@ -13,7 +13,7 @@
   </form>
   <ul>
     {#each data.stops as stop (stop.stopId)}
-      <li><a href="/{stop.prefix}/stops/{stop.stopCode}">{stop.stopCode} - {stop.stopName}</a></li>
+      <li><a href="/{stop.prefix}/stops/{stop.stopId}">{stop.stopCode} - {stop.stopName}</a></li>
     {/each}
   </ul>
 </div>

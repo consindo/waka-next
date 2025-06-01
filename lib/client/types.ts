@@ -26,7 +26,7 @@ export interface BoundsResult {
   bounds: [Position, Position]
 }
 
-export interface StopResult {
+export interface StopsResult {
   prefix: Prefix
   stopId: string
   stopCode?: string
@@ -34,6 +34,19 @@ export interface StopResult {
   stopDesc?: string
   stopLat: number
   stopLon: number
+}
+
+export interface StopResult {
+  prefix: Prefix
+  parentStopId: string
+  parentStopCode?: string
+  parentStopName: string
+  stopLat: number
+  stopLon: number
+  parentStation?: string
+  stopId?: string
+  stopName?: string
+  platformCode?: string
 }
 
 export interface RouteResult {
