@@ -69,5 +69,11 @@ export class DBImport {
       this.db.run(`BEGIN;${batch}COMMIT;`) // dramatically increases the speed of sqlite
       logger.info(`(${schema.table}) committed batch ${index + 1}/${result.length}`)
     })
+
+    // run post import script
+    if (schema.postImport) {
+      this.db.run(schema.postImport)
+      logger.info(`(${schema.table}) ran post import script`)
+    }
   }
 }

@@ -1,4 +1,23 @@
-SELECT *
+SELECT trips.trip_id,
+       stop_times.stop_id,
+       stop_times.arrival_time,
+       stop_times.departure_time,
+       stop_times.stop_sequence,
+       stop_times.stop_headsign,
+       trips.trip_headsign,
+       trips.trip_short_name,
+       trips.wheelchair_accessible,
+       trips.bikes_allowed,
+       routes.route_id,
+       routes.route_type,
+       routes.route_short_name,
+       routes.route_long_name,
+       routes.route_color,
+       routes.route_text_color,
+       agency.agency_name,
+       agency.agency_url,
+       agency.agency_fare_url,
+       agency.agency_phone
 FROM stop_times
 INNER JOIN trips ON stop_times.trip_id = trips.trip_id
 INNER JOIN routes ON trips.route_id = routes.route_id
@@ -14,3 +33,4 @@ WHERE stop_id = (?)
         AND exception_type IS NULL)
        OR exception_type = 1)
 ORDER BY departure_time ASC;
+

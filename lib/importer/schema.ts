@@ -11,6 +11,7 @@ export interface Schema {
   filename: string
   table: string
   primaryKey: string[]
+  postImport?: string
   tableSchema: Record<string, SqliteStorageClasses>
 }
 
@@ -93,6 +94,7 @@ export const schema: Schema[] = [
     filename: 'stop_times.txt',
     table: 'stop_times',
     primaryKey: ['trip_id', 'stop_sequence'],
+    postImport: 'CREATE INDEX idx_stop_id ON stop_times (stop_id);',
     tableSchema: {
       trip_id: SqliteStorageClasses.char,
       arrival_time: SqliteStorageClasses.char,

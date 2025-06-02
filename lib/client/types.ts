@@ -99,3 +99,28 @@ export interface TimetableResult {
   parentStopCode?: string
   parentStopName?: string
 }
+
+export interface StopTimesResult {
+  prefix: Prefix
+  tripId: string
+  stopId: string
+  arrivalTime?: string
+  departureTime?: string
+  stopSequence: number
+  stopHeadsign?: string
+  routeId: string
+  tripHeadsign?: string
+  tripShortName?: string
+  wheelchairAccessible?: number
+  bikesAllowed?: number
+  routeShortName?: string
+  routeLongName?: string
+  routeColor?: string
+  routeTextColor?: string
+  routeType: number
+  agencyTimezone: string
+  agencyName: string
+  agencyUrl: string
+  agencyFareUrl?: string
+  agencyPhone?: string
+}
