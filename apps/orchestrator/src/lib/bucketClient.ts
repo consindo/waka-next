@@ -20,10 +20,13 @@ export class BucketClient {
       region,
       endpoint,
       forcePathStyle: true,
-      credentials: {
-        accessKeyId,
-        secretAccessKey,
-      },
+      credentials:
+        accessKeyId !== undefined && secretAccessKey !== undefined
+          ? {
+              accessKeyId,
+              secretAccessKey,
+            }
+          : undefined,
     })
   }
 
