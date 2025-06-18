@@ -14,7 +14,17 @@ export class BucketClient {
   constructor(bucket: string, region: string) {
     this.bucket = bucket
     const endpoint = env.AWS_S3_ENDPOINT
-    this.#s3client = new S3Client({ region, endpoint })
+    const accessKeyId = env.AWS_ACCESS_KEY_ID
+    const secretAccessKey = env.AWS_SECRET_ACCESS_KEY
+    this.#s3client = new S3Client({
+      region,
+      endpoint,
+      forcePathStyle: true,
+      credentials: {
+        accessKeyId,
+        secretAccessKey,
+      },
+    })
   }
 
   async listObjects(prefix = '') {
