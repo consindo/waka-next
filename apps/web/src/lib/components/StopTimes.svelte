@@ -37,13 +37,13 @@
       <a href="/{trip.prefix}/routes/{trip.routeId}?tripId={encodeURIComponent(trip.tripId)}">
         <div class="direction">
           <h3>{trip.routeShortName}</h3>
-          <p>{trip.tripHeadsign}</p>
+          <p>{trip.directionId === 1 ? '→' : '←'} {trip.tripHeadsign}</p>
           <p><small>{childStops.find((i) => i.stopId === trip.stopId)?.stopName}</small></p>
         </div>
         <div class="time">
-          {formatShortDate(trip.departureTime)}
+          <strong>{formatShortDate(trip.departureTime, 'short')}</strong>
           <ul>
-            {#each route.slice(1, 4) as trip, key (key)}
+            {#each route.slice(1, 3) as trip, key (key)}
               <li>
                 <small>{formatShortDate(trip.departureTime)}</small>
               </li>
@@ -64,7 +64,7 @@
   li a {
     display: grid;
     grid-template-columns: minmax(100px, 1fr) auto;
-    gap: 0.5rem;
+    gap: 1.5rem;
     text-decoration: none;
     cursor: default;
     padding: calc(var(--edge-padding) - 0.25rem) var(--edge-padding);
@@ -83,9 +83,22 @@
   }
   li p {
     margin: 0;
-    font-size: 0.85rem;
+    font-size: 13px;
   }
   .time {
     text-align: right;
+    font-size: 13px;
+  }
+  .time strong {
+    font-size: 1rem;
+  }
+  li ul:not(:empty)::before {
+    content: 'and in ';
+  }
+  li li {
+    display: inline;
+  }
+  li li:not(:last-child)::after {
+    content: ', ';
   }
 </style>

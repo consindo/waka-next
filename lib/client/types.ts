@@ -109,6 +109,7 @@ export interface StopTimesResult {
   stopSequence: number
   stopHeadsign?: string
   routeId: string
+  directionId: number
   tripHeadsign?: string
   tripShortName?: string
   wheelchairAccessible?: number

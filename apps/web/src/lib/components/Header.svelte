@@ -6,7 +6,7 @@
 
 <header>
   <div>
-    <h1>{title}</h1>
+    <h1 {title}>{title}</h1>
     {#if subtitle !== ''}<h2>{subtitle}</h2>{/if}
   </div>
   <a
@@ -36,11 +36,16 @@
     height: 48px;
   }
   header div {
+    overflow-x: hidden;
     flex: 1;
   }
   h1 {
     font-size: 1rem;
     margin: 0;
+    white-space: pre;
+    text-overflow: ellipsis;
+    width: 100%;
+    overflow-x: hidden;
   }
   h2 {
     font-size: 0.9rem;
