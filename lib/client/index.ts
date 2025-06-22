@@ -27,6 +27,7 @@ import {
   type PrefixInput,
   type RouteResult,
   type ServiceResult,
+  type StopInfoResult,
   type StopResult,
   type StopTimesResult,
   type StopsResult,
@@ -53,12 +54,12 @@ export class Client {
     return flatMap
       ? databases.flatMap(cb)
       : databases.reduce(
-          (acc, cur) => {
-            acc[cur] = cb(cur)
-            return acc
-          },
-          {} as Record<Prefix, unknown>
-        )
+        (acc, cur) => {
+          acc[cur] = cb(cur)
+          return acc
+        },
+        {} as Record<Prefix, unknown>
+      )
   }
 
   addRegion(prefix: Prefix, db: DB, shapes?: Blob | string) {
@@ -246,7 +247,8 @@ export class Client {
   getStop(prefix: PrefixInput, stopId: string) {
     const stops = this.runQuery(prefix, getStop, [stopId]) as StopResult[]
     if (stops.length === 0) throw GetError(ClientErrors.NotFound)
-    const stopInfo = {
+    const stopInfo: StopInfoResult = {
+      prefix: stops[0].prefix,
       stopId: stops[0].parentStopId,
       stopCode: stops[0].parentStopCode,
       stopName: stops[0].parentStopName,

@@ -9,10 +9,11 @@
 </script>
 
 {#if data.route}
-  <Header title={page.params.routeid} />
-  <pre>
-  {JSON.stringify(data.route, null, 2)}
-</pre>
+  <Header
+    title={data.route.routeShortName}
+    subtitle={data.route.routeLongName ||
+      (data.services || []).find((i) => i.directionId === 0)?.tripHeadsign}
+  />
   <div class="content">
     <div>
       <h2>Services</h2>

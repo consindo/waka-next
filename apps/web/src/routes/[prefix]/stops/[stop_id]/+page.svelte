@@ -4,9 +4,12 @@
 
   const { data } = $props()
 
-  const stopInfo = $derived(data.data?.stopInfo ?? null)
+  const stopInfo = $derived(data.data?.stopInfo)
 </script>
 
-<Header title={stopInfo?.stopName} subtitle={stopInfo?.stopCode} />
+<Header
+  title={stopInfo?.stopName}
+  subtitle={stopInfo?.stopCode ? `Stop ${stopInfo?.stopCode}` : undefined}
+/>
 
-<StopTimes childStops={stopInfo?.childStops || []} stopTimes={data.data?.stopTimes || []} />
+<StopTimes {stopInfo} stopTimes={data.data?.stopTimes || []} />

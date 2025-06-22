@@ -36,6 +36,21 @@ export interface StopsResult {
   stopLon: number
 }
 
+export interface StopInfoResult {
+  prefix: Prefix
+  stopId: string
+  stopCode?: string
+  stopName?: string
+  stopLat: number
+  stopLon: number
+  parentStation?: string
+  childStops: {
+    stopId: string
+    stopName?: string
+    platformCode?: string
+  }[]
+}
+
 export interface StopResult {
   prefix: Prefix
   parentStopId: string

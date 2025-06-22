@@ -48,8 +48,8 @@
     overflow-x: hidden;
   }
   h2 {
-    font-size: 0.9rem;
-    margin: 0.125rem 0 0;
+    font-size: 13px;
+    margin: 1px 0 0;
     font-weight: normal;
     color: var(--surface-text-subtle);
   }

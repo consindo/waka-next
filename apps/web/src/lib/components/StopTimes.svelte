@@ -1,17 +1,13 @@
 <script lang="ts">
-  import type { StopTimesResult } from '@lib/client'
+  import type { StopInfoResult, StopTimesResult } from '@lib/client'
 
   import { formatShortDate } from '$lib/utils/formatDate'
 
   const {
-    childStops,
+    stopInfo,
     stopTimes,
   }: {
-    childStops: {
-      stopId: string
-      stopName?: string
-      platformCode?: string
-    }[]
+    stopInfo?: StopInfoResult
     stopTimes: StopTimesResult[]
   } = $props()
 
@@ -38,7 +34,15 @@
         <div class="direction">
           <h3>{trip.routeShortName}</h3>
           <p>{trip.directionId === 1 ? '→' : '←'} {trip.tripHeadsign}</p>
-          <p><small>{childStops.find((i) => i.stopId === trip.stopId)?.stopName}</small></p>
+          {#if stopInfo}
+            <p>
+              <small
+                >{stopInfo.childStops
+                  .find((i) => i.stopId === trip.stopId)
+                  ?.stopName?.replace(stopInfo.stopName || '', '')}</small
+              >
+            </p>
+          {/if}
         </div>
         <div class="time">
           <strong>{formatShortDate(trip.departureTime, 'short')}</strong>
