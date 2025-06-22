@@ -57,6 +57,7 @@
     "@zip.js/zip.js": "^2.7.60",
     "confbox": "^0.2.2",
     "date-fns": "^4.1.0",
+    "maplibre-gl": "^5.6.0",
     "sql.js": "^1.13.0",
     "udsv": "^0.6.0"
   }

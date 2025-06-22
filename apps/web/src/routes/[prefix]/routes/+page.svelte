@@ -5,8 +5,9 @@
   let { data } = $props()
 </script>
 
+<Header title="Routes" />
+
 <div>
-  <Header title="Routes" />
   {#each data.groups as group (group.name)}
     <RouteGroup {group} />
   {/each}
@@ -14,6 +15,6 @@
 
 <style>
   div {
-    padding: 1rem;
+    padding: 0.25rem 0.75rem;
   }
 </style>

@@ -5,7 +5,7 @@
   --base-border-radius: 3px;
 
   --surface-bg: light-dark(#fff, #393939);
-  --surface-bg-hover: light-dark(rgba(55, 53, 47, 0.04), rgba(255, 255, 255, 0.15));
+  --surface-bg-hover: light-dark(rgba(55, 53, 47, 0.07), rgba(255, 255, 255, 0.15));
   --surface-bg-subtle: light-dark(#fafaf9, #242424);
   --surface-bg-subtle-hover: light-dark(rgba(55, 53, 47, 0.08), rgba(255, 255, 255, 0.075));
   --surface-bg-interactive: #0074e4;
@@ -15,10 +15,16 @@
   --surface-border: light-dark(rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0.15));
 
   --surface-text: light-dark(#09090b, #fafafa);
-  --surface-text-subtle: #3f3f46;
+  --surface-text-subtle: light-dark(#3f3f46, #eee); /* todo: get the correct color from tailwind */
   --surface-text-shadow: 0 1px 0 light-dark(#fff, #000);
 
   --surface-shadow: 0 3px 6px -1px rgba(0, 0, 0, 0.025), 0 2px 4px -2px rgba(0, 0, 0, 0.025);
+}
+
+@media (prefers-color-scheme: dark) {
+  .img-invert {
+    filter: invert(100%);
+  }
 }
 
 body,

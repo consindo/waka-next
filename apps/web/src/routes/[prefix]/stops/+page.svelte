@@ -1,12 +1,13 @@
 <script lang="ts">
   import { page } from '$app/state'
 
+  import Header from '../../../components/Header.svelte'
+
   let { data } = $props()
 </script>
 
+<Header title="Stops" subtitle={page.params.prefix} />
 <div>
-  <a href="/">home</a>
-  <h2>stops {page.params.prefix}</h2>
   <form>
     <input type="search" name="q" placeholder="Search..." />
     <input type="submit" value="Search" />
@@ -20,6 +21,6 @@
 
 <style>
   div {
-    padding: 1rem;
+    padding: 0.75rem;
   }
 </style>
