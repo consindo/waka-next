@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from '$app/state'
 
-  import Header from '../../../components/Header.svelte'
+  import Header from '$lib/components/Header.svelte'
 
   let { data } = $props()
 </script>

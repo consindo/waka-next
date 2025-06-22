@@ -134,14 +134,14 @@ export class Client {
 
     // todo: need to be able to query for a specific date
     const yesterday = new Date()
-    yesterday.setDate(yesterday.getDate() - 1)
+    yesterday.setUTCDate(yesterday.getUTCDate() - 1)
     const today = new Date()
     const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
+    tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
     const services = [yesterday, today, tomorrow].flatMap((dateObj) => {
       const dateInput = dateObj.toISOString().split('T')[0]
       const date = dateInput.split('-').join('')
-      const dayofweek = new Date(dateInput).getDay()
+      const dayofweek = new Date(dateInput).getUTCDay()
       return (
         (
           this.runQuery(prefix, getServices, [
@@ -156,7 +156,7 @@ export class Client {
             dayofweek === 4 ? '1' : '0',
             dayofweek === 5 ? '1' : '0',
             dayofweek === 6 ? '1' : '0',
-            dayofweek === 7 ? '1' : '0',
+            dayofweek === 0 ? '1' : '0',
           ]) as ServiceResult[]
         )
           // todo: map the timetable times to proper date objects
@@ -272,14 +272,14 @@ export class Client {
     }
 
     const yesterday = new Date()
-    yesterday.setDate(yesterday.getDate() - 1)
+    yesterday.setUTCDate(yesterday.getUTCDate() - 1)
     const today = new Date()
     const tomorrow = new Date()
-    tomorrow.setDate(tomorrow.getDate() + 1)
+    tomorrow.setUTCDate(tomorrow.getUTCDate() + 1)
     const stopTimes = [yesterday, today, tomorrow].flatMap((dateObj) => {
       const dateInput = dateObj.toISOString().split('T')[0]
       const date = dateInput.split('-').join('')
-      const dayofweek = new Date(dateInput).getDay()
+      const dayofweek = new Date(dateInput).getUTCDay()
       return [stopId, ...stopInfo.childStops.map((i) => i.stopId)]
         .flatMap(
           (sid) =>
@@ -294,7 +294,7 @@ export class Client {
               dayofweek === 4 ? '1' : '0',
               dayofweek === 5 ? '1' : '0',
               dayofweek === 6 ? '1' : '0',
-              dayofweek === 7 ? '1' : '0',
+              dayofweek === 0 ? '1' : '0',
             ]) as StopTimesResult[]
         )
         .map((i) => {

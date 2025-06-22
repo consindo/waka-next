@@ -1,5 +1,6 @@
 <script lang="ts">
-  import Header from '../../../components/Header.svelte'
+  import Header from '$lib/components/Header.svelte'
+
   import RouteGroup from './RouteGroup.svelte'
 
   let { data } = $props()
@@ -15,6 +16,6 @@
 
 <style>
   div {
-    padding: 0.25rem 0.75rem;
+    padding: 0.25rem var(--edge-padding);
   }
 </style>

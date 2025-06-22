@@ -1,5 +1,5 @@
 <script lang="ts">
-  import close from '../icons/close.svg'
+  import close from '../../icons/close.svg'
 
   const { title, subtitle = '' } = $props()
 </script>
@@ -10,7 +10,7 @@
     {#if subtitle !== ''}<h2>{subtitle}</h2>{/if}
   </div>
   <a
-    href="#"
+    href="/"
     onclick={(e) => {
       // todo: needs to check if the previous item in history has a different pathname
       if (window.history.length > 0) {
@@ -19,14 +19,14 @@
       }
     }}
   >
-    <img src={close} alt="close" class="img-invert" />
+    <img src={close} alt="Close" class="img-invert" />
   </a>
 </header>
 
 <style>
   header {
     display: flex;
-    padding: 0 0.5rem 0 1rem;
+    padding: 0 calc(var(--edge-padding) - 0.25rem) 0 var(--edge-padding);
     border-bottom: 1px solid var(--surface-border);
     background: var(--surface-bg);
     align-items: center;
@@ -40,11 +40,11 @@
   }
   h1 {
     font-size: 1rem;
-    margin: 0 0 0.125rem;
+    margin: 0;
   }
   h2 {
     font-size: 0.9rem;
-    margin: 0;
+    margin: 0.125rem 0 0;
     font-weight: normal;
     color: var(--surface-text-subtle);
   }
