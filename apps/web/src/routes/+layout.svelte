@@ -27,12 +27,17 @@
   }
   .content {
     width: 360px;
-    border-right: 1px solid var(--surface-border);
-    box-shadow: var(--surface-shadow);
     overflow-y: scroll;
     height: 100%;
   }
   .map {
     flex: 1;
+    border: 0.5px solid var(--surface-border);
+    margin: 0.5rem;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow:
+      lch(0 0 0 / 0.022) 0px 3px 6px -2px,
+      lch(0 0 0 / 0.044) 0px 1px 1px;
   }
 </style>

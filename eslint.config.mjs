@@ -13,7 +13,7 @@ export default [
     ignores: ['**/.svelte-kit/*', '**/build/*', '**/*.netlify/*'],
   },
   {
-    files: ['**/*.svelte', '*.svelte'],
+    files: ['**/*.svelte', '*.svelte', '**/*.svelte.ts', '*.svelte.ts'],
     languageOptions: {
       globals: {
         ...globals.browser,
@@ -23,7 +23,7 @@ export default [
         parser: {
           ts: '@typescript-eslint/parser',
         },
-        extraFileExtensions: ['.svelte'],
+        extraFileExtensions: ['.svelte', '.svelte.ts'],
       },
     },
   },
