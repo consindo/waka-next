@@ -8,8 +8,10 @@
   let { data }: Props = $props()
 </script>
 
+<header>
+  <h1>Waka</h1>
+</header>
 <div>
-  <h1>waka:next</h1>
   <p>this will eventually be the new waka. however it's long way from being done.</p>
   <ul>
     <li><a href="/dev/orchestrator">developer console</a></li>
@@ -32,7 +34,17 @@
 </div>
 
 <style>
+  header {
+    padding: 0.5rem 1rem;
+    display: flex;
+    height: 36px;
+    align-items: center;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 0.9375rem;
+  }
   div {
-    padding: 1rem;
+    padding: 0 1rem;
   }
 </style>
