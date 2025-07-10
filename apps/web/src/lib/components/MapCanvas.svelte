@@ -1,10 +1,17 @@
 <script lang="ts">
+  import { goto } from '$app/navigation'
+  import { page } from '$app/state'
   import maplibregl, { type GeoJSONSource } from 'maplibre-gl'
   import 'maplibre-gl/dist/maplibre-gl.css'
-  import { onDestroy, onMount } from 'svelte'
+  import { onMount } from 'svelte'
+
+  import type { Prefix } from '@lib/client'
+
+  import { resolveData } from '$lib/dataResolver'
 
   import { mapState } from '../../routes/mapstate.svelte'
 
+  const ALL_STOPS_LAYER = 'all-stops'
   const CURRENT_STOP_LAYER = 'current-stop'
 
   let map: maplibregl.Map
@@ -30,6 +37,13 @@
           features: [],
         },
       })
+      map.addSource(ALL_STOPS_LAYER, {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: [],
+        },
+      })
       map.addLayer({
         id: CURRENT_STOP_LAYER,
         source: CURRENT_STOP_LAYER,
@@ -42,7 +56,56 @@
           'circle-stroke-color': '#0000ff',
         },
       })
+      map.addLayer({
+        id: ALL_STOPS_LAYER,
+        source: ALL_STOPS_LAYER,
+        type: 'circle',
+        layout: {},
+        paint: {
+          'circle-color': '#ffffff',
+          'circle-radius': 8,
+          'circle-stroke-width': 4,
+          'circle-stroke-color': '#ff00ff',
+        },
+      })
+      map.on('click', ALL_STOPS_LAYER, (e) => {
+        const { prefix, stopId } = (e.features || [])[0].properties
+        goto(`/${prefix}/stops/${stopId}`)
+      })
       mounted = true
+    })
+
+    map.on('moveend', async (e) => {
+      const bounds = e.target.getBounds()
+      const prefix = page.params.prefix as Prefix
+
+      // todo: needs to be bounds
+      const query = 'britomart'
+      console.log(bounds.getNorthEast(), bounds.getSouthWest())
+
+      const stops = await resolveData(
+        prefix,
+        `/stops?q=${encodeURIComponent(query)}`,
+        (client) => client.getStops(prefix, query),
+        fetch
+      )
+      const source = map.getSource(ALL_STOPS_LAYER) as GeoJSONSource
+      if (source) {
+        source.setData({
+          type: 'FeatureCollection',
+          features: (stops.data || []).map((i) => ({
+            type: 'Feature',
+            properties: {
+              prefix: i.prefix,
+              stopId: i.stopId,
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [i.stopLon, i.stopLat],
+            },
+          })),
+        })
+      }
     })
   })
 
