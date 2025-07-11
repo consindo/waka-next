@@ -79,14 +79,18 @@
       const bounds = e.target.getBounds()
       const prefix = page.params.prefix as Prefix
 
-      // todo: needs to be bounds
-      const query = 'britomart'
-      console.log(bounds.getNorthEast(), bounds.getSouthWest())
+      // we pad a little bit
+      const sw = bounds.getSouthWest()
+      const minLat = sw.lat - 0.01
+      const minLon = sw.lng - 0.01
+      const ne = bounds.getNorthEast()
+      const maxLat = ne.lat + 0.01
+      const maxLon = ne.lng + 0.01
 
       const stops = await resolveData(
         prefix,
-        `/stops?q=${encodeURIComponent(query)}`,
-        (client) => client.getStops(prefix, query),
+        `/stops?bounds=${encodeURIComponent([minLat, maxLat, minLon, maxLon].join(','))}`,
+        (client) => client.getStopsByLocation(prefix, minLat, maxLat, minLon, maxLon),
         fetch
       )
       const source = map.getSource(ALL_STOPS_LAYER) as GeoJSONSource

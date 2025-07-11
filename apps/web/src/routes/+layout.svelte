@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { page } from '$app/state'
+
   import MapCanvas from '$lib/components/MapCanvas.svelte'
 
   import '../css/app.css'
@@ -11,7 +13,7 @@
   let { children }: Props = $props()
 </script>
 
-<main>
+<main class:single={page.url.pathname.startsWith('/dev')}>
   <section class="content">
     {@render children?.()}
   </section>
@@ -21,11 +23,14 @@
 </main>
 
 <style>
-  main {
+  main:not(.single) {
     display: flex;
     height: 100vh;
   }
-  .content {
+  .single .map {
+    display: none;
+  }
+  main:not(.single) .content {
     width: 360px;
     overflow-y: scroll;
     height: 100%;

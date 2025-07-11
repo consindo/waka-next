@@ -17,6 +17,7 @@ import getShape from './sql/getShape.sql?raw'
 import getStop from './sql/getStop.sql?raw'
 import getStopTimes from './sql/getStopTimes.sql?raw'
 import getStops from './sql/getStops.sql?raw'
+import getStopsByLocation from './sql/getStopsByLocation.sql?raw'
 import getTable from './sql/getTable.sql?raw'
 import getTimetable from './sql/getTimetable.sql?raw'
 import {
@@ -121,6 +122,21 @@ export class Client {
 
   getStops(prefix: PrefixInput, searchTerm: string): StopsResult[] {
     return this.runQuery(prefix, getStops, [`%${searchTerm}%`, `%${searchTerm}%`]) as StopsResult[]
+  }
+
+  getStopsByLocation(
+    prefix: PrefixInput,
+    minLat: number,
+    maxLat: number,
+    minLon: number,
+    maxLon: number
+  ): StopsResult[] {
+    return this.runQuery(prefix, getStopsByLocation, [
+      minLat.toString(),
+      maxLat.toString(),
+      minLon.toString(),
+      maxLon.toString(),
+    ]) as StopsResult[]
   }
 
   /*
