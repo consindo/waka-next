@@ -35,6 +35,7 @@ export const schema: Schema[] = [
     filename: 'stops.txt',
     table: 'stops',
     primaryKey: ['stop_id'],
+    postImport: 'CREATE INDEX idx_stop_lat_lon ON stops (stop_lat, stop_lon);',
     tableSchema: {
       stop_id: SqliteStorageClasses.char,
       stop_code: SqliteStorageClasses.char,

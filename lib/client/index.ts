@@ -131,12 +131,39 @@ export class Client {
     minLon: number,
     maxLon: number
   ): StopsResult[] {
-    return this.runQuery(prefix, getStopsByLocation, [
+    const results = this.runQuery(prefix, getStopsByLocation, [
       minLat.toString(),
       maxLat.toString(),
       minLon.toString(),
       maxLon.toString(),
-    ]) as StopsResult[]
+    ]) as (StopsResult & {
+      parentStopId?: string
+      parentStopCode?: string
+      parentStopName?: string
+      routeType: number
+      routeShortName: string
+    })[]
+    const groups = Object.groupBy(results, (i) => i.parentStopId || i.stopId)
+    const groupedResults = Object.values(groups).flatMap((i) => {
+      if (i === undefined) return []
+      const stop = i[0]
+      return [
+        {
+          prefix: stop.prefix,
+          stopId: stop.parentStopId || stop.stopId,
+          stopCode: stop.parentStopCode || stop.stopCode,
+          stopName: stop.parentStopName || stop.stopName,
+          stopDesc: stop.stopDesc,
+          stopLat: stop.stopLat,
+          stopLon: stop.stopLon,
+          routes: i.map((j) => ({
+            routeType: j.routeType,
+            routeShortName: j.routeShortName,
+          })),
+        },
+      ]
+    })
+    return groupedResults
   }
 
   /*
