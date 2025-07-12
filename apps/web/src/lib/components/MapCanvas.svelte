@@ -70,7 +70,7 @@
       })
       map.on('click', ALL_STOPS_LAYER, (e) => {
         const { prefix, stopId } = (e.features || [])[0].properties
-        goto(`/${prefix}/stops/${stopId}`)
+        goto(`/${prefix}/stops/${stopId}`, { replaceState: page.url.pathname.includes('/stops/') })
       })
       mounted = true
     })

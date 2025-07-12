@@ -140,6 +140,9 @@ export class Client {
       parentStopId?: string
       parentStopCode?: string
       parentStopName?: string
+      parentStopDesc?: string
+      parentStopLat?: string
+      parentStopLon?: string
       routeType: number
       routeShortName: string
     })[]
@@ -153,9 +156,9 @@ export class Client {
           stopId: stop.parentStopId || stop.stopId,
           stopCode: stop.parentStopCode || stop.stopCode,
           stopName: stop.parentStopName || stop.stopName,
-          stopDesc: stop.stopDesc,
-          stopLat: stop.stopLat,
-          stopLon: stop.stopLon,
+          stopDesc: stop.parentStopDesc || stop.stopDesc,
+          stopLat: stop.parentStopLat || stop.stopLat,
+          stopLon: stop.parentStopLon || stop.stopLon,
           routes: i.map((j) => ({
             routeType: j.routeType,
             routeShortName: j.routeShortName,
