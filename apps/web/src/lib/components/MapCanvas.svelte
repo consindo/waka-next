@@ -65,7 +65,19 @@
           'circle-color': '#ffffff',
           'circle-radius': 8,
           'circle-stroke-width': 4,
-          'circle-stroke-color': '#ff00ff',
+          'circle-stroke-color': [
+            'match',
+            ['get', 'routeType'],
+            '1',
+            '#fbb03b',
+            '2',
+            '#223b53',
+            '3',
+            '#e55e5e',
+            '4',
+            '#3bb2d0',
+            /* other */ '#ccc',
+          ],
         },
       })
       map.on('click', ALL_STOPS_LAYER, (e) => {
@@ -102,6 +114,7 @@
             properties: {
               prefix: i.prefix,
               stopId: i.stopId,
+              routeType: (i.routes[0]?.routeType || 3).toString(),
             },
             geometry: {
               type: 'Point',

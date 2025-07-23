@@ -34,6 +34,10 @@ export interface StopsResult {
   stopDesc?: string
   stopLat: number
   stopLon: number
+  routes: {
+    routeType: number
+    routeShortName: string
+  }[]
 }
 
 export interface StopInfoResult {

@@ -22,6 +22,7 @@
           {#each data.services as service, i (i)}
             <li>
               <a
+                data-sveltekit-replacestate
                 class:selected={service.tripId === searchParams.get('tripId')}
                 href="{page.url.pathname}?tripId={service.tripId}"
               >
