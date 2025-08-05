@@ -15,7 +15,9 @@
 
 <main class:single={page.url.pathname.startsWith('/dev')}>
   <section class="content">
-    {@render children?.()}
+    <div class="content-inner">
+      {@render children?.()}
+    </div>
   </section>
   <section class="map">
     <MapCanvas />
@@ -26,6 +28,9 @@
   main:not(.single) {
     display: flex;
     height: 100vh;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    box-sizing: border-box;
   }
   .single .map {
     display: none;
@@ -35,11 +40,18 @@
     overflow-y: scroll;
     height: 100%;
   }
+  .content-inner {
+    border: 0.5px solid var(--surface-border);
+    border-radius: calc(var(--base-border-radius) + 1px);
+    overflow: hidden;
+    box-shadow:
+      lch(0 0 0 / 0.022) 0px 3px 6px -2px,
+      lch(0 0 0 / 0.044) 0px 1px 1px;
+  }
   .map {
     flex: 1;
     border: 0.5px solid var(--surface-border);
-    margin: 0.5rem;
-    border-radius: 4px;
+    border-radius: calc(var(--base-border-radius) + 1px);
     overflow: hidden;
     box-shadow:
       lch(0 0 0 / 0.022) 0px 3px 6px -2px,

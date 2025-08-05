@@ -29,11 +29,12 @@
     padding: 0 calc(var(--edge-padding) - 0.25rem) 0 var(--edge-padding);
     border-bottom: 1px solid var(--surface-border);
     background: var(--surface-bg);
+    border-radius: calc(var(--base-border-radius) + 1px) calc(var(--base-border-radius) + 1px) 0 0;
     align-items: center;
     position: sticky;
     top: 0;
     z-index: 5;
-    height: 48px;
+    height: 54px;
   }
   header div {
     overflow-x: hidden;
@@ -60,7 +61,7 @@
     align-items: center;
     cursor: default;
     padding: 0.25rem;
-    border-radius: 50%;
+    border-radius: 0.5rem;
   }
   a:hover {
     background: var(--surface-bg-hover);

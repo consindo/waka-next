@@ -35,24 +35,33 @@
           <h3>{trip.routeShortName}</h3>
           <p>{trip.directionId === 1 ? '→' : '←'} {trip.tripHeadsign}</p>
           {#if stopInfo}
-            <p>
-              <small
-                >{stopInfo.childStops
-                  .find((i) => i.stopId === trip.stopId)
-                  ?.stopName?.replace(stopInfo.stopName || '', '')}</small
-              >
+            {@const substop = stopInfo.childStops
+              .find((i) => i.stopId === trip.stopId)
+              ?.stopName?.replace(stopInfo.stopName || '', '')
+              .trim()}
+            <p class="substop">
+              {#if new Number(substop).toString() === substop}Platform&nbsp;{/if}{substop}
             </p>
           {/if}
         </div>
         <div class="time">
-          <strong>{formatShortDate(trip.departureTime, 'short')}</strong>
-          <ul>
-            {#each route.slice(1, 3) as trip, key (key)}
-              <li>
-                <small>{formatShortDate(trip.departureTime)}</small>
-              </li>
-            {/each}
-          </ul>
+          <h4>{formatShortDate(trip.departureTime, 'short')}</h4>
+          {#if route[1] && route[2]}
+            {@const secondTime = formatShortDate(route[1].departureTime, 'long')}
+            {@const thirdTime = formatShortDate(route[2].departureTime, 'long')}
+            <p>
+              also {#if secondTime.includes('min')}in{:else}at{/if}
+              <strong>{secondTime}</strong
+              >{#if thirdTime.includes('min')},&nbsp;{:else}&nbsp;&amp;&nbsp;{/if}<strong
+                >{thirdTime}</strong
+              >
+            </p>
+          {:else if route[1]}
+            {@const secondTime = formatShortDate(route[1].departureTime, 'long')}
+            <p>
+              also {#if secondTime.includes('min')}in{:else}at{/if} <strong>{secondTime}</strong>
+            </p>
+          {/if}
         </div>
       </a>
     </li>
@@ -87,22 +96,26 @@
   }
   li p {
     margin: 0;
-    font-size: 13px;
+    font-size: 12px;
+  }
+  .substop {
+    margin-top: 0.25rem;
+    display: inline-block;
+    padding: 2px 4px;
+    border: 1px solid #ffffff33;
+    border-radius: var(--base-border-radius);
   }
   .time {
     text-align: right;
-    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
   }
-  .time strong {
+  .time h4 {
     font-size: 1rem;
+    margin: 0;
   }
-  li ul:not(:empty)::before {
-    content: 'and in ';
-  }
-  li li {
-    display: inline;
-  }
-  li li:not(:last-child)::after {
-    content: ', ';
+  .time p {
+    font-size: 13px;
   }
 </style>
