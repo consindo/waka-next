@@ -350,7 +350,10 @@ export class Client {
         .map((i) => {
           let arrivalTimeString = i.arrivalTime
           if (arrivalTimeString) {
-            let arrivalTime = new TZDate(dateInput + ' 00:00:00', i.agencyTimezone)
+            // eslint-disable-next-line prefer-const
+            let [year, month, day] = dateInput.split('-').map((i) => parseInt(i))
+            month = month - 1
+            let arrivalTime = new TZDate(year, month, day, i.agencyTimezone)
             const [arrivalHours, arrivalMinutes, arrivalSeconds] = arrivalTimeString
               .split(':')
               .map((i) => parseInt(i))
@@ -362,7 +365,10 @@ export class Client {
 
           let departureTimeString = i.departureTime
           if (departureTimeString) {
-            let departureTime = new TZDate(dateInput + ' 00:00:00', i.agencyTimezone)
+            // eslint-disable-next-line prefer-const
+            let [year, month, day] = dateInput.split('-').map((i) => parseInt(i))
+            month = month - 1
+            let departureTime = new TZDate(year, month, day, i.agencyTimezone)
             const [departureHours, departureMinutes, departureSeconds] = departureTimeString
               .split(':')
               .map((i) => parseInt(i))
@@ -371,7 +377,12 @@ export class Client {
             departureTime = addSeconds(departureTime, departureSeconds)
             departureTimeString = departureTime.toISOString()
           }
-          return { ...i, arrivalTime: arrivalTimeString, departureTime: departureTimeString }
+          return {
+            ...i,
+            arrivalTime: arrivalTimeString,
+            departureTime: departureTimeString,
+            ogTime: i.departureTime,
+          }
         })
         .sort(
           (a, b) =>

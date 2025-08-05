@@ -35,26 +35,33 @@
           <h3>{trip.routeShortName}</h3>
           <p>{trip.directionId === 1 ? '→' : '←'} {trip.tripHeadsign}</p>
           {#if stopInfo}
-            {@const substop = stopInfo.childStops
-              .find((i) => i.stopId === trip.stopId)
-              ?.stopName?.replace(stopInfo.stopName || '', '')
-              .trim()}
-            <p class="substop">
-              {#if new Number(substop).toString() === substop}Platform&nbsp;{/if}{substop}
-            </p>
+            {@const substop =
+              stopInfo.childStops
+                .find((i) => i.stopId === trip.stopId)
+                ?.stopName?.replace(stopInfo.stopName || '', '')
+                .trim() || ''}
+            {#if substop !== ''}
+              <p class="substop">
+                {#if new Number(substop).toString() === substop}Platform&nbsp;{/if}{substop}
+              </p>
+            {/if}
           {/if}
         </div>
         <div class="time">
           <h4>{formatShortDate(trip.departureTime, 'short')}</h4>
           {#if route[1] && route[2]}
             {@const secondTime = formatShortDate(route[1].departureTime, 'long')}
+            {@const secondTimeShort = formatShortDate(route[1].departureTime)}
             {@const thirdTime = formatShortDate(route[2].departureTime, 'long')}
+            {@const thirdTimeShort = formatShortDate(route[2].departureTime)}
+            <!-- todo: this is very messy -->
             <p>
               also {#if secondTime.includes('min')}in{:else}at{/if}
-              <strong>{secondTime}</strong
-              >{#if thirdTime.includes('min')},&nbsp;{:else}&nbsp;&amp;&nbsp;{/if}<strong
-                >{thirdTime}</strong
-              >
+              {#if thirdTime.includes('min')}<strong>{secondTimeShort}</strong>,&nbsp;{:else}<strong
+                  >{secondTimeShort}</strong
+                >{#if secondTime.includes('min')}&nbsp;mins{/if}&nbsp;&amp;&nbsp;{/if}<strong
+                >{thirdTimeShort}</strong
+              >{#if thirdTime.includes('min')}&nbsp;mins{/if}
             </p>
           {:else if route[1]}
             {@const secondTime = formatShortDate(route[1].departureTime, 'long')}

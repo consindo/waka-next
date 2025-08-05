@@ -18,7 +18,8 @@ SELECT trips.trip_id,
        agency.agency_name,
        agency.agency_url,
        agency.agency_fare_url,
-       agency.agency_phone
+       agency.agency_phone,
+       agency.agency_timezone
 FROM stop_times
 INNER JOIN trips ON stop_times.trip_id = trips.trip_id
 INNER JOIN routes ON trips.route_id = routes.route_id
