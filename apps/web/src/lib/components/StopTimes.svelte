@@ -11,10 +11,10 @@
     stopTimes: StopTimesResult[]
   } = $props()
 
-  const now = $derived(new Date())
   const filteredTimes = $derived(
     stopTimes.flatMap((i) => {
       if (!i.departureTime) return []
+      const now = new Date()
       const departureTime = new Date(i.departureTime)
       // don't show if it was supposed to show up 3 minutes ago
       if (departureTime.getTime() < now.getTime() - 3 * 60 * 1000) return []
@@ -22,13 +22,17 @@
       return [{ ...i, departureTime }]
     })
   )
-  const groupedTimes = $derived(Object.groupBy(filteredTimes, (i) => i.routeId))
+  const groupedTimes = $derived(Object.groupBy(filteredTimes, (i) => i.routeId + i.directionId))
 </script>
 
 <ul>
+  {#if Object.keys(groupedTimes).length === 0}
+    <li class="empty">No services found at this station today.</li>
+  {/if}
   {#each Object.keys(groupedTimes) as routeId (routeId)}
     {@const route = groupedTimes[routeId] || []}
     {@const trip = route[0]}
+    {@const departureTime = formatShortDate(trip.departureTime, trip.agencyTimezone, 'short')}
     <li>
       <a href="/{trip.prefix}/routes/{trip.routeId}?tripId={encodeURIComponent(trip.tripId)}">
         <div class="direction">
@@ -48,12 +52,20 @@
           {/if}
         </div>
         <div class="time">
-          <h4>{formatShortDate(trip.departureTime, 'short')}</h4>
+          <h4 class:mins={departureTime.includes('m')}>{departureTime}</h4>
           {#if route[1] && route[2]}
-            {@const secondTime = formatShortDate(route[1].departureTime, 'long')}
-            {@const secondTimeShort = formatShortDate(route[1].departureTime)}
-            {@const thirdTime = formatShortDate(route[2].departureTime, 'long')}
-            {@const thirdTimeShort = formatShortDate(route[2].departureTime)}
+            {@const secondTime = formatShortDate(
+              route[1].departureTime,
+              trip.agencyTimezone,
+              'long'
+            )}
+            {@const secondTimeShort = formatShortDate(route[1].departureTime, trip.agencyTimezone)}
+            {@const thirdTime = formatShortDate(
+              route[2].departureTime,
+              trip.agencyTimezone,
+              'long'
+            )}
+            {@const thirdTimeShort = formatShortDate(route[2].departureTime, trip.agencyTimezone)}
             <!-- todo: this is very messy -->
             <p>
               also {#if secondTime.includes('min')}in{:else}at{/if}
@@ -64,7 +76,11 @@
               >{#if thirdTime.includes('min')}&nbsp;mins{/if}
             </p>
           {:else if route[1]}
-            {@const secondTime = formatShortDate(route[1].departureTime, 'long')}
+            {@const secondTime = formatShortDate(
+              route[1].departureTime,
+              trip.agencyTimezone,
+              'long'
+            )}
             <p>
               also {#if secondTime.includes('min')}in{:else}at{/if} <strong>{secondTime}</strong>
             </p>
@@ -104,13 +120,23 @@
   li p {
     margin: 0;
     font-size: 12px;
+    text-wrap: pretty;
+  }
+  li.empty {
+    text-align: center;
+    background: var(--surface-bg-subtle);
+    padding: 1.5rem 1rem;
+    color: var(--surface-text-subtle);
+    font-size: 14px;
   }
   .substop {
-    margin-top: 0.25rem;
+    margin-top: 0.375rem;
     display: inline-block;
     padding: 2px 4px;
-    border: 1px solid #ffffff33;
+    border: 0.5px solid #ffffff44;
+    background: #ffffff18;
     border-radius: var(--base-border-radius);
+    font-size: 11px;
   }
   .time {
     text-align: right;
@@ -121,6 +147,9 @@
   .time h4 {
     font-size: 1rem;
     margin: 0;
+  }
+  .time h4.mins {
+    font-size: 1.125rem;
   }
   .time p {
     font-size: 13px;

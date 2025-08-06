@@ -1,4 +1,4 @@
-export const formatShortDate = (date: Date, suffix?: 'long' | 'short') => {
+export const formatShortDate = (date: Date, timeZone: string, suffix?: 'long' | 'short') => {
   const now = new Date()
   if (suffix === 'short' && date.getTime() < now.getTime() + 60 * 1000) {
     return 'Due'
@@ -6,5 +6,10 @@ export const formatShortDate = (date: Date, suffix?: 'long' | 'short') => {
     const mins = Math.floor((date.getTime() - now.getTime()) / 1000 / 60)
     return `${mins}${suffix ? (suffix === 'short' ? 'm' : mins === 1 ? ' min' : ' mins') : ''}`
   }
-  return date.toLocaleString('en-NZ', { hour12: false, hour: 'numeric', minute: 'numeric' })
+  return date.toLocaleString('en-NZ', {
+    hour12: false,
+    hour: 'numeric',
+    minute: 'numeric',
+    timeZone,
+  })
 }

@@ -7,7 +7,7 @@
 <header>
   <div>
     <h1 {title}>{title}</h1>
-    {#if subtitle !== ''}<h2>{subtitle}</h2>{/if}
+    {#if subtitle !== ''}<h2 title={subtitle}>{subtitle}</h2>{/if}
   </div>
   <a
     href="/"
@@ -27,7 +27,7 @@
   header {
     display: flex;
     padding: 0 calc(var(--edge-padding) - 0.25rem) 0 var(--edge-padding);
-    border-bottom: 1px solid var(--surface-border);
+    border-bottom: 0.5px solid var(--surface-border);
     background: var(--surface-bg);
     border-radius: calc(var(--base-border-radius) + 1px) calc(var(--base-border-radius) + 1px) 0 0;
     align-items: center;
@@ -53,6 +53,9 @@
     margin: 1px 0 0;
     font-weight: normal;
     color: var(--surface-text-subtle);
+    white-space: pre;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   a {
     background: transparent;

@@ -37,13 +37,13 @@
   }
   main:not(.single) .content {
     width: 360px;
-    overflow-y: scroll;
     height: 100%;
   }
   .content-inner {
     border: 0.5px solid var(--surface-border);
     border-radius: calc(var(--base-border-radius) + 1px);
-    overflow: hidden;
+    overflow-y: auto;
+    max-height: 100%;
     box-shadow:
       lch(0 0 0 / 0.022) 0px 3px 6px -2px,
       lch(0 0 0 / 0.044) 0px 1px 1px;
