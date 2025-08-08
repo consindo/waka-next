@@ -16,34 +16,39 @@
   />
   <div class="content">
     <div>
-      <h2>Services</h2>
-      <ul>
-        {#if data.services && data.services.length > 0}
-          {#each data.services as service, i (i)}
-            <li>
-              <a
-                data-sveltekit-replacestate
-                class:selected={service.tripId === searchParams.get('tripId')}
-                href="{page.url.pathname}?tripId={service.tripId}"
-              >
-                <code>{service.date}</code>
-                <strong>{service.departureTime}</strong>
-                {service.directionId === 1 ? '→' : '←'}
-                {service.tripHeadsign}
-              </a>
-            </li>
-          {/each}
-        {/if}
-      </ul>
+      <details>
+        <summary>
+          <h2>Services</h2>
+        </summary>
+        <ul>
+          {#if data.services && data.services.length > 0}
+            {#each data.services as service, i (i)}
+              <li>
+                <a
+                  data-sveltekit-replacestate
+                  class:selected={service.tripId === searchParams.get('tripId')}
+                  href="{page.url.pathname}?tripId={service.tripId}"
+                >
+                  <code>{service.date}</code>
+                  <strong>{service.departureTime}</strong>
+                  {service.directionId === 1 ? '→' : '←'}
+                  {service.tripHeadsign}
+                </a>
+              </li>
+            {/each}
+          {/if}
+        </ul>
+      </details>
     </div>
     <div>
-      <h2>Stop Times</h2>
-      <ul>
+      <ul class="stop-times-wrapper">
         {#each data.timetable as time, i (i)}
-          <li>
+          <li class="stop-time">
             <a href="/{time.prefix}/stops/{time.parentStopId || time.stopId}">
-              {time.departureTime}
-              {time.parentStopName || time.stopName}
+              <div>
+                {time.parentStopName || time.stopName}
+              </div>
+              <time>{time.departureTime}</time>
             </a>
           </li>
         {/each}
@@ -65,7 +70,61 @@
     color: #0f0;
     font-weight: bold;
   }
-  .content {
+  .stop-times-wrapper {
+    padding: 0;
+    margin: 0;
+  }
+  .stop-time {
+    display: block;
+    border-left: 4px solid #444;
+    padding-left: 0.5rem;
+    margin-left: 0.5rem;
+    position: relative;
+  }
+  .stop-time:first-child::after,
+  .stop-time:last-child::after {
+    content: '';
+    position: absolute;
+    height: 1rem;
+    width: 4px;
+    background: var(--surface-bg-subtle);
+    left: -4px;
+    top: 0;
+  }
+  .stop-time:last-child::after {
+    top: calc(100% - 1rem);
+  }
+  .stop-time::before {
+    --circle-size: 14px;
+    z-index: 1;
+    content: '';
+    display: block;
+    width: var(--circle-size);
+    height: var(--circle-size);
+    border: 2px solid #444;
+    box-sizing: border-box;
+    border-radius: var(--circle-size);
+    position: absolute;
+    left: calc(var(--circle-size) / -2 - 2px);
+    top: calc(0.5rem + 2px);
+    background: #fff;
+  }
+  .stop-time a {
     display: flex;
+    gap: 1rem;
+    padding: 0.5rem;
+    border-bottom: 0.5px solid var(--surface-border);
+    font-size: 14px;
+  }
+  .stop-time:last-child a {
+    border-bottom: 0;
+  }
+  .stop-time div {
+    flex: 1;
+    color: var(--surface-text);
+    font-weight: 600;
+  }
+  .stop-time time {
+    color: var(--surface-text-subtle);
   }
 </style>
