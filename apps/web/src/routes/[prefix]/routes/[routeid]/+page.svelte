@@ -6,6 +6,24 @@
   let { data } = $props()
 
   const searchParams = $derived(new URLSearchParams(page.url.search))
+  const tripId = $derived(searchParams.get('tripId'))
+
+  const currentService = $derived((data.services || []).find((i) => i.tripId === tripId))
+  const initialStopIndex = 0
+  const initialTime = $derived(
+    new Date(`${currentService?.date} ${data.timetable[initialStopIndex].departureTime}`)
+  )
+
+  const getMinuteDifference = (initialTime: Date, departureTime: Date) => {
+    const mins = Math.floor((departureTime.getTime() - initialTime.getTime()) / 1000 / 60)
+    if (mins === 1) {
+      return '+1 min'
+    } else if (mins >= 0) {
+      return `+${mins} mins`
+    } else {
+      return `-${mins} mins`
+    }
+  }
 </script>
 
 {#if data.route}
@@ -43,12 +61,20 @@
     <div>
       <ul class="stop-times-wrapper">
         {#each data.timetable as time, i (i)}
+          {@const departureTime = new Date(`${currentService?.date || ''} ${time.departureTime}`)}
           <li class="stop-time">
             <a href="/{time.prefix}/stops/{time.parentStopId || time.stopId}">
               <div>
                 {time.parentStopName || time.stopName}
               </div>
-              <time>{time.departureTime}</time>
+              <time
+                ><strong>{getMinuteDifference(initialTime, departureTime)}</strong>
+                {departureTime.toLocaleString(undefined, {
+                  hour12: false,
+                  hour: 'numeric',
+                  minute: 'numeric',
+                })}</time
+              >
             </a>
           </li>
         {/each}
@@ -106,13 +132,13 @@
     border-radius: var(--circle-size);
     position: absolute;
     left: calc(var(--circle-size) / -2 - 2px);
-    top: calc(0.5rem + 2px);
+    top: calc(50% - var(--circle-size) / 2);
     background: #fff;
   }
   .stop-time a {
     display: flex;
     gap: 1rem;
-    padding: 0.5rem;
+    padding: 0.375rem;
     border-bottom: 0.5px solid var(--surface-border);
     font-size: 14px;
   }
@@ -123,8 +149,14 @@
     flex: 1;
     color: var(--surface-text);
     font-weight: 600;
+    align-content: center;
   }
   .stop-time time {
     color: var(--surface-text-subtle);
+    text-align: right;
+    font-size: 13px;
+  }
+  .stop-time time strong {
+    display: block;
   }
 </style>

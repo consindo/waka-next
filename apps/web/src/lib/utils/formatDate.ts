@@ -6,7 +6,7 @@ export const formatShortDate = (date: Date, timeZone: string, suffix?: 'long' | 
     const mins = Math.floor((date.getTime() - now.getTime()) / 1000 / 60)
     return `${mins}${suffix ? (suffix === 'short' ? 'm' : mins === 1 ? ' min' : ' mins') : ''}`
   }
-  return date.toLocaleString('en-NZ', {
+  return date.toLocaleString(undefined, {
     hour12: false,
     hour: 'numeric',
     minute: 'numeric',
