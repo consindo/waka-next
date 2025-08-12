@@ -12,6 +12,7 @@ import getInfoFromCalendar from './sql/getInfoFromCalendar.sql?raw'
 import getInfoFromFeedInfo from './sql/getInfoFromFeedInfo.sql?raw'
 import getRoute from './sql/getRoute.sql?raw'
 import getRoutes from './sql/getRoutes.sql?raw'
+import getRoutesByStops from './sql/getRoutesByStops.sql?raw'
 import getServices from './sql/getServices.sql?raw'
 import getShape from './sql/getShape.sql?raw'
 import getStop from './sql/getStop.sql?raw'
@@ -27,6 +28,7 @@ import {
   type Prefix,
   type PrefixInput,
   type RouteResult,
+  RoutesByStopsResult,
   type ServiceResult,
   type StopInfoResult,
   type StopResult,
@@ -145,6 +147,8 @@ export class Client {
       parentStopLon?: number
       routeType: number
       routeShortName: string
+      routeColor?: string
+      routeTextColor?: string
     })[]
     const groups = Object.groupBy(results, (i) => i.parentStopId || i.stopId)
     const groupedResults = Object.values(groups).flatMap((i) => {
@@ -164,6 +168,8 @@ export class Client {
             .map((j) => ({
               routeType: j.routeType,
               routeShortName: j.routeShortName,
+              routeColor: j.routeColor,
+              routeTextColor: j.routeTextColor,
             })),
         },
       ]
@@ -282,11 +288,67 @@ export class Client {
   }
 
   /*
+   * Returns the routes that stop at a list of stops
+   */
+  getRoutesByStops(prefix: PrefixInput, stopIds: string[]): { routes: RoutesByStopsResult[] } {
+    // sqlite does not allow an array to be passed in as a prepared statement
+    const preparedRoutesByStops = getRoutesByStops.replace(/[?]/g, `'${stopIds.join("', '")}'`)
+    const routes = this.runQuery(prefix, preparedRoutesByStops) as RoutesByStopsResult[]
+    return { routes }
+  }
+
+  /*
    * Returns the stop times for a particular trip
    */
-  getTimetable(prefix: PrefixInput, tripId: string): { timetable: TimetableResult[] } {
+  getTimetable(
+    prefix: PrefixInput,
+    tripId: string
+  ): {
+    timetable: TimetableResult[] &
+      {
+        transfers: {
+          routeType: number
+          routeShortName: string
+          routeColor?: string
+          routeTextColor?: string
+        }[]
+      }[]
+  } {
     const timetable = this.runQuery(prefix, getTimetable, [tripId]) as TimetableResult[]
-    return { timetable }
+    const uniqueStops = timetable.flatMap((i) =>
+      [i.stopId, i.parentStopId].filter((j) => j !== undefined)
+    )
+    const routes = this.getRoutesByStops(prefix, uniqueStops)
+
+    const timetableWithTransfers = timetable.map((i) => ({
+      ...i,
+      transfers: routes.routes
+        .filter((j) => j.stopId === i.stopId)
+        .reduce(
+          (acc, cur) => {
+            if (
+              !acc.some(
+                (j) => j.routeShortName === cur.routeShortName && j.routeType === cur.routeType
+              )
+            ) {
+              acc.push({
+                routeType: cur.routeType,
+                routeShortName: cur.routeShortName,
+                routeColor: cur.routeColor,
+                routeTextColor: cur.routeTextColor,
+              })
+            }
+            return acc
+          },
+          [] as {
+            routeType: number
+            routeShortName: string
+            routeColor?: string
+            routeTextColor?: string
+          }[]
+        ),
+    }))
+    return { timetable: timetableWithTransfers }
   }
 
   /*
@@ -381,7 +443,6 @@ export class Client {
             ...i,
             arrivalTime: arrivalTimeString,
             departureTime: departureTimeString,
-            ogTime: i.departureTime,
           }
         })
         .sort(

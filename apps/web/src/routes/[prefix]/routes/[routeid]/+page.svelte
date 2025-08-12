@@ -62,10 +62,20 @@
       <ul class="stop-times-wrapper">
         {#each data.timetable as time, i (i)}
           {@const departureTime = new Date(`${currentService?.date || ''} ${time.departureTime}`)}
+          {@const transfersWithoutSelf = time.transfers.filter(
+            (i) => i.routeShortName !== data.route?.routeShortName
+          )}
           <li class="stop-time">
             <a href="/{time.prefix}/stops/{time.parentStopId || time.stopId}">
               <div>
-                {time.parentStopName || time.stopName}
+                <h4>{time.parentStopName || time.stopName}</h4>
+                {#if transfersWithoutSelf.length > 0}
+                  <ul>
+                    {#each transfersWithoutSelf as route (route.routeShortName)}
+                      <li>{route.routeShortName}</li>
+                    {/each}
+                  </ul>
+                {/if}
               </div>
               <time
                 ><strong>{getMinuteDifference(initialTime, departureTime)}</strong>
@@ -111,14 +121,14 @@
   .stop-time:last-child::after {
     content: '';
     position: absolute;
-    height: 1rem;
+    height: 50%;
     width: 4px;
     background: var(--surface-bg-subtle);
     left: -4px;
     top: 0;
   }
   .stop-time:last-child::after {
-    top: calc(100% - 1rem);
+    top: calc(50%);
   }
   .stop-time::before {
     --circle-size: 14px;
@@ -140,7 +150,7 @@
     gap: 1rem;
     padding: 0.375rem;
     border-bottom: 0.5px solid var(--surface-border);
-    font-size: 14px;
+    align-items: center;
   }
   .stop-time:last-child a {
     border-bottom: 0;
@@ -148,8 +158,25 @@
   .stop-time div {
     flex: 1;
     color: var(--surface-text);
-    font-weight: 600;
     align-content: center;
+  }
+  .stop-time h4 {
+    font-weight: 600;
+    margin: 0;
+    font-size: 14px;
+  }
+  .stop-time div ul {
+    margin: 0;
+    padding: 0;
+  }
+  .stop-time div ul li {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--surface-bg);
+    padding: 1px 4px;
+    border-radius: 3px;
+    margin-right: 2px;
   }
   .stop-time time {
     color: var(--surface-text-subtle);

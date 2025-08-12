@@ -98,6 +98,16 @@ export interface ServiceResult {
   timezone: string
 }
 
+export interface RoutesByStopsResult {
+  prefix: Prefix
+  stopId: string
+  parentStopId?: string
+  routeType: number
+  routeShortName: string
+  routeColor?: string
+  routeTextColor?: string
+}
+
 export interface TimetableResult {
   prefix: Prefix
   tripId: string

@@ -11,7 +11,9 @@ SELECT DISTINCT stops.stop_id,
                 stops.stop_lat,
                 stops.stop_lon,
                 routes.route_type,
-                routes.route_short_name
+                routes.route_short_name,
+                routes.route_color,
+                routes.route_text_color
 FROM stops
 LEFT JOIN stops AS parentstops ON parentstops.stop_id = stops.parent_station
 LEFT JOIN stop_times ON stop_times.stop_id = stops.stop_id
