@@ -28,7 +28,7 @@ import {
   type Prefix,
   type PrefixInput,
   type RouteResult,
-  RoutesByStopsResult,
+  type RoutesByStopsResult,
   type ServiceResult,
   type StopInfoResult,
   type StopResult,
@@ -57,12 +57,12 @@ export class Client {
     return flatMap
       ? databases.flatMap(cb)
       : databases.reduce(
-          (acc, cur) => {
-            acc[cur] = cb(cur)
-            return acc
-          },
-          {} as Record<Prefix, unknown>
-        )
+        (acc, cur) => {
+          acc[cur] = cb(cur)
+          return acc
+        },
+        {} as Record<Prefix, unknown>
+      )
   }
 
   addRegion(prefix: Prefix, db: DB, shapes?: Blob | string) {
@@ -304,15 +304,7 @@ export class Client {
     prefix: PrefixInput,
     tripId: string
   ): {
-    timetable: TimetableResult[] &
-      {
-        transfers: {
-          routeType: number
-          routeShortName: string
-          routeColor?: string
-          routeTextColor?: string
-        }[]
-      }[]
+    timetable: TimetableResult[]
   } {
     const timetable = this.runQuery(prefix, getTimetable, [tripId]) as TimetableResult[]
     const uniqueStops = timetable.flatMap((i) =>
@@ -323,7 +315,10 @@ export class Client {
     const timetableWithTransfers = timetable.map((i) => ({
       ...i,
       transfers: routes.routes
-        .filter((j) => j.stopId === i.stopId)
+        .filter(
+          (j) =>
+            j.stopId === i.stopId || (j.parentStopId !== null && j.parentStopId === i.parentStopId)
+        )
         .reduce(
           (acc, cur) => {
             if (
@@ -340,12 +335,7 @@ export class Client {
             }
             return acc
           },
-          [] as {
-            routeType: number
-            routeShortName: string
-            routeColor?: string
-            routeTextColor?: string
-          }[]
+          [] as TimetableResult['transfers']
         ),
     }))
     return { timetable: timetableWithTransfers }

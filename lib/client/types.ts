@@ -127,6 +127,12 @@ export interface TimetableResult {
   parentStopId?: string
   parentStopCode?: string
   parentStopName?: string
+  transfers: {
+    routeType: number
+    routeShortName: string
+    routeColor?: string
+    routeTextColor?: string
+  }[]
 }
 
 export interface StopTimesResult {
