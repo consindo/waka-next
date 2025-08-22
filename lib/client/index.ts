@@ -57,12 +57,12 @@ export class Client {
     return flatMap
       ? databases.flatMap(cb)
       : databases.reduce(
-        (acc, cur) => {
-          acc[cur] = cb(cur)
-          return acc
-        },
-        {} as Record<Prefix, unknown>
-      )
+          (acc, cur) => {
+            acc[cur] = cb(cur)
+            return acc
+          },
+          {} as Record<Prefix, unknown>
+        )
   }
 
   addRegion(prefix: Prefix, db: DB, shapes?: Blob | string) {

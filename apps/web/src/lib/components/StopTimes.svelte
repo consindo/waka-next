@@ -35,7 +35,9 @@
     {@const departureTime = formatShortDate(trip.departureTime, trip.agencyTimezone, 'short')}
     <li>
       <a
-        href="/{trip.prefix}/routes/{trip.routeId}?tripId={encodeURIComponent(trip.tripId)}"
+        href="/{trip.prefix}/routes/{trip.routeId}?tripId={encodeURIComponent(
+          trip.tripId
+        )}&stopId={encodeURIComponent(trip.stopId)}"
         style={`${trip.routeTextColor ? `color: #${trip.routeTextColor};` : ''}${trip.routeColor ? `background: #${trip.routeColor};` : ''}`}
       >
         <div class="direction">

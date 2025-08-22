@@ -8,6 +8,7 @@
 
   const searchParams = $derived(new URLSearchParams(page.url.search))
   const tripId = $derived(searchParams.get('tripId'))
+  const stopId = $derived(searchParams.get('stopId'))
 
   const currentService = $derived((data.services || []).find((i) => i.tripId === tripId))
 </script>
@@ -46,7 +47,7 @@
     </div>
     <div>
       {#if currentService}
-        <Timetable timetable={data.timetable} route={data.route} {currentService} />
+        <Timetable timetable={data.timetable} route={data.route} {currentService} {stopId} />
       {/if}
     </div>
   </div>
