@@ -150,7 +150,8 @@
     display: inline-block;
     font-size: 11px;
     font-weight: 600;
-    background: var(--surface-bg);
+    background: #444;
+    color: #fff;
     padding: 1px 4px;
     border-radius: 3px;
     margin-right: 2px;

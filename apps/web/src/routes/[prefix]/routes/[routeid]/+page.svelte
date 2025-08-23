@@ -2,6 +2,7 @@
   import { page } from '$app/state'
 
   import Header from '$lib/components/Header.svelte'
+  import Services from '$lib/components/Services.svelte'
   import Timetable from '$lib/components/Timetable.svelte'
 
   let { data } = $props()
@@ -21,29 +22,9 @@
   />
   <div class="content">
     <div>
-      <details>
-        <summary>
-          <h2>Services</h2>
-        </summary>
-        <ul>
-          {#if data.services && data.services.length > 0}
-            {#each data.services as service, i (i)}
-              <li>
-                <a
-                  data-sveltekit-replacestate
-                  class:selected={service.tripId === searchParams.get('tripId')}
-                  href="{page.url.pathname}?tripId={service.tripId}"
-                >
-                  <code>{service.date}</code>
-                  <strong>{service.departureTime}</strong>
-                  {service.directionId === 1 ? '→' : '←'}
-                  {service.tripHeadsign}
-                </a>
-              </li>
-            {/each}
-          {/if}
-        </ul>
-      </details>
+      {#if data.services && data.services.length > 0}
+        <Services services={data.services} selectedService={searchParams.get('tripId')} />
+      {/if}
     </div>
     <div>
       {#if currentService}
@@ -54,13 +35,3 @@
 {:else}
   <Header title="Not found" />
 {/if}
-
-<style>
-  a {
-    text-decoration: none;
-  }
-  .selected {
-    color: #0f0;
-    font-weight: bold;
-  }
-</style>

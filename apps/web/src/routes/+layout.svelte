@@ -45,17 +45,13 @@
     overflow-y: auto;
     max-height: 100%;
     background: var(--surface-bg-subtle);
-    box-shadow:
-      lch(0 0 0 / 0.022) 0px 3px 6px -2px,
-      lch(0 0 0 / 0.044) 0px 1px 1px;
+    box-shadow: var(--surface-shadow);
   }
   .map {
     flex: 1;
     border: 0.5px solid var(--surface-border);
     border-radius: calc(var(--base-border-radius) + 1px);
     overflow: hidden;
-    box-shadow:
-      lch(0 0 0 / 0.022) 0px 3px 6px -2px,
-      lch(0 0 0 / 0.044) 0px 1px 1px;
+    box-shadow: var(--surface-shadow);
   }
 </style>

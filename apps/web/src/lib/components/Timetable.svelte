@@ -12,7 +12,7 @@
     timetable: TimetableResult[]
     route: RouteResult
     currentService: ServiceResult
-    stopId: string
+    stopId: string | null
   } = $props()
 
   const initialStopIndex = stopId ? timetable.findIndex((i) => i.stopId === stopId) : 0
