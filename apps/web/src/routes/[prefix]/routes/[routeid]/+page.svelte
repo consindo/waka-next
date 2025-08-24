@@ -10,20 +10,24 @@
   const searchParams = $derived(new URLSearchParams(page.url.search))
   const tripId = $derived(searchParams.get('tripId'))
   const stopId = $derived(searchParams.get('stopId'))
+  const directionId = $derived(parseInt(searchParams.get('directionId') || '0'))
 
   const currentService = $derived((data.services || []).find((i) => i.tripId === tripId))
 </script>
 
 {#if data.route}
-  <Header
-    title={data.route.routeShortName}
-    subtitle={data.route.routeLongName ||
-      (data.services || []).find((i) => i.directionId === 0)?.tripHeadsign}
-  />
+  <Header title={data.route.routeShortName} />
   <div class="content">
     <div>
       {#if data.services && data.services.length > 0}
-        <Services services={data.services} selectedService={searchParams.get('tripId')} />
+        <Services
+          {directionId}
+          routeName={data.route.routeLongName ||
+            (data.services || []).find((i) => i.directionId === directionId)?.tripHeadsign ||
+            data.route.routeShortName}
+          services={data.services}
+          selectedService={searchParams.get('tripId')}
+        />
       {/if}
     </div>
     <div>
