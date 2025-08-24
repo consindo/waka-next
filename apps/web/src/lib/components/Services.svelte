@@ -3,6 +3,8 @@
 
   import type { ServiceResult } from '@lib/client'
 
+  import ServiceItem from './ServiceItem.svelte'
+
   const {
     routeName,
     directionId,
@@ -37,16 +39,7 @@
 <div class="services-wrapper">
   <ul>
     {#each filteredServices.slice(0, 3) as service, i (i)}
-      <li>
-        <a
-          data-sveltekit-replacestate
-          class:selected={service.tripId === selectedService}
-          href="{page.url.pathname}?tripId={service.tripId}"
-        >
-          <strong>{service.departureTime}</strong>
-          {service.tripHeadsign}
-        </a>
-      </li>
+      <ServiceItem {service} {selectedService} />
     {/each}
   </ul>
 
@@ -55,17 +48,7 @@
       <summary>More Departures</summary>
       <ul>
         {#each filteredServices.slice(3) as service, i (i)}
-          <li>
-            <a
-              data-sveltekit-replacestate
-              class:selected={service.tripId === selectedService}
-              href="{page.url.pathname}?tripId={service.tripId}"
-            >
-              <code>{service.date}</code>
-              <strong>{service.departureTime}</strong>
-              {service.tripHeadsign}
-            </a>
-          </li>
+          <ServiceItem {service} {selectedService} />
         {/each}
       </ul>
     </details>
@@ -101,9 +84,8 @@
     padding: 0;
   }
   a {
-    color: var(--surface-text);
+    color: inherit;
     text-decoration: none;
-    display: block;
     padding: 0.75rem;
     font-size: 14px;
     cursor: default;
@@ -118,13 +100,10 @@
     padding: 0.75rem;
     border-top: 0.5px solid var(--surface-border);
     font-size: 14px;
+    cursor: default;
 
     &:hover {
       background: var(--surface-bg-hover);
     }
-  }
-  .selected {
-    color: #0f0;
-    font-weight: bold;
   }
 </style>

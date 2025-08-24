@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { RouteResult, TimetableResult } from '@lib/client'
 
+  import { formatTime } from '$lib/utils/formatDate'
+
   let {
     time,
     initialTime,
@@ -56,11 +58,7 @@
     </div>
     <time
       ><strong>{relativeTime}</strong>
-      {departureTime.toLocaleString(undefined, {
-        hour12: false,
-        hour: 'numeric',
-        minute: 'numeric',
-      })}</time
+      {formatTime(departureTime)}</time
     >
   </a>
 </li>

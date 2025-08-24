@@ -10,9 +10,12 @@
   const searchParams = $derived(new URLSearchParams(page.url.search))
   const tripId = $derived(searchParams.get('tripId'))
   const stopId = $derived(searchParams.get('stopId'))
-  const directionId = $derived(parseInt(searchParams.get('directionId') || '0'))
 
   const currentService = $derived((data.services || []).find((i) => i.tripId === tripId))
+
+  const directionId = $derived(
+    parseInt(searchParams.get('directionId') || currentService?.directionId.toString() || '0')
+  )
 </script>
 
 {#if data.route}

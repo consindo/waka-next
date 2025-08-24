@@ -3,6 +3,7 @@ SELECT trips.route_id,
        direction_id,
        trips.trip_id,
        departure_time,
+       arrival_time,
        agency_timezone as timezone
 FROM trips
 INNER JOIN routes ON trips.route_id = routes.route_id

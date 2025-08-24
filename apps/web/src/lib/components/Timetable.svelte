@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { RouteResult, ServiceResult, TimetableResult } from '@lib/client'
 
+  import { getDate } from '$lib/utils/formatDate'
+
   import TimetableItem from './TimetableItem.svelte'
 
   const {
@@ -15,21 +17,18 @@
     stopId: string | null
   } = $props()
 
-  const initialStopIndex = stopId ? timetable.findIndex((i) => i.stopId === stopId) : 0
+  const initialStopIndex = $derived(
+    (() => {
+      if (stopId) {
+        const index = timetable.findIndex((i) => i.stopId === stopId)
+        if (index > 0) return index
+      }
+      return 0
+    })()
+  )
   const initialTime = $derived(
     new Date(`${currentService?.date} ${timetable[initialStopIndex].departureTime}`)
   )
-
-  const getDate = (date: string, time: TimetableResult) => {
-    let timeComponent = time.departureTime || time.arrivalTime || '0:00:00'
-    const [hours, minutes, seconds] = timeComponent.split(':').map((i) => parseInt(i))
-    const dateObj = new Date(`${date || ''} ${hours % 24}:${minutes}:${seconds}`)
-    if (hours >= 24) {
-      // sometimes timestamps come in as 24:01:00 etc
-      dateObj.setDate(dateObj.getDate() + 1)
-    }
-    return dateObj
-  }
 </script>
 
 {#if initialStopIndex > 0}
