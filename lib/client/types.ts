@@ -94,8 +94,8 @@ export interface ServiceResult {
   directionId: number
   tripId: string
   date: string
-  arrivalTime: string
-  departureTime: string
+  arrivalTime?: string
+  departureTime?: string
   timezone: string
 }
 

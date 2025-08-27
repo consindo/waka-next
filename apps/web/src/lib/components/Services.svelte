@@ -20,6 +20,17 @@
   const currentService = $derived(services.find((i) => i.tripId === selectedService))
   const derivedDirectionId = $derived(currentService ? currentService.directionId : directionId)
   const filteredServices = $derived(services.filter((i) => i.directionId === derivedDirectionId))
+  const firstVisibleServiceIndex = $derived(
+    (() => {
+      const now = new Date()
+      const firstService = filteredServices.findIndex(
+        (i) =>
+          new Date(i.departureTime || i.arrivalTime || '').getTime() > now.getTime() - 3 * 60 * 1000
+      )
+      if (firstService > -1) return firstService
+      return 0
+    })()
+  )
 </script>
 
 <h2>
@@ -38,7 +49,7 @@
 </h2>
 <div class="services-wrapper">
   <ul>
-    {#each filteredServices.slice(0, 3) as service, i (i)}
+    {#each filteredServices.slice(firstVisibleServiceIndex, firstVisibleServiceIndex + 3) as service, i (i)}
       <ServiceItem {service} {selectedService} />
     {/each}
   </ul>
@@ -47,7 +58,7 @@
     <details>
       <summary>More Departures</summary>
       <ul>
-        {#each filteredServices.slice(3) as service, i (i)}
+        {#each filteredServices.slice(firstVisibleServiceIndex + 3) as service, i (i)}
           <ServiceItem {service} {selectedService} />
         {/each}
       </ul>

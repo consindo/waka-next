@@ -3,14 +3,12 @@
 
   import type { ServiceResult } from '@lib/client'
 
-  import { formatTime, getDate } from '$lib/utils/formatDate'
+  import { formatShortDate } from '$lib/utils/formatDate'
 
   const { service, selectedService }: { service: ServiceResult; selectedService: string | null } =
     $props()
 
   const existingSearchParams = $derived(new URLSearchParams(page.url.search))
-
-  const departureTime = $derived(getDate(service.date, service))
 
   const newSearchParams = $derived(
     (() => {
@@ -27,7 +25,13 @@
     class:selected={service.tripId === selectedService}
     href="{page.url.pathname}?{newSearchParams.toString()}"
   >
-    <strong>{formatTime(departureTime)}</strong>
+    <strong
+      >{formatShortDate(
+        new Date(service.departureTime || service.arrivalTime || ''),
+        service.timezone,
+        'long'
+      )}</strong
+    >
     <span>{service.tripHeadsign}</span>
   </a>
 </li>
@@ -43,7 +47,7 @@
     padding: 0.75rem;
     font-size: 14px;
     cursor: default;
-    gap: 0.5rem;
+    gap: 0.75rem;
     align-items: center;
   }
   a span {

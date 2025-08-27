@@ -5,7 +5,8 @@ export const formatShortDate = (date: Date, timeZone: string, suffix?: 'long' | 
   if (suffix === 'short' && date.getTime() < now.getTime() + 60 * 1000) {
     return 'Due'
   } else if (date.getTime() < now.getTime() + 60 * 90 * 1000) {
-    const mins = Math.floor((date.getTime() - now.getTime()) / 1000 / 60)
+    let mins = Math.floor((date.getTime() - now.getTime()) / 1000 / 60)
+    if (mins < 0) mins = 0
     return `${mins}${suffix ? (suffix === 'short' ? 'm' : mins === 1 ? ' min' : ' mins') : ''}`
   }
   return date.toLocaleString(undefined, {

@@ -1,8 +1,6 @@
-import { TZDate } from '@date-fns/tz'
 import { TarReader } from '@gera2ld/tarjs'
 import { parseSync } from '@loaders.gl/core'
 import { WKBLoader } from '@loaders.gl/wkt'
-import { addHours, addMinutes, addSeconds } from 'date-fns'
 import type { Feature } from 'geojson'
 
 import type { DB } from '@lib/db'
@@ -21,6 +19,7 @@ import getStops from './sql/getStops.sql?raw'
 import getStopsByLocation from './sql/getStopsByLocation.sql?raw'
 import getTable from './sql/getTable.sql?raw'
 import getTimetable from './sql/getTimetable.sql?raw'
+import { convertFromGtfsDateToISOTimestamp } from './timezone'
 import {
   type BoundsResult,
   ClientErrors,
@@ -198,25 +197,26 @@ export class Client {
       const date = dateInput.split('-').join('')
       const dayofweek = new Date(dateInput).getUTCDay()
       return (
-        (
-          this.runQuery(prefix, getServices, [
-            date,
-            routeId,
-            stopSequence.toString(),
-            date,
-            date,
-            dayofweek === 1 ? '1' : '0',
-            dayofweek === 2 ? '1' : '0',
-            dayofweek === 3 ? '1' : '0',
-            dayofweek === 4 ? '1' : '0',
-            dayofweek === 5 ? '1' : '0',
-            dayofweek === 6 ? '1' : '0',
-            dayofweek === 0 ? '1' : '0',
-          ]) as ServiceResult[]
-        )
-          // todo: map the timetable times to proper date objects
-          .map((i) => ({ ...i, date: dateInput }))
-      )
+        this.runQuery(prefix, getServices, [
+          date,
+          routeId,
+          stopSequence.toString(),
+          date,
+          date,
+          dayofweek === 1 ? '1' : '0',
+          dayofweek === 2 ? '1' : '0',
+          dayofweek === 3 ? '1' : '0',
+          dayofweek === 4 ? '1' : '0',
+          dayofweek === 5 ? '1' : '0',
+          dayofweek === 6 ? '1' : '0',
+          dayofweek === 0 ? '1' : '0',
+        ]) as ServiceResult[]
+      ).map((i) => ({
+        ...i,
+        date: dateInput,
+        arrivalTime: convertFromGtfsDateToISOTimestamp(dateInput, i.arrivalTime, i.timezone),
+        departureTime: convertFromGtfsDateToISOTimestamp(dateInput, i.departureTime, i.timezone),
+      }))
     })
 
     let route: RouteResult | null = null
@@ -399,42 +399,19 @@ export class Client {
               dayofweek === 0 ? '1' : '0',
             ]) as StopTimesResult[]
         )
-        .map((i) => {
-          let arrivalTimeString = i.arrivalTime
-          if (arrivalTimeString) {
-            // eslint-disable-next-line prefer-const
-            let [year, month, day] = dateInput.split('-').map((i) => parseInt(i))
-            month = month - 1
-            let arrivalTime = new TZDate(year, month, day, i.agencyTimezone)
-            const [arrivalHours, arrivalMinutes, arrivalSeconds] = arrivalTimeString
-              .split(':')
-              .map((i) => parseInt(i))
-            arrivalTime = addHours(arrivalTime, arrivalHours)
-            arrivalTime = addMinutes(arrivalTime, arrivalMinutes)
-            arrivalTime = addSeconds(arrivalTime, arrivalSeconds)
-            arrivalTimeString = arrivalTime.toISOString()
-          }
-
-          let departureTimeString = i.departureTime
-          if (departureTimeString) {
-            // eslint-disable-next-line prefer-const
-            let [year, month, day] = dateInput.split('-').map((i) => parseInt(i))
-            month = month - 1
-            let departureTime = new TZDate(year, month, day, i.agencyTimezone)
-            const [departureHours, departureMinutes, departureSeconds] = departureTimeString
-              .split(':')
-              .map((i) => parseInt(i))
-            departureTime = addHours(departureTime, departureHours)
-            departureTime = addMinutes(departureTime, departureMinutes)
-            departureTime = addSeconds(departureTime, departureSeconds)
-            departureTimeString = departureTime.toISOString()
-          }
-          return {
-            ...i,
-            arrivalTime: arrivalTimeString,
-            departureTime: departureTimeString,
-          }
-        })
+        .map((i) => ({
+          ...i,
+          arrivalTime: convertFromGtfsDateToISOTimestamp(
+            dateInput,
+            i.arrivalTime,
+            i.agencyTimezone
+          ),
+          departureTime: convertFromGtfsDateToISOTimestamp(
+            dateInput,
+            i.departureTime,
+            i.agencyTimezone
+          ),
+        }))
         .sort(
           (a, b) =>
             new Date(a.departureTime || 0).getTime() - new Date(b.departureTime || 0).getTime()
