@@ -45,14 +45,15 @@
     text-decoration: none;
     display: flex;
     padding: 0.75rem;
-    font-size: 14px;
+    font-size: 15px;
     cursor: default;
     gap: 0.75rem;
     align-items: center;
   }
   a span {
     flex: 1;
-    font-size: 13px;
+    font-size: 14px;
+    text-wrap: pretty;
   }
   li:has(a:hover) {
     background: var(--surface-bg-hover);

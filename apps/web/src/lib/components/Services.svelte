@@ -110,7 +110,7 @@
     font-weight: 600;
     padding: 0.75rem;
     border-top: 0.5px solid var(--surface-border);
-    font-size: 14px;
+    font-size: 15px;
     cursor: default;
 
     &:hover {

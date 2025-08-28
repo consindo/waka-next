@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { RouteResult, TimetableResult } from '@lib/client'
 
+  import { getTextColor } from '$lib/utils/color'
   import { formatTime } from '$lib/utils/formatDate'
 
   let {
@@ -48,7 +49,7 @@
         <ul>
           {#each transfersWithoutSelf as route (route.routeShortName)}
             <li
-              style={`${route.routeTextColor ? `color: #${route.routeTextColor};` : ''}${route.routeColor ? `background: #${route.routeColor};` : ''}`}
+              style={`${route.routeColor ? `background: #${route.routeColor};color: #${getTextColor(route.routeColor)};` : ''}`}
             >
               {route.routeShortName}
             </li>

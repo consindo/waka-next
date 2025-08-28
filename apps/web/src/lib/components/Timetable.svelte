@@ -26,9 +26,7 @@
       return 0
     })()
   )
-  const initialTime = $derived(
-    new Date(`${currentService?.date} ${timetable[initialStopIndex].departureTime}`)
-  )
+  const initialTime = $derived(getDate(currentService?.date, timetable[initialStopIndex]))
 </script>
 
 {#if initialStopIndex > 0}

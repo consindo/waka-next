@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { StopInfoResult, StopTimesResult } from '@lib/client'
 
+  import { getTextColor } from '$lib/utils/color'
   import { formatShortDate } from '$lib/utils/formatDate'
 
   const {
@@ -38,7 +39,7 @@
         href="/{trip.prefix}/routes/{trip.routeId}?tripId={encodeURIComponent(
           trip.tripId
         )}&stopId={encodeURIComponent(trip.stopId)}"
-        style={`${trip.routeTextColor ? `color: #${trip.routeTextColor};` : ''}${trip.routeColor ? `background: #${trip.routeColor};` : ''}`}
+        style={`${trip.routeColor ? `color: ${getTextColor(trip.routeColor)};` : ''}${trip.routeColor ? `background: #${trip.routeColor};` : ''}`}
       >
         <div class="direction">
           <h3>{trip.routeShortName}</h3>

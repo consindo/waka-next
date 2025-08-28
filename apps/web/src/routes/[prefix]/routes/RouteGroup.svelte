@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { RouteResult } from '@lib/client'
 
+  import { getTextColor } from '$lib/utils/color'
+
   interface Props {
     group: { name: string; emoji: string; routes: RouteResult[] }
   }
@@ -14,12 +16,13 @@
   </summary>
   <ul>
     {#each group.routes as route (route.routeId)}
-      {@const color = route.routeColor !== null ? `background-color: #${route.routeColor};` : ''}
-      {@const textColor = route.routeTextColor !== null ? `color: #${route.routeTextColor};` : ''}
+      {@const color = route.routeColor
+        ? `background-color: #${route.routeColor};color: ${getTextColor(route.routeColor)}`
+        : ''}
       <li>
         <a href="/{route.prefix}/routes/{route.routeId}">
           <span>{route.routeLongName ?? route.tripHeadsign ?? ''}</span>
-          <strong style={`${color}${textColor}`}>{route.routeShortName}</strong>
+          <strong style={`${color}`}>{route.routeShortName}</strong>
         </a>
       </li>
     {/each}
@@ -28,10 +31,14 @@
 
 <style>
   details {
-    margin: 0.5rem 0;
     border-radius: calc(var(--base-border-radius) + 1px);
-    border: 1px solid var(--surface-border);
+    border: 0.5px solid var(--surface-border);
     background: var(--surface-bg);
+    box-shadow: var(--surface-shadow);
+
+    &:not(:last-child) {
+      margin-bottom: 0.5rem;
+    }
   }
 
   details summary {
@@ -46,8 +53,8 @@
   h2 {
     margin: 0;
     display: inline-flex;
-    font-size: 1.5rem;
-    line-height: 1.5rem;
+    font-size: 18px;
+    line-height: 1.25rem;
     gap: 0.3em;
     padding: 0.25rem 0.125rem;
     color: var(--surface-text);
@@ -67,12 +74,15 @@
 
   a {
     display: flex;
-    padding: 0.5rem;
+    padding: 0.75rem;
     text-decoration: none;
     align-items: center;
     color: var(--surface-text);
-    border-top: 1px solid var(--surface-border);
+    border-top: 0.5px solid var(--surface-border);
     cursor: default;
+    gap: 1rem;
+    font-size: 14px;
+    text-wrap: pretty;
 
     &:hover {
       background: var(--surface-bg-hover);
@@ -84,10 +94,11 @@
 
     & strong {
       display: inline-block;
-      padding: 0.25rem 0.5rem;
+      padding: 0.125rem 0.375rem;
       border-radius: var(--base-border-radius);
       background: var(--surface-bg-hover);
       color: var(--surface-text-subtle);
+      font-size: 13px;
     }
   }
 </style>
