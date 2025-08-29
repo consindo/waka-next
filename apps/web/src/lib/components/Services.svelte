@@ -31,6 +31,21 @@
       return 0
     })()
   )
+  const currentFilteredServiceIndex = $derived(
+    filteredServices
+      .slice(firstVisibleServiceIndex)
+      .findIndex((i) => i.tripId === selectedService) + firstVisibleServiceIndex
+  )
+  const isShowingHiddenService = $derived(
+    currentFilteredServiceIndex >= firstVisibleServiceIndex + 3
+  )
+
+  let detailsElement: HTMLDetailsElement | null = $state(null)
+  const triggerCloseDetails = () => {
+    if (detailsElement) {
+      detailsElement.removeAttribute('open')
+    }
+  }
 </script>
 
 <h2>
@@ -49,17 +64,25 @@
 </h2>
 <div class="services-wrapper">
   <ul>
-    {#each filteredServices.slice(firstVisibleServiceIndex, firstVisibleServiceIndex + 3) as service, i (i)}
-      <ServiceItem {service} {selectedService} />
-    {/each}
+    {#if isShowingHiddenService && filteredServices[currentFilteredServiceIndex]}
+      <ServiceItem
+        service={filteredServices[currentFilteredServiceIndex]}
+        {selectedService}
+        {triggerCloseDetails}
+      />
+    {:else}
+      {#each filteredServices.slice(firstVisibleServiceIndex, firstVisibleServiceIndex + 3) as service, i (i)}
+        <ServiceItem {service} {selectedService} triggerCloseDetails={() => {}} />
+      {/each}
+    {/if}
   </ul>
 
-  {#if filteredServices.length > 3}
-    <details>
+  {#if (isShowingHiddenService && filteredServices.length > 0 && currentService) || filteredServices.length > 3}
+    <details bind:this={detailsElement}>
       <summary>More Departures</summary>
       <ul>
-        {#each filteredServices.slice(firstVisibleServiceIndex + 3) as service, i (i)}
-          <ServiceItem {service} {selectedService} />
+        {#each filteredServices.slice(isShowingHiddenService ? firstVisibleServiceIndex : firstVisibleServiceIndex + 3) as service, i (i)}
+          <ServiceItem {service} {selectedService} {triggerCloseDetails} />
         {/each}
       </ul>
     </details>
@@ -110,11 +133,14 @@
     font-weight: 600;
     padding: 0.75rem;
     border-top: 0.5px solid var(--surface-border);
-    font-size: 15px;
+    font-size: 14px;
     cursor: default;
 
     &:hover {
       background: var(--surface-bg-hover);
     }
+  }
+  details[open] summary {
+    border-bottom: 0.5px solid var(--surface-border);
   }
 </style>

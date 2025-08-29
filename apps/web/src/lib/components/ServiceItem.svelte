@@ -5,7 +5,11 @@
 
   import { formatShortDate } from '$lib/utils/formatDate'
 
-  const { service, selectedService }: { service: ServiceResult; selectedService: string | null } =
+  const {
+    service,
+    selectedService,
+    triggerCloseDetails,
+  }: { service: ServiceResult; selectedService: string | null; triggerCloseDetails: () => void } =
     $props()
 
   const existingSearchParams = $derived(new URLSearchParams(page.url.search))
@@ -24,6 +28,7 @@
     data-sveltekit-replacestate
     class:selected={service.tripId === selectedService}
     href="{page.url.pathname}?{newSearchParams.toString()}"
+    onclick={triggerCloseDetails}
   >
     <strong
       >{formatShortDate(
