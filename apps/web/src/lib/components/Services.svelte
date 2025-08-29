@@ -72,7 +72,7 @@
       />
     {:else}
       {#each filteredServices.slice(firstVisibleServiceIndex, firstVisibleServiceIndex + 3) as service, i (i)}
-        <ServiceItem {service} {selectedService} triggerCloseDetails={() => {}} />
+        <ServiceItem {service} {selectedService} triggerCloseDetails={() => null} />
       {/each}
     {/if}
   </ul>
