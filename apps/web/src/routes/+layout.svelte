@@ -25,12 +25,14 @@
 </main>
 
 <style>
-  main:not(.single) {
-    display: flex;
-    height: 100vh;
-    gap: 0.5rem;
+  main {
     padding: 0.5rem;
     box-sizing: border-box;
+  }
+  main:not(.single) {
+    height: 100vh;
+    display: flex;
+    gap: 0.5rem;
   }
   .single .map {
     display: none;

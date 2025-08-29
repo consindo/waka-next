@@ -66,7 +66,7 @@
   <DatabaseNav {db} triggerChange={triggerDatabaseChange} dbName={requestedDb} />
   <div class="query">
     <textarea bind:value={query} onkeydown={triggerKeydown} rows="5"></textarea>
-    <div><button onclick={run}>run (ctrl+enter)</button></div>
+    <div><button class="dev-btn" onclick={run}>run (ctrl+enter)</button></div>
   </div>
   <div>{$stream}</div>
   <div>{error}</div>
@@ -98,12 +98,12 @@
   .query {
     display: flex;
     gap: 0.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: var(--edge-padding);
   }
   textarea {
     flex: 1;
     background: var(--surface-bg);
-    border: 1px solid var(--surface-border);
+    border: 0.5px solid var(--surface-border);
     padding: 0.5rem;
     border-radius: var(--base-border-radius);
   }
@@ -115,7 +115,7 @@
     white-space: nowrap;
     font-size: 11px;
     background: var(--surface-bg);
-    border: 1px solid var(--surface-border);
+    border: 0.5px solid var(--surface-border);
     width: 100%;
     display: block;
     overflow-x: auto;
@@ -132,13 +132,13 @@
     }
   }
   th {
-    border-bottom: 1px solid var(--surface-border);
+    border-bottom: 0.5px solid var(--surface-border);
   }
   td,
   th {
     padding: 0.125rem 0.25rem;
-    border-right: 1px solid var(--surface-border);
-    border-left: 1px solid var(--surface-border);
+    border-right: 0.5px solid var(--surface-border);
+    border-left: 0.5px solid var(--surface-border);
 
     &:first-child {
       border-left: 0;

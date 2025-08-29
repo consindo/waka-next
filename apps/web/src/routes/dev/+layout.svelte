@@ -28,13 +28,13 @@
   </nav>
 </header>
 
-<main>
+<div>
   {@render children?.()}
-</main>
+</div>
 
 <style>
   header {
-    padding: 0.75rem 1.25rem;
+    padding: calc(var(--edge-padding) - 0.25rem) var(--edge-padding);
     margin-bottom: 0;
     display: flex;
     align-items: center;
@@ -43,7 +43,7 @@
   h1 {
     letter-spacing: -0.7px;
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.25rem;
     flex: 1;
     font-weight: 600;
   }
@@ -59,7 +59,7 @@
     text-decoration: none;
   }
   li a {
-    font-size: 15px;
+    font-size: 14px;
     color: var(--surface-text);
     font-weight: 450;
   }
@@ -69,7 +69,7 @@
   a:hover {
     text-decoration: underline;
   }
-  main {
-    padding: 0 1rem;
+  div {
+    padding: 0 var(--edge-padding) var(--edge-padding);
   }
 </style>

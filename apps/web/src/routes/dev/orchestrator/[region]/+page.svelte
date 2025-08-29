@@ -80,8 +80,9 @@
           </dd>
         {/if}
       </dl>
-      <button onclick={() => window.location.reload()}>refresh</button>
+      <button class="dev-btn" onclick={() => window.location.reload()}>refresh</button>
       <button
+        class="dev-btn"
         onclick={loadDb({
           region: data.id,
           version: 'live',
@@ -94,10 +95,8 @@
     {/if}
     <h2>versions</h2>
     <form method="POST" action="?/import">
-      <p>
-        <input type="text" name="token" placeholder="auth token" bind:value={token} />
-        <button disabled={token === ''}>check & import new version</button>
-      </p>
+      <input class="dev-btn" type="text" name="token" placeholder="auth token" bind:value={token} />
+      <button class="dev-btn" disabled={token === ''}>check & import new version</button>
       {#if data.importResult}
         <div class="logs">
           <h3>import result</h3>
@@ -146,12 +145,10 @@
         {/if}
       </dl>
       <form method="POST" action="?/activate">
-        <p>
-          <input type="hidden" name="token" bind:value={token} />
-          <input type="hidden" name="version" value={version.version} />
-          <button type="submit" disabled={token === ''}>set active</button>
-          <button onclick={loadDb(version)}>load into client</button>
-        </p>
+        <input type="hidden" name="token" bind:value={token} />
+        <input type="hidden" name="version" value={version.version} />
+        <button class="dev-btn" type="submit" disabled={token === ''}>set active</button>
+        <button class="dev-btn" onclick={loadDb(version)}>load into client</button>
       </form>
     {/each}
   </div>
@@ -160,7 +157,7 @@
 <style>
   .container {
     display: flex;
-    gap: 2rem;
+    gap: calc(var(--edge-padding) * 2);
   }
   .active {
     overflow-y: hidden;
@@ -177,9 +174,13 @@
   pre {
     overflow-y: scroll;
   }
+  h2 {
+    font-size: 1.25rem;
+    margin: 1.5rem 0 1rem;
+  }
   h3 {
     font-size: 1rem;
-    margin-top: 2rem;
+    margin-top: 1.5rem;
   }
   strong {
     font-weight: 600;
@@ -189,7 +190,7 @@
     display: grid;
     grid-template-columns: 100px 2fr;
     gap: 0.25rem;
-    font-size: 1rem;
+    font-size: 15px;
   }
   dt {
     font-weight: 500;

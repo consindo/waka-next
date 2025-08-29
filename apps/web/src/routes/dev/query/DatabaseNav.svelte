@@ -67,6 +67,7 @@
 <nav>
   <div>
     <select
+      class="dev-btn"
       onchange={triggerChange}
       value={Object.keys(getDatabases()).includes(dbName || '') ? dbName : 'empty-db'}
     >
@@ -79,10 +80,12 @@
   </div>
   <div>
     <input type="file" bind:this={dbElement} bind:files={dbFiles} />
-    <button onclick={() => (dbElement ? dbElement.click() : null)}>load db</button>
-    <button onclick={triggerSave}>dump db</button>
+    <button class="dev-btn" onclick={() => (dbElement ? dbElement.click() : null)}>load db</button>
+    <button class="dev-btn" onclick={triggerSave}>dump db</button>
     <input type="file" bind:this={zipElement} bind:files={zipFiles} accept=".zip,application/zip" />
-    <button onclick={() => (zipElement ? zipElement.click() : null)}>import gtfs</button>
+    <button class="dev-btn" onclick={() => (zipElement ? zipElement.click() : null)}
+      >import gtfs</button
+    >
   </div>
 </nav>
 
@@ -91,9 +94,9 @@
     display: flex;
     background: var(--surface-bg-subtle);
     padding: 0.5rem;
-    border: 1px solid rgba(0, 0, 0, 0.075);
+    border: 0.5px solid rgba(0, 0, 0, 0.075);
     border-radius: calc(var(--base-border-radius) + 1px);
-    margin-bottom: 1rem;
+    margin-bottom: var(--edge-padding);
     box-shadow: var(--surface-shadow);
   }
   nav div:first-child {
@@ -101,18 +104,6 @@
   }
   nav input {
     display: none;
-  }
-  nav button,
-  nav select {
-    border: 0;
-    background: var(--surface-bg);
-    font-size: 14px;
-    padding: 0.25rem 0.5rem;
-    border: 1px solid var(--surface-border);
-    border-radius: var(--base-border-radius);
-  }
-  nav button:hover {
-    background: rgba(0, 0, 0, 0.025);
   }
   nav select {
     min-width: 180px;

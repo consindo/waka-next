@@ -22,6 +22,6 @@
 <style>
   .container {
     display: flex;
-    gap: 2rem;
+    gap: calc(var(--edge-padding) * 2);
   }
 </style>

@@ -39,13 +39,11 @@
     max-width: 200px;
     min-height: 200px;
     width: 100%;
-    background: var(--surface-bg-subtle);
-    border-radius: 5px;
+    background: var(--surface-bg);
+    border-radius: var(--base-border-radius);
     padding: 0.5rem;
-    border: 1px solid var(--surface-border);
-    box-shadow:
-      0 3px 6px -1px rgba(0, 0, 0, 0.05),
-      0 2px 4px -2px rgba(0, 0, 0, 0.05);
+    border: 0.5px solid var(--surface-border);
+    box-shadow: var(--surface-shadow);
   }
   h2 {
     font-size: 14px;
@@ -71,14 +69,14 @@
     display: block;
     text-decoration: none;
     color: var(--surface-text);
-    border: 1px solid transparent;
+    border: 0.5px solid transparent;
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
   }
   .selected a,
   a:hover {
-    background: var(--surface-bg);
-    border: 1px solid var(--surface-border);
+    background: var(--surface-bg-subtle);
+    border: 0.5px solid var(--surface-border);
   }
   code {
     font-size: 0.75rem;

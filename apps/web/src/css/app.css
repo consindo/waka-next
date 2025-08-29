@@ -36,3 +36,17 @@ html {
   background: var(--bg);
   color: var(--surface-text);
 }
+
+.dev-btn {
+  border: 0;
+  background: var(--surface-bg);
+  font-size: 14px;
+  padding: 0.25rem 0.5rem;
+  border: 0.5px solid var(--surface-border);
+  border-radius: var(--base-border-radius);
+  box-shadow: var(--surface-shadow);
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.025);
+  }
+}
