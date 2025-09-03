@@ -1,6 +1,7 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
   import { page } from '$app/state'
+  import { bbox } from '@turf/bbox'
   import maplibregl, { type GeoJSONSource } from 'maplibre-gl'
   import 'maplibre-gl/dist/maplibre-gl.css'
   import { onMount } from 'svelte'
@@ -13,6 +14,7 @@
 
   const ALL_STOPS_LAYER = 'all-stops'
   const CURRENT_STOP_LAYER = 'current-stop'
+  const CURRENT_SHAPE_LAYER = 'current-shape'
 
   let map: maplibregl.Map
   let mounted = $state(false)
@@ -37,6 +39,13 @@
           features: [],
         },
       })
+      map.addSource(CURRENT_SHAPE_LAYER, {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: [],
+        },
+      })
       map.addSource(ALL_STOPS_LAYER, {
         type: 'geojson',
         data: {
@@ -54,6 +63,16 @@
           'circle-radius': 8,
           'circle-stroke-width': 4,
           'circle-stroke-color': '#0000ff',
+        },
+      })
+      map.addLayer({
+        id: CURRENT_SHAPE_LAYER,
+        source: CURRENT_SHAPE_LAYER,
+        type: 'line',
+        layout: {},
+        paint: {
+          'line-color': '#666',
+          'line-width': 5,
         },
       })
       map.addLayer({
@@ -149,6 +168,40 @@
       }
     } else if (mounted) {
       const source = map.getSource(CURRENT_STOP_LAYER) as GeoJSONSource
+      source.setData({
+        type: 'FeatureCollection',
+        features: [],
+      })
+    }
+    if (mapState.currentShape.length > 0) {
+      // we fetch the shape here rather than resolving the data on the client like usual
+      // this should only run on the client
+      const prefix = mapState.currentShape[0].prefix
+      const shapeId = mapState.currentShape[0].shapeId
+      resolveData(
+        prefix,
+        `/shapes/${shapeId}`,
+        (client) => client.getShape(prefix, shapeId),
+        fetch
+      ).then((data) => {
+        // this one is a bit weird because it might be async
+        Promise.all([data.data]).then((shape) => {
+          // if the page has already been closed, then don't update the ui
+          if (mapState.currentShape.length === 0) return
+
+          // todo: should be able to handle multiple shapes...
+          const source = map.getSource(CURRENT_SHAPE_LAYER) as GeoJSONSource
+          if (shape[0] !== null && typeof shape[0] !== 'string') {
+            const extent = bbox(shape[0])
+            source.setData(shape[0])
+            map.fitBounds(extent as [number, number, number, number], {
+              padding: 32,
+            })
+          }
+        })
+      })
+    } else if (mounted) {
+      const source = map.getSource(CURRENT_SHAPE_LAYER) as GeoJSONSource
       source.setData({
         type: 'FeatureCollection',
         features: [],

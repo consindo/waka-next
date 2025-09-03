@@ -97,6 +97,7 @@ export interface ServiceResult {
   arrivalTime?: string
   departureTime?: string
   timezone: string
+  shapeId?: string
 }
 
 export interface RoutesByStopsResult {

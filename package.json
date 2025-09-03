@@ -53,6 +53,7 @@
     "@loaders.gl/core": "^4.3.3",
     "@loaders.gl/wkt": "^4.3.3",
     "@sveltejs/adapter-node": "^5.2.12",
+    "@turf/bbox": "^7.2.0",
     "@types/geojson": "^7946.0.16",
     "@zip.js/zip.js": "^2.7.60",
     "confbox": "^0.2.2",
