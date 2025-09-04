@@ -2,7 +2,11 @@
   import { goto } from '$app/navigation'
   import { page } from '$app/state'
   import { bbox } from '@turf/bbox'
-  import maplibregl, { type GeoJSONSource } from 'maplibre-gl'
+  import type { FeatureCollection } from 'geojson'
+  import maplibregl, {
+    type DataDrivenPropertyValueSpecification,
+    type GeoJSONSource,
+  } from 'maplibre-gl'
   import 'maplibre-gl/dist/maplibre-gl.css'
   import { onMount } from 'svelte'
 
@@ -16,7 +20,25 @@
   const CURRENT_STOP_LAYER = 'current-stop'
   const CURRENT_SHAPE_LAYER = 'current-shape'
 
+  const routeTypeStroke: DataDrivenPropertyValueSpecification<string> = [
+    'match',
+    ['get', 'routeType'],
+    '1',
+    '#fbb03b',
+    '2',
+    '#223b53',
+    '3',
+    '#e55e5e',
+    '4',
+    '#3bb2d0',
+    /* other */ '#ccc',
+  ]
+
   let map: maplibregl.Map
+  let loadedStopsData: FeatureCollection = {
+    type: 'FeatureCollection',
+    features: [],
+  }
   let mounted = $state(false)
   onMount(async () => {
     // todo: default to regional center
@@ -84,19 +106,7 @@
           'circle-color': '#ffffff',
           'circle-radius': 8,
           'circle-stroke-width': 4,
-          'circle-stroke-color': [
-            'match',
-            ['get', 'routeType'],
-            '1',
-            '#fbb03b',
-            '2',
-            '#223b53',
-            '3',
-            '#e55e5e',
-            '4',
-            '#3bb2d0',
-            /* other */ '#ccc',
-          ],
+          'circle-stroke-color': routeTypeStroke,
         },
       })
       map.on('click', ALL_STOPS_LAYER, (e) => {
@@ -126,7 +136,7 @@
       )
       const source = map.getSource(ALL_STOPS_LAYER) as GeoJSONSource
       if (source) {
-        source.setData({
+        loadedStopsData = {
           type: 'FeatureCollection',
           features: (stops.data || []).map((i) => ({
             type: 'Feature',
@@ -140,7 +150,10 @@
               coordinates: [i.stopLon, i.stopLat],
             },
           })),
-        })
+        }
+        // we just cache the data for later if a shape is being shown
+        if (mapState.currentShape.length > 0) return
+        source.setData(loadedStopsData)
       }
     })
   })
@@ -173,7 +186,7 @@
         features: [],
       })
     }
-    if (mapState.currentShape.length > 0) {
+    if (mapState.currentShape.length > 0 && mounted) {
       // we fetch the shape here rather than resolving the data on the client like usual
       // this should only run on the client
       const prefix = mapState.currentShape[0].prefix
@@ -197,6 +210,40 @@
             map.fitBounds(extent as [number, number, number, number], {
               padding: 32,
             })
+
+            if (mapState.currentShape[0].color) {
+              map.setPaintProperty(
+                CURRENT_SHAPE_LAYER,
+                'line-color',
+                `#${mapState.currentShape[0].color}`
+              )
+              map.setPaintProperty(
+                ALL_STOPS_LAYER,
+                'circle-stroke-color',
+                `#${mapState.currentShape[0].color}`
+              )
+            } else {
+              map.setPaintProperty(CURRENT_SHAPE_LAYER, 'line-color', `#666`)
+              map.setPaintProperty(ALL_STOPS_LAYER, 'circle-stroke-color', `#666`)
+            }
+
+            const allStopsSource = map.getSource(ALL_STOPS_LAYER) as GeoJSONSource
+            if (allStopsSource) {
+              allStopsSource.setData({
+                type: 'FeatureCollection',
+                features: mapState.visibleStops.map((i) => ({
+                  type: 'Feature',
+                  properties: {
+                    prefix: i.prefix,
+                    stopId: i.stopId,
+                  },
+                  geometry: {
+                    type: 'Point',
+                    coordinates: i.coordinates,
+                  },
+                })),
+              })
+            }
           }
         })
       })
@@ -206,6 +253,9 @@
         type: 'FeatureCollection',
         features: [],
       })
+      const allStopsSource = map.getSource(ALL_STOPS_LAYER) as GeoJSONSource
+      allStopsSource.setData(loadedStopsData)
+      map.setPaintProperty(ALL_STOPS_LAYER, 'circle-stroke-color', routeTypeStroke)
     }
   })
 </script>

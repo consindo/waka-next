@@ -5,7 +5,9 @@ SELECT trips.route_id,
        departure_time,
        arrival_time,
        agency_timezone as timezone,
-       shape_id
+       shape_id,
+       route_color,
+       route_text_color
 FROM trips
 INNER JOIN routes ON trips.route_id = routes.route_id
 INNER JOIN agency ON routes.agency_id = agency.agency_id

@@ -98,6 +98,8 @@ export interface ServiceResult {
   departureTime?: string
   timezone: string
   shapeId?: string
+  routeColor?: string
+  routeTextColor?: string
 }
 
 export interface RoutesByStopsResult {
@@ -123,9 +125,11 @@ export interface TimetableResult {
   continuousDropOff?: number
   shapeDistTraveled?: number
   timepoint?: number
-  stopId?: string
+  stopId: string
   stopCode?: string
   stopName?: string
+  stopLat: number
+  stopLon: number
   parentStopId?: string
   parentStopCode?: string
   parentStopName?: string

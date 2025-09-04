@@ -1,10 +1,8 @@
 <script lang="ts">
   import { page } from '$app/state'
-  import { onDestroy } from 'svelte'
 
   import type { ServiceResult } from '@lib/client'
 
-  import { mapState } from '../../routes/mapstate.svelte'
   import ServiceItem from './ServiceItem.svelte'
 
   const {
@@ -48,21 +46,6 @@
       detailsElement.removeAttribute('open')
     }
   }
-
-  $effect(() => {
-    if (currentService?.shapeId !== undefined) {
-      mapState.currentShape = [
-        {
-          prefix: currentService.prefix,
-          shapeId: currentService.shapeId,
-        },
-      ]
-    }
-  })
-
-  onDestroy(() => {
-    mapState.currentShape = []
-  })
 </script>
 
 <h2>

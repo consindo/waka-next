@@ -12,6 +12,8 @@ SELECT trip_id,
        stops.stop_id,
        stops.stop_code,
        stops.stop_name,
+       stops.stop_lat,
+       stops.stop_lon,
        parent_stop.stop_id AS parent_stop_id,
        parent_stop.stop_code AS parent_stop_code,
        parent_stop.stop_name AS parent_stop_name

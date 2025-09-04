@@ -1,9 +1,12 @@
 <script lang="ts">
   import { page } from '$app/state'
+  import { onDestroy } from 'svelte'
 
   import Header from '$lib/components/Header.svelte'
   import Services from '$lib/components/Services.svelte'
   import Timetable from '$lib/components/Timetable.svelte'
+
+  import { mapState } from '../../../../routes/mapstate.svelte'
 
   let { data } = $props()
 
@@ -16,6 +19,29 @@
   const directionId = $derived(
     parseInt(searchParams.get('directionId') || currentService?.directionId.toString() || '0')
   )
+
+  $effect(() => {
+    if (currentService?.shapeId !== undefined) {
+      mapState.currentShape = [
+        {
+          prefix: currentService.prefix,
+          shapeId: currentService.shapeId,
+          color: currentService.routeColor,
+        },
+      ]
+    }
+    mapState.visibleStops = data.timetable.map((i) => ({
+      prefix: i.prefix,
+      stopId: i.parentStopId || i.stopId,
+      stopName: i.parentStopName || i.stopName,
+      coordinates: [i.stopLon, i.stopLat],
+    }))
+  })
+
+  onDestroy(() => {
+    mapState.currentShape = []
+    mapState.visibleStops = []
+  })
 </script>
 
 {#if data.route}
