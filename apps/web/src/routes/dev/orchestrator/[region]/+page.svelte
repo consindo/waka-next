@@ -112,17 +112,17 @@
       <p>No available versions.</p>
     {/if}
     {#each data.versions as version (version.version)}
-      <h3>{version.version}</h3>
+      <h3>
+        <time title={version.date}>{new Date(version.date).toLocaleDateString()}</time>
+        <em
+          >({Math.round(
+            (new Date().getTime() - new Date(version.date).getTime()) / 1000 / 60 / 60 / 24
+          )} days ago)</em
+        >{#if version.etag === data?.activeRegion?.etag}<span class="pill">active</span>{/if}
+      </h3>
       <dl>
-        <dt>date</dt>
-        <dd>
-          <time>{new Date(version.date).toLocaleString()}</time>
-          <em
-            >({Math.round(
-              (new Date().getTime() - new Date(version.date).getTime()) / 1000 / 60 / 60 / 24
-            )} days ago)</em
-          >
-        </dd>
+        <dt>id</dt>
+        <dd>{version.version}</dd>
         <dt>etag</dt>
         <dd>{version.etag}</dd>
         <dt>url</dt>
@@ -181,6 +181,13 @@
   h3 {
     font-size: 1rem;
     margin-top: 1.5rem;
+  }
+  .pill {
+    background: green;
+    color: #fff;
+    margin-left: 0.25rem;
+    border-radius: 5px;
+    padding: 0.125rem 0.25rem;
   }
   strong {
     font-weight: 600;
