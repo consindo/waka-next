@@ -2,6 +2,7 @@
   import { onDestroy } from 'svelte'
 
   import Header from '$lib/components/Header.svelte'
+  import ScrollContainer from '$lib/components/ScrollContainer.svelte'
   import StopTimes from '$lib/components/StopTimes.svelte'
 
   import { mapState } from '../../../mapstate.svelte.js'
@@ -32,5 +33,6 @@
   title={stopInfo?.stopName}
   subtitle={stopInfo?.stopCode ? `Stop ${stopInfo?.stopCode}` : undefined}
 />
-
-<StopTimes {stopInfo} stopTimes={data.data?.stopTimes || []} />
+<ScrollContainer>
+  <StopTimes {stopInfo} stopTimes={data.data?.stopTimes || []} />
+</ScrollContainer>

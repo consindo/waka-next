@@ -29,12 +29,13 @@
     padding: 0 calc(var(--edge-padding) - 0.25rem) 0 var(--edge-padding);
     border-bottom: 0.5px solid var(--surface-border);
     background: var(--surface-bg);
-    border-radius: calc(var(--base-border-radius) + 1px) calc(var(--base-border-radius) + 1px) 0 0;
     align-items: center;
-    position: sticky;
-    top: 0;
-    z-index: 5;
-    height: 54px;
+    height: var(--collapsed-height);
+    margin-top: calc(var(--collapsed-height) * -1);
+
+    @media (min-width: 640px) {
+      margin-top: 0;
+    }
   }
   header div {
     overflow-x: hidden;

@@ -14,46 +14,67 @@
 </script>
 
 <main class:single={page.url.pathname.startsWith('/dev')}>
+  <section class="map">
+    <MapCanvas />
+  </section>
   <section class="content">
     <div class="content-inner">
       {@render children?.()}
     </div>
   </section>
-  <section class="map">
-    <MapCanvas />
-  </section>
 </main>
 
 <style>
   main {
-    padding: 0.5rem;
+    height: var(--screen-height);
     box-sizing: border-box;
+    overflow-y: scroll;
   }
-  main:not(.single) {
-    height: 100vh;
-    display: flex;
-    gap: 0.5rem;
+  .map {
+    overflow: hidden;
+    height: 100%;
+    position: sticky;
+    top: 0;
+    z-index: 0;
+    background: #000;
   }
   .single .map {
     display: none;
   }
-  main:not(.single) .content {
-    width: 360px;
-    height: 100%;
+  .content {
+    position: relative;
+    z-index: 2;
   }
   .content-inner {
-    border: 0.5px solid var(--surface-border);
-    border-radius: calc(var(--base-border-radius) + 1px);
-    overflow-y: auto;
-    max-height: 100%;
     background: var(--surface-bg-subtle);
-    box-shadow: var(--surface-shadow);
+    border-radius: calc(var(--base-border-radius) + 5px) calc(var(--base-border-radius) + 5px) 0 0;
+    box-shadow: 0 -1px 8px #00000022;
+    overflow: clip;
   }
-  .map {
-    flex: 1;
-    border: 0.5px solid var(--surface-border);
-    border-radius: calc(var(--base-border-radius) + 1px);
-    overflow: hidden;
-    box-shadow: var(--surface-shadow);
+  @media (min-width: 640px) {
+    main {
+      padding: var(--screen-padding);
+      overflow-y: hidden;
+    }
+    main:not(.single) {
+      display: flex;
+      flex-direction: row-reverse;
+      gap: 0.5rem;
+    }
+    main:not(.single) .content {
+      width: 360px;
+    }
+    .map {
+      background: transparent;
+      flex: 1;
+      border: 0.5px solid var(--surface-border);
+      border-radius: calc(var(--base-border-radius) + 1px);
+      box-shadow: var(--surface-shadow);
+    }
+    .content-inner {
+      border: 0.5px solid var(--surface-border);
+      border-radius: calc(var(--base-border-radius) + 1px);
+      box-shadow: var(--surface-shadow);
+    }
   }
 </style>

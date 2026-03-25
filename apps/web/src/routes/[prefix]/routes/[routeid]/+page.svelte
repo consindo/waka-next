@@ -3,6 +3,7 @@
   import { onDestroy } from 'svelte'
 
   import Header from '$lib/components/Header.svelte'
+  import ScrollContainer from '$lib/components/ScrollContainer.svelte'
   import Services from '$lib/components/Services.svelte'
   import Timetable from '$lib/components/Timetable.svelte'
 
@@ -46,7 +47,7 @@
 
 {#if data.route}
   <Header title={data.route.routeShortName} />
-  <div class="content">
+  <ScrollContainer>
     <div>
       {#if data.services && data.services.length > 0}
         <Services
@@ -64,7 +65,7 @@
         <Timetable timetable={data.timetable} route={data.route} {currentService} {stopId} />
       {/if}
     </div>
-  </div>
+  </ScrollContainer>
 {:else}
   <Header title="Not found" />
 {/if}
