@@ -5,11 +5,7 @@
   --drawer-top-margin: 2rem;
   --drawer-midpoint: 18rem;
   --collapsed-height: 4rem;
-  --screen-padding: 0px;
-
-  @media (min-width: 640px) {
-    --screen-padding: 0.5rem;
-  }
+  --screen-padding: 0.5rem;
 
   --bg: light-dark(#f5f5f5, #18181b);
   --base-border-radius: 3px;

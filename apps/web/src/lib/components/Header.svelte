@@ -1,7 +1,13 @@
 <script lang="ts">
   import close from '../../icons/close.svg'
 
-  const { title, subtitle = '' } = $props()
+  interface Props {
+    title: string
+    subtitle?: string
+    isCloseButtonEnabled?: boolean
+  }
+
+  const { title, subtitle = '', isCloseButtonEnabled = true }: Props = $props()
 </script>
 
 <header>
@@ -9,22 +15,28 @@
     <h1 {title}>{title}</h1>
     {#if subtitle !== ''}<h2 title={subtitle}>{subtitle}</h2>{/if}
   </div>
-  <a
-    href="/"
-    onclick={(e) => {
-      // todo: needs to check if the previous item in history has a different pathname
-      if (window.history.length > 0) {
-        e.preventDefault()
-        window.history.back()
-      }
-    }}
-  >
-    <img src={close} alt="Close" class="img-invert" />
-  </a>
+  {#if isCloseButtonEnabled}
+    <a
+      href="/"
+      onclick={(e) => {
+        // todo: needs to check if the previous item in history has a different pathname
+        if (window.history.length > 0) {
+          e.preventDefault()
+          window.history.back()
+        }
+      }}
+    >
+      <img src={close} alt="Close" class="img-invert" />
+    </a>
+  {/if}
 </header>
 
 <style>
   header {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    scroll-margin-top: calc(var(--screen-height) - var(--drawer-midpoint));
+
     display: flex;
     padding: 0 calc(var(--edge-padding) - 0.25rem) 0 var(--edge-padding);
     border-bottom: 0.5px solid var(--surface-border);

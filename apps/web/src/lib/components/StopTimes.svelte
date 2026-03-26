@@ -127,6 +127,7 @@
     margin: 0;
     font-size: 12px;
     text-wrap: pretty;
+    letter-spacing: -0.2px;
   }
   li.empty {
     text-align: center;

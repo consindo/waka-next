@@ -1,5 +1,6 @@
 <script lang="ts">
   import Header from '$lib/components/Header.svelte'
+  import ScrollContainer from '$lib/components/ScrollContainer.svelte'
 
   import RouteGroup from './RouteGroup.svelte'
 
@@ -7,12 +8,13 @@
 </script>
 
 <Header title="Routes" />
-
-<div>
-  {#each data.groups as group (group.name)}
-    <RouteGroup {group} />
-  {/each}
-</div>
+<ScrollContainer>
+  <div>
+    {#each data.groups as group (group.name)}
+      <RouteGroup {group} />
+    {/each}
+  </div>
+</ScrollContainer>
 
 <style>
   div {

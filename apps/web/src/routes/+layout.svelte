@@ -14,8 +14,11 @@
 </script>
 
 <main class:single={page.url.pathname.startsWith('/dev')}>
+  <div class="screen-top"></div>
   <section class="map">
-    <MapCanvas />
+    <div class="map-inner">
+      <MapCanvas />
+    </div>
   </section>
   <section class="content">
     <div class="content-inner">
@@ -29,6 +32,25 @@
     height: var(--screen-height);
     box-sizing: border-box;
     overflow-y: scroll;
+    scroll-timeline: --page-scroll block;
+  }
+  main:not(.single) {
+    scrollbar-width: none;
+    scroll-snap-type: y mandatory;
+  }
+  .screen-top {
+    scroll-snap-align: start;
+  }
+  @keyframes main-scroll-opacity {
+    0% {
+      opacity: 1;
+    }
+    90% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.7;
+    }
   }
   .map {
     overflow: hidden;
@@ -37,6 +59,12 @@
     top: 0;
     z-index: 0;
     background: #000;
+  }
+  .map-inner {
+    background: var(--surface-bg-subtle);
+    height: 100%;
+    animation: main-scroll-opacity auto linear;
+    animation-timeline: --page-scroll;
   }
   .single .map {
     display: none;
@@ -52,17 +80,21 @@
     overflow: clip;
   }
   @media (min-width: 640px) {
+    .screen-top {
+      display: none;
+    }
     main {
       padding: var(--screen-padding);
-      overflow-y: hidden;
     }
     main:not(.single) {
       display: flex;
       flex-direction: row-reverse;
       gap: 0.5rem;
+      overflow-y: hidden;
     }
     main:not(.single) .content {
-      width: 360px;
+      width: 40vw;
+      max-width: 360px;
     }
     .map {
       background: transparent;
