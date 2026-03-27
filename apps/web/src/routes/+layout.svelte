@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onNavigate } from '$app/navigation'
   import { page } from '$app/state'
 
   import MapCanvas from '$lib/components/MapCanvas.svelte'
@@ -11,9 +12,39 @@
   }
 
   let { children }: Props = $props()
+  let mainElement: HTMLElement | undefined = undefined
+
+  onNavigate((navigation) => {
+    // todo: don't run a view transition for stay in place navigation
+    if (!document.startViewTransition) return
+
+    const types: string[] = []
+    if ((navigation.delta || 0) < 0) {
+      types.push('backward')
+    }
+
+    if ((mainElement?.scrollTop || 0) === 0) {
+      types.push('collapsed')
+    } else if ((mainElement?.scrollTop || 0) < 300) {
+      types.push('middle')
+    } else {
+      types.push('expanded')
+    }
+
+    return new Promise((resolve) => {
+      document.startViewTransition({
+        types,
+        update: async () => {
+          resolve()
+          await navigation.complete
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any)
+    })
+  })
 </script>
 
-<main class:single={page.url.pathname.startsWith('/dev')}>
+<main class:single={page.url.pathname.startsWith('/dev')} bind:this={mainElement}>
   <div class="screen-top"></div>
   <section class="map">
     <div class="map-inner">
@@ -45,7 +76,7 @@
     0% {
       opacity: 1;
     }
-    90% {
+    80% {
       opacity: 1;
     }
     100% {
@@ -69,14 +100,81 @@
   .single .map {
     display: none;
   }
+  @keyframes slide-drawer-in {
+    0% {
+      transform: translateY(var(--current-drawer-height));
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  @keyframes fade-drawer {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0.93;
+    }
+  }
+  @keyframes regular-fade {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  :root::view-transition-new(drawer) {
+    animation: 350ms ease slide-drawer-in;
+  }
+  :root::view-transition-old(drawer) {
+    animation: 300ms ease fade-drawer;
+    opacity: 0.93;
+  }
+  :root:active-view-transition-type(collapsed) {
+    --current-drawer-height: var(--collapsed-height);
+  }
+  :root:active-view-transition-type(middle) {
+    --current-drawer-height: var(--drawer-midpoint);
+  }
+  :root:active-view-transition-type(expanded) {
+    --current-drawer-height: calc(var(--screen-height) - var(--drawer-top-margin));
+  }
+  :root:active-view-transition-type(backward) {
+    &::view-transition-new(drawer) {
+      animation: 300ms ease fade-drawer reverse;
+      z-index: 2;
+    }
+    &::view-transition-old(drawer) {
+      animation: 350ms ease slide-drawer-in reverse;
+      transform: translateY(var(--current-drawer-height));
+      opacity: 1;
+      z-index: 3;
+    }
+  }
   .content {
+    --border-radius: calc(var(--base-border-radius) + 5px) calc(var(--base-border-radius) + 5px) 0 0;
     position: relative;
     z-index: 2;
+    box-shadow: 0 -1px 8px #00000022;
+    border-radius: var(--border-radius);
+  }
+  /* so when the drawer goes transparent, it has black in the background */
+  .content::before {
+    content: '';
+    background: #000;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: -1;
+    border-radius: var(--border-radius);
   }
   .content-inner {
+    view-transition-name: drawer;
     background: var(--surface-bg-subtle);
-    border-radius: calc(var(--base-border-radius) + 5px) calc(var(--base-border-radius) + 5px) 0 0;
-    box-shadow: 0 -1px 8px #00000022;
+    border-radius: var(--border-radius);
     overflow: clip;
   }
   @media (min-width: 640px) {
@@ -103,10 +201,21 @@
       border-radius: calc(var(--base-border-radius) + 1px);
       box-shadow: var(--surface-shadow);
     }
+    .map-inner {
+      animation: none;
+    }
+    .content {
+      view-transition-name: none;
+      box-shadow: none;
+    }
+    .content::before {
+      content: none;
+    }
     .content-inner {
       border: 0.5px solid var(--surface-border);
       border-radius: calc(var(--base-border-radius) + 1px);
       box-shadow: var(--surface-shadow);
+      view-transition-name: none;
     }
   }
 </style>

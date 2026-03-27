@@ -30,7 +30,7 @@
 </script>
 
 <Header
-  title={stopInfo?.stopName}
+  title={stopInfo?.stopName || ''}
   subtitle={stopInfo?.stopCode ? `Stop ${stopInfo?.stopCode}` : undefined}
 />
 <ScrollContainer>
