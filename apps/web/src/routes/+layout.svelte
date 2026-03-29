@@ -15,7 +15,12 @@
   let mainElement: HTMLElement | undefined = undefined
 
   onNavigate((navigation) => {
-    // todo: don't run a view transition for stay in place navigation
+    // if the route id is not changing, we don't run an animation
+    if (navigation.from?.route.id === navigation.to?.route.id) {
+      return
+    }
+
+    // if the api is not supported
     if (!document.startViewTransition) return
 
     const types: string[] = []

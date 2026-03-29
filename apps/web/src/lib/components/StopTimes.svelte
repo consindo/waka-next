@@ -58,7 +58,12 @@
           {/if}
         </div>
         <div class="time">
-          <h4 class:mins={departureTime.includes('m')}>{departureTime}</h4>
+          <h4>
+            <span>{(departureTime.match(/[0-9]*/g) || [''])[0]}</span>{departureTime.replace(
+              /[0-9]*/g,
+              ''
+            )}
+          </h4>
           {#if route[1] && route[2]}
             {@const secondTime = formatShortDate(
               route[1].departureTime,
@@ -120,6 +125,7 @@
     opacity: 0.9;
   }
   li h3 {
+    font-weight: 800;
     font-size: 1.5rem;
     margin: 0;
   }
@@ -155,8 +161,8 @@
     font-size: 1rem;
     margin: 0;
   }
-  .time h4.mins {
-    font-size: 1.125rem;
+  .time h4 span {
+    font-size: 1.25rem;
   }
   .time p {
     font-size: 13px;
