@@ -6,12 +6,16 @@
 
   import '../css/app.css'
   import '../css/fonts.css'
+  import type { PageData } from './$types'
 
   interface Props {
     children?: import('svelte').Snippet
+    data: PageData
   }
 
-  let { children }: Props = $props()
+  let { children, data }: Props = $props()
+  const { regions } = data
+
   let mainElement: HTMLElement | undefined = undefined
 
   onNavigate((navigation) => {
@@ -53,7 +57,7 @@
   <div class="screen-top"></div>
   <section class="map">
     <div class="map-inner">
-      <MapCanvas />
+      <MapCanvas {regions} />
     </div>
   </section>
   <section class="content">

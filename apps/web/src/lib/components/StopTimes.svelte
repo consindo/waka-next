@@ -59,8 +59,8 @@
         </div>
         <div class="time">
           <h4>
-            <span>{(departureTime.match(/[0-9]*/g) || [''])[0]}</span>{departureTime.replace(
-              /[0-9]*/g,
+            <span>{(departureTime.match(/[0-9:]*/g) || [''])[0]}</span>{departureTime.replace(
+              /[0-9:]*/g,
               ''
             )}
           </h4>

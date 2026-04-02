@@ -6,7 +6,7 @@ import { DB } from '@lib/db'
 import { variables } from './variables'
 
 type Fetch = typeof fetch
-interface Region {
+export interface Region {
   region: Prefix
   bounds: [[number, number], [number, number]]
   url: string

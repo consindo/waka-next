@@ -1,20 +1,27 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
   import { page } from '$app/state'
-  import { bbox } from '@turf/bbox'
+  import { bbox, envelope, lineString } from '@turf/turf'
   import type { FeatureCollection } from 'geojson'
   import maplibregl, {
     type DataDrivenPropertyValueSpecification,
     type GeoJSONSource,
+    type MapLibreEvent,
   } from 'maplibre-gl'
   import 'maplibre-gl/dist/maplibre-gl.css'
   import { onMount } from 'svelte'
 
-  import type { Prefix } from '@lib/client'
-
   import { resolveData } from '$lib/dataResolver'
+  import type { Region } from '$lib/storage'
 
   import { mapState } from '../../routes/mapstate.svelte'
+  import { getStops } from './mapData'
+
+  const { regions }: { regions: Region[] } = $props()
+  const regionalBounds = regions.map((region) => ({
+    prefix: region.region,
+    bounds: envelope(lineString(region.bounds)),
+  }))
 
   const ALL_STOPS_LAYER = 'all-stops'
   const CURRENT_STOP_LAYER = 'current-stop'
@@ -53,14 +60,7 @@
       zoom: 14,
     })
 
-    map.on('load', () => {
-      map.addSource(CURRENT_STOP_LAYER, {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: [],
-        },
-      })
+    map.on('load', (e) => {
       map.addSource(CURRENT_SHAPE_LAYER, {
         type: 'geojson',
         data: {
@@ -75,16 +75,11 @@
           features: [],
         },
       })
-      map.addLayer({
-        id: CURRENT_STOP_LAYER,
-        source: CURRENT_STOP_LAYER,
-        type: 'circle',
-        layout: {},
-        paint: {
-          'circle-color': '#ffffff',
-          'circle-radius': 8,
-          'circle-stroke-width': 4,
-          'circle-stroke-color': '#0000ff',
+      map.addSource(CURRENT_STOP_LAYER, {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: [],
         },
       })
       map.addLayer({
@@ -109,53 +104,56 @@
           'circle-stroke-color': routeTypeStroke,
         },
       })
+      map.addLayer({
+        id: CURRENT_STOP_LAYER,
+        source: CURRENT_STOP_LAYER,
+        type: 'circle',
+        layout: {},
+        paint: {
+          'circle-color': '#ffffff',
+          'circle-radius': 8,
+          'circle-stroke-width': 4,
+          'circle-stroke-color': '#0000ff',
+        },
+      })
+
       map.on('click', ALL_STOPS_LAYER, (e) => {
         const { prefix, stopId } = (e.features || [])[0].properties
         goto(`/${prefix}/stops/${stopId}`, { replaceState: page.url.pathname.includes('/stops/') })
       })
       mounted = true
+
+      loadStopsOnMap(e)
     })
 
-    map.on('moveend', async (e) => {
+    const loadStopsOnMap = async (e: MapLibreEvent) => {
       const bounds = e.target.getBounds()
-      const prefix = page.params.prefix as Prefix
+      const sw = bounds.getSouthWest()
+      const ne = bounds.getNorthEast()
 
       // we pad a little bit
-      const sw = bounds.getSouthWest()
       const minLat = sw.lat - 0.01
       const minLon = sw.lng - 0.01
-      const ne = bounds.getNorthEast()
       const maxLat = ne.lat + 0.01
       const maxLon = ne.lng + 0.01
+      const mapBounds = [
+        [maxLon, maxLat],
+        [minLon, minLat],
+      ] as [[number, number], [number, number]]
 
-      const stops = await resolveData(
-        prefix,
-        `/stops?bounds=${encodeURIComponent([minLat, maxLat, minLon, maxLon].join(','))}`,
-        (client) => client.getStopsByLocation(prefix, minLat, maxLat, minLon, maxLon),
-        fetch
-      )
+      const stopsData = await getStops(regionalBounds, mapBounds)
+      loadedStopsData = stopsData
+
       const source = map.getSource(ALL_STOPS_LAYER) as GeoJSONSource
       if (source) {
-        loadedStopsData = {
-          type: 'FeatureCollection',
-          features: (stops.data || []).map((i) => ({
-            type: 'Feature',
-            properties: {
-              prefix: i.prefix,
-              stopId: i.stopId,
-              routeType: (i.routes[0]?.routeType || 3).toString(),
-            },
-            geometry: {
-              type: 'Point',
-              coordinates: [i.stopLon, i.stopLat],
-            },
-          })),
-        }
         // we just cache the data for later if a shape is being shown
+
         if (mapState.currentShape.length > 0) return
         source.setData(loadedStopsData)
       }
-    })
+    }
+
+    map.on('moveend', loadStopsOnMap)
   })
 
   $effect(() => {
