@@ -3,7 +3,7 @@
 
   --screen-height: 100svh;
   --drawer-top-margin: 2rem;
-  --drawer-midpoint: 18rem;
+  --drawer-midpoint: 45vh;
   --collapsed-height: 4rem;
   --screen-padding: 0.5rem;
 
@@ -41,6 +41,7 @@ html {
   padding: 0;
   background: var(--bg);
   color: var(--surface-text);
+  overflow: hidden;
 }
 
 .dev-btn {

@@ -34,7 +34,7 @@
 
     if ((mainElement?.scrollTop || 0) === 0) {
       types.push('collapsed')
-    } else if ((mainElement?.scrollTop || 0) < 300) {
+    } else if ((mainElement?.scrollTop || 0) < document.documentElement.clientHeight / 2) {
       types.push('middle')
     } else {
       types.push('expanded')
@@ -73,6 +73,7 @@
     box-sizing: border-box;
     overflow-y: scroll;
     scroll-timeline: --page-scroll block;
+    overscroll-behavior: none;
   }
   main:not(.single) {
     scrollbar-width: none;

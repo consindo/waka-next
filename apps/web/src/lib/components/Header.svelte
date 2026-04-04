@@ -45,8 +45,25 @@
     height: var(--collapsed-height);
     margin-top: calc(var(--collapsed-height) * -1);
 
+    &::before {
+      content: '';
+      background: #00000044;
+      position: absolute;
+      top: 0.25rem;
+      left: 50%;
+      height: 0.25rem;
+      width: 2rem;
+      margin-left: -1rem;
+      border-radius: 0.375rem;
+      display: flex;
+    }
+
     @media (min-width: 640px) {
       margin-top: 0;
+
+      &::before {
+        display: none;
+      }
     }
   }
   header div {
@@ -54,7 +71,7 @@
     flex: 1;
   }
   h1 {
-    font-size: 1rem;
+    font-size: 1.125rem;
     margin: 0;
     white-space: pre;
     text-overflow: ellipsis;
