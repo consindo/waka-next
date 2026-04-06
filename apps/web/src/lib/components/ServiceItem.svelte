@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from '$app/state'
+  import { SvelteURLSearchParams } from 'svelte/reactivity'
 
   import type { ServiceResult } from '@lib/client'
 
@@ -16,7 +17,7 @@
 
   const newSearchParams = $derived(
     (() => {
-      const p = new URLSearchParams(existingSearchParams)
+      const p = new SvelteURLSearchParams(existingSearchParams)
       p.set('tripId', service.tripId)
       return p
     })()
