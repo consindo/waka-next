@@ -30,7 +30,7 @@ export class Importer {
     const files = new ZipReader(stream)
     for await (const file of files.getEntriesGenerator()) {
       const schema = schemas.find((s) => s.filename === file.filename)
-      if (schema === undefined || file.getData === undefined) {
+      if (schema === undefined || !('getData' in file)) {
         logger.info(`(skipping) ${file.filename}`)
         continue
       }

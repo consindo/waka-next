@@ -80,20 +80,19 @@
           </dd>
         {/if}
       </dl>
-      <button class="dev-btn" onclick={() => window.location.reload()}>refresh</button>
       <button
         class="dev-btn"
         onclick={loadDb({
           region: data.id,
           version: 'live',
           url: data.activeRegion.url,
-        })}>load into client</button
+        })}>load into sql client</button
       >
     {:else}
       <p>Region {data.id} is inactive.</p>
       <button onclick={() => window.location.reload()}>refresh</button>
     {/if}
-    <h2>versions</h2>
+    <h2>other versions</h2>
     <form method="POST" action="?/import">
       <input class="dev-btn" type="text" name="token" placeholder="auth token" bind:value={token} />
       <button class="dev-btn" disabled={token === ''}>check & import new version</button>
@@ -147,8 +146,8 @@
       <form method="POST" action="?/activate">
         <input type="hidden" name="token" bind:value={token} />
         <input type="hidden" name="version" value={version.version} />
+        <button class="dev-btn" onclick={loadDb(version)}>load into sql client</button>
         <button class="dev-btn" type="submit" disabled={token === ''}>set active</button>
-        <button class="dev-btn" onclick={loadDb(version)}>load into client</button>
       </form>
     {/each}
   </div>

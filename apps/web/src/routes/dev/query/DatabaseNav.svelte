@@ -84,7 +84,7 @@
     <button class="dev-btn" onclick={triggerSave}>dump db</button>
     <input type="file" bind:this={zipElement} bind:files={zipFiles} accept=".zip,application/zip" />
     <button class="dev-btn" onclick={() => (zipElement ? zipElement.click() : null)}
-      >import gtfs</button
+      >import gtfs .zip</button
     >
   </div>
 </nav>

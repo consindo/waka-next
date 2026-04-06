@@ -12,6 +12,7 @@
 
   const emptyDb = new DB()
   let db = $state(emptyDb)
+  let querySpeed = $state(-1)
   const requestedDb = page.url.searchParams.get('db')
 
   const stream = logger.stream
@@ -33,8 +34,15 @@
   const run = () => {
     error = ''
     try {
-      results = db.db!.exec(query)
-      console.log(results)
+      if (db.db === undefined) {
+        throw new Error('db.db not found')
+      }
+      const startTime = performance.now()
+      const queryResults = db.db.exec(query)
+      const endTime = performance.now()
+      console.log(queryResults)
+      results = queryResults
+      querySpeed = endTime - startTime
     } catch (err) {
       results = []
       error = getErrorMessage(err)
@@ -52,8 +60,6 @@
       run()
     }
   }
-
-  $inspect(results)
 </script>
 
 <svelte:head>
@@ -61,12 +67,21 @@
 </svelte:head>
 
 {#await connect}
-  loading sqllite
+  loading sqlite
 {:then}
   <DatabaseNav {db} triggerChange={triggerDatabaseChange} dbName={requestedDb} />
   <div class="query">
     <textarea bind:value={query} onkeydown={triggerKeydown} rows="5"></textarea>
-    <div><button class="dev-btn" onclick={run}>run (ctrl+enter)</button></div>
+    <div>
+      <button class="dev-btn" onclick={run}>run query (ctrl+enter)</button>
+      {#if querySpeed >= 0}
+        {@const resultCount = results.reduce((acc, cur) => acc + cur.values.length, 0)}
+        <div class="result-count">
+          {resultCount}
+          {resultCount === 1 ? 'result' : 'results'} ({querySpeed.toFixed(1)}ms)
+        </div>
+      {/if}
+    </div>
   </div>
   <div>{$stream}</div>
   <div>{error}</div>
@@ -109,6 +124,12 @@
   }
   button {
     vertical-align: top;
+  }
+  .result-count {
+    text-align: right;
+    font-size: 11px;
+    padding: 0.25rem 0;
+    color: var(--surface-text-subtle);
   }
   table {
     font-family: monospace;

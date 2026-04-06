@@ -14,7 +14,6 @@
       <li><a href="/dev/orchestrator">developer console</a></li>
       <li><a href="https://github.com/consindo/waka-next">github</a></li>
     </ul>
-    <a href="/nz-akl/shapes/246-850006-e62baee3">test shape</a>
   </div>
 </ScrollContainer>
 

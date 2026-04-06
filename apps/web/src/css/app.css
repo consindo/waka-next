@@ -47,7 +47,7 @@ html {
 .dev-btn {
   border: 0;
   background: var(--surface-bg);
-  font-size: 14px;
+  font-size: 13px;
   padding: 0.25rem 0.5rem;
   border: 0.5px solid var(--surface-border);
   border-radius: var(--base-border-radius);
