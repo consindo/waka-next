@@ -17,6 +17,7 @@ import getStop from './sql/getStop.sql?raw'
 import getStopTimes from './sql/getStopTimes.sql?raw'
 import getStops from './sql/getStops.sql?raw'
 import getStopsByLocation from './sql/getStopsByLocation.sql?raw'
+import getStopsByLocationExcludingBus from './sql/getStopsByLocationExcludingBus.sql?raw'
 import getTable from './sql/getTable.sql?raw'
 import getTimetable from './sql/getTimetable.sql?raw'
 import { convertFromGtfsDateToISOTimestamp } from './timezone'
@@ -130,9 +131,11 @@ export class Client {
     minLat: number,
     maxLat: number,
     minLon: number,
-    maxLon: number
+    maxLon: number,
+    includeBus: boolean
   ): StopsResult[] {
-    const results = this.runQuery(prefix, getStopsByLocation, [
+    const query = includeBus ? getStopsByLocation : getStopsByLocationExcludingBus
+    const results = this.runQuery(prefix, query, [
       minLat.toString(),
       maxLat.toString(),
       minLon.toString(),

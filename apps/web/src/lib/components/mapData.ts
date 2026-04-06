@@ -7,7 +7,8 @@ import { resolveData } from '$lib/dataResolver'
 
 export const getStops = async (
   regionalBounds: { prefix: Prefix; bounds: Feature }[],
-  mapBounds: [[number, number], [number, number]]
+  mapBounds: [[number, number], [number, number]],
+  includebus: boolean
 ) => {
   const mapEnvelope = envelope(lineString(mapBounds))
   const prefixes = regionalBounds
@@ -20,14 +21,15 @@ export const getStops = async (
     prefixes.map((prefix) =>
       resolveData(
         prefix,
-        `/stops?bounds=${encodeURIComponent(orderedMapBounds.join(','))}`,
+        `/stops?bounds=${encodeURIComponent(orderedMapBounds.join(','))}&includebus=${includebus}`,
         (client) =>
           client.getStopsByLocation(
             prefix,
             orderedMapBounds[0],
             orderedMapBounds[1],
             orderedMapBounds[2],
-            orderedMapBounds[3]
+            orderedMapBounds[3],
+            includebus
           ),
         fetch
       )

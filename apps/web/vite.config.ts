@@ -2,9 +2,7 @@ import { sveltekit } from '@sveltejs/kit/vite'
 import path from 'path'
 
 export default {
-  plugins: [
-    sveltekit(),
-  ],
+  plugins: [sveltekit()],
   server: {
     port: 5180,
   },

@@ -8,11 +8,19 @@ export const GET: RequestHandler = async ({ locals, params, url }) => {
   const { client } = locals
   const bounds = url.searchParams.get('bounds') || ''
   const query = url.searchParams.get('q') || ''
+  const includebus = url.searchParams.get('includebus') === 'true'
   try {
     let stops
     if (bounds !== '') {
       const [minLat, maxLat, minLon, maxLon] = bounds.split(',').map((i) => parseFloat(i))
-      stops = client.getStopsByLocation(params.prefix as Prefix, minLat, maxLat, minLon, maxLon)
+      stops = client.getStopsByLocation(
+        params.prefix as Prefix,
+        minLat,
+        maxLat,
+        minLon,
+        maxLon,
+        includebus
+      )
     } else {
       stops = client.getStops(params.prefix as Prefix, query)
     }

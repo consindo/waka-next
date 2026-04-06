@@ -127,21 +127,25 @@
     })
 
     const loadStopsOnMap = async (e: MapLibreEvent) => {
+      const zoom = e.target.getZoom()
       const bounds = e.target.getBounds()
       const sw = bounds.getSouthWest()
       const ne = bounds.getNorthEast()
 
+      const includeBus = zoom >= 14
+      const boundsPadding = includeBus ? 0.01 : 0.1
+
       // we pad a little bit
-      const minLat = sw.lat - 0.01
-      const minLon = sw.lng - 0.01
-      const maxLat = ne.lat + 0.01
-      const maxLon = ne.lng + 0.01
+      const minLat = sw.lat - boundsPadding / 2
+      const minLon = sw.lng - boundsPadding
+      const maxLat = ne.lat + boundsPadding / 2
+      const maxLon = ne.lng + boundsPadding
       const mapBounds = [
         [maxLon, maxLat],
         [minLon, minLat],
       ] as [[number, number], [number, number]]
 
-      const stopsData = await getStops(regionalBounds, mapBounds)
+      const stopsData = await getStops(regionalBounds, mapBounds, includeBus)
       loadedStopsData = stopsData
 
       const source = map.getSource(ALL_STOPS_LAYER) as GeoJSONSource

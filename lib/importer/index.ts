@@ -52,6 +52,22 @@ export class Importer {
       this.#dbImport.analyzeTable(schema)
     }
 
+    // null filenames indicate a table should be created even without a corresponding file
+    schemas
+      .filter((i) => i.filename === null)
+      .forEach(async (schema) => {
+        // empty stream because no data
+        const emptyStream = new ReadableStream({
+          start(controller) {
+            controller.close()
+          },
+        })
+
+        this.#dbImport.createTable(schema)
+        await this.#dbImport.importTable(schema, emptyStream)
+        this.#dbImport.analyzeTable(schema)
+      })
+
     let shapesBlob: Blob | null = null
     if (shapesStream) {
       logger.info('importing shapes to blob')

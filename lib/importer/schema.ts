@@ -1,3 +1,5 @@
+import cacheNotBusStops from '../client/sql/cacheNotBusStops.sql?raw'
+
 enum SqliteStorageClasses {
   null = 'NULL',
   char = 'CHAR',
@@ -8,7 +10,7 @@ enum SqliteStorageClasses {
 }
 
 export interface Schema {
-  filename: string
+  filename: string | null
   table: string
   primaryKey: string[]
   postImport?: string
@@ -375,6 +377,16 @@ export const schema: Schema[] = [
       attribution_url: SqliteStorageClasses.char,
       attribution_email: SqliteStorageClasses.char,
       attribution_phone: SqliteStorageClasses.char,
+    },
+  },
+  {
+    filename: null,
+    table: 'not_bus_stops',
+    primaryKey: ['stop_id'],
+    postImport: cacheNotBusStops,
+    tableSchema: {
+      stop_id: SqliteStorageClasses.char,
+      route_type: SqliteStorageClasses.integer,
     },
   },
 ]
