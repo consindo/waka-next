@@ -38,12 +38,12 @@
     const center =
       mapState.currentStop.length > 0
         ? mapState.currentStop[0].coordinates
-        : ([174.764, -36.851] as [number, number])
+        : ([174.767, -36.844] as [number, number])
     map = new maplibregl.Map({
       container: 'maplibre-canvas',
       style: 'http://localhost:8090/styles/basic-preview/style.json',
       center,
-      zoom: 14,
+      zoom: 16,
     })
 
     map.on('load', (e) => {
@@ -57,7 +57,6 @@
 
     const addIcons = async (region: string) => {
       if (availableIcons[region]) return // already loaded
-      console.log('loading', region)
       const pins = await getPins(region, PIXEL_RATIO)
       availableIcons[region] = pins
       await Promise.all(
@@ -106,9 +105,40 @@
         type: 'symbol',
         layout: {
           'icon-image': ['get', 'icon'],
-          'icon-size': 1 / PIXEL_RATIO,
+          'icon-size': [
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            15,
+            ['case', ['==', ['get', 'shouldZoom'], true], 0.75 / PIXEL_RATIO, 1 / PIXEL_RATIO],
+            16,
+            1 / PIXEL_RATIO,
+          ],
           'icon-offset': [0, -15],
           'icon-allow-overlap': true,
+          'text-field': ['get', 'stopName'],
+          'text-optional': true,
+          'text-variable-anchor': ['left', 'right'],
+          'text-radial-offset': 1.25,
+          'text-size': 11,
+          'text-font': ['Open Sans Semibold'],
+          'text-justify': 'auto',
+          'text-max-width': 20,
+        },
+        paint: {
+          // todo: maybe this needs to be moved to js, so we can use a transition instead
+          'icon-opacity': [
+            'step',
+            ['zoom'],
+            ['case', ['==', ['get', 'shouldZoom'], true], 0, 1],
+            14.5,
+            1,
+          ],
+          'text-opacity': ['step', ['zoom'], 0, 12.5, 1],
+          'text-color': '#3f3f46',
+          'text-halo-color': '#eeeeee',
+          'text-halo-width': 0.75,
+          'text-translate': [0, -10],
         },
       })
       map.addLayer({

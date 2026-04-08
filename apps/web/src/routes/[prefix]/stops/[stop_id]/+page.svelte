@@ -4,6 +4,7 @@
   import Header from '$lib/components/Header.svelte'
   import ScrollContainer from '$lib/components/ScrollContainer.svelte'
   import StopTimes from '$lib/components/StopTimes.svelte'
+  import { tidyStopName } from '$lib/components/tidyStrings.js'
 
   import { mapState } from '../../../mapstate.svelte.js'
 
@@ -30,7 +31,7 @@
 </script>
 
 <Header
-  title={stopInfo?.stopName || ''}
+  title={tidyStopName(stopInfo?.stopName || '')}
   subtitle={stopInfo?.stopCode ? `Stop ${stopInfo?.stopCode}` : undefined}
 />
 <ScrollContainer>
