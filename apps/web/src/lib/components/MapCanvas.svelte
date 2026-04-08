@@ -16,6 +16,7 @@
 
   import { mapState } from '../../routes/mapstate.svelte'
   import { getStops } from './mapData'
+  import { getPins } from './mapIcons'
 
   const { regions }: { regions: Region[] } = $props()
   const regionalBounds = regions.map((region) => ({
@@ -26,20 +27,7 @@
   const ALL_STOPS_LAYER = 'all-stops'
   const CURRENT_STOP_LAYER = 'current-stop'
   const CURRENT_SHAPE_LAYER = 'current-shape'
-
-  const routeTypeStroke: DataDrivenPropertyValueSpecification<string> = [
-    'match',
-    ['get', 'routeType'],
-    '1',
-    '#fbb03b',
-    '2',
-    '#223b53',
-    '3',
-    '#e55e5e',
-    '4',
-    '#3bb2d0',
-    /* other */ '#ccc',
-  ]
+  const PIXEL_RATIO = 2
 
   let map: maplibregl.Map
   let loadedStopsData: FeatureCollection = {
@@ -61,6 +49,25 @@
     })
 
     map.on('load', (e) => {
+      // can just run async
+      ;(async () => {
+        const pins = await getPins('nz-akl', PIXEL_RATIO)
+        Promise.all(
+          pins.map(async (i) => {
+            const image = await map.loadImage(i.png)
+            map.addImage(i.id, image.data)
+          })
+        )
+      })()
+
+      addLayers()
+      addEvents()
+      mounted = true
+
+      loadStopsOnMap(e)
+    })
+
+    const addLayers = () => {
       map.addSource(CURRENT_SHAPE_LAYER, {
         type: 'geojson',
         data: {
@@ -95,13 +102,22 @@
       map.addLayer({
         id: ALL_STOPS_LAYER,
         source: ALL_STOPS_LAYER,
-        type: 'circle',
-        layout: {},
-        paint: {
-          'circle-color': '#ffffff',
-          'circle-radius': 8,
-          'circle-stroke-width': 4,
-          'circle-stroke-color': routeTypeStroke,
+        type: 'symbol',
+        layout: {
+          'icon-image': [
+            'match',
+            ['get', 'routeType'],
+            '1',
+            'bus-pin.svg',
+            '2',
+            'train-pin.svg',
+            '3',
+            'bus-pin.svg',
+            '4',
+            'ferry-pin.svg',
+            /* other */ 'bus-pin.svg',
+          ],
+          'icon-size': 1 / PIXEL_RATIO,
         },
       })
       map.addLayer({
@@ -116,15 +132,13 @@
           'circle-stroke-color': '#0000ff',
         },
       })
-
+    }
+    const addEvents = () => {
       map.on('click', ALL_STOPS_LAYER, (e) => {
         const { prefix, stopId } = (e.features || [])[0].properties
         goto(`/${prefix}/stops/${stopId}`, { replaceState: page.url.pathname.includes('/stops/') })
       })
-      mounted = true
-
-      loadStopsOnMap(e)
-    })
+    }
 
     const loadStopsOnMap = async (e: MapLibreEvent) => {
       const zoom = e.target.getZoom()
@@ -257,7 +271,6 @@
       })
       const allStopsSource = map.getSource(ALL_STOPS_LAYER) as GeoJSONSource
       allStopsSource.setData(loadedStopsData)
-      map.setPaintProperty(ALL_STOPS_LAYER, 'circle-stroke-color', routeTypeStroke)
     }
   })
 </script>
