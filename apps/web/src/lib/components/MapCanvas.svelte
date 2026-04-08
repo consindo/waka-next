@@ -3,11 +3,7 @@
   import { page } from '$app/state'
   import { bbox, envelope, lineString } from '@turf/turf'
   import type { FeatureCollection } from 'geojson'
-  import maplibregl, {
-    type DataDrivenPropertyValueSpecification,
-    type GeoJSONSource,
-    type MapLibreEvent,
-  } from 'maplibre-gl'
+  import maplibregl, { type GeoJSONSource, type MapLibreEvent } from 'maplibre-gl'
   import 'maplibre-gl/dist/maplibre-gl.css'
   import { onMount } from 'svelte'
 
@@ -15,7 +11,7 @@
   import type { Region } from '$lib/storage'
 
   import { mapState } from '../../routes/mapstate.svelte'
-  import { getStops } from './mapData'
+  import { getRegionsFromBounds, getStops } from './mapData'
   import { getPins } from './mapIcons'
 
   const { regions }: { regions: Region[] } = $props()
@@ -28,6 +24,8 @@
   const CURRENT_STOP_LAYER = 'current-stop'
   const CURRENT_SHAPE_LAYER = 'current-shape'
   const PIXEL_RATIO = 2
+
+  const availableIcons: Record<string, { id: string; png: string }[]> = {}
 
   let map: maplibregl.Map
   let loadedStopsData: FeatureCollection = {
@@ -49,23 +47,26 @@
     })
 
     map.on('load', (e) => {
-      // can just run async
-      ;(async () => {
-        const pins = await getPins('nz-akl', PIXEL_RATIO)
-        Promise.all(
-          pins.map(async (i) => {
-            const image = await map.loadImage(i.png)
-            map.addImage(i.id, image.data)
-          })
-        )
-      })()
-
+      addIcons('generic')
       addLayers()
       addEvents()
       mounted = true
 
       loadStopsOnMap(e)
     })
+
+    const addIcons = async (region: string) => {
+      if (availableIcons[region]) return // already loaded
+      console.log('loading', region)
+      const pins = await getPins(region, PIXEL_RATIO)
+      availableIcons[region] = pins
+      await Promise.all(
+        pins.map(async (i) => {
+          const image = await map.loadImage(i.png)
+          map.addImage(`${region}-${i.id}`, image.data)
+        })
+      )
+    }
 
     const addLayers = () => {
       map.addSource(CURRENT_SHAPE_LAYER, {
@@ -104,20 +105,10 @@
         source: ALL_STOPS_LAYER,
         type: 'symbol',
         layout: {
-          'icon-image': [
-            'match',
-            ['get', 'routeType'],
-            '1',
-            'bus-pin.svg',
-            '2',
-            'train-pin.svg',
-            '3',
-            'bus-pin.svg',
-            '4',
-            'ferry-pin.svg',
-            /* other */ 'bus-pin.svg',
-          ],
+          'icon-image': ['get', 'icon'],
           'icon-size': 1 / PIXEL_RATIO,
+          'icon-offset': [0, -15],
+          'icon-allow-overlap': true,
         },
       })
       map.addLayer({
@@ -159,7 +150,9 @@
         [minLon, minLat],
       ] as [[number, number], [number, number]]
 
-      const stopsData = await getStops(regionalBounds, mapBounds, includeBus)
+      const prefixes = getRegionsFromBounds(regionalBounds, mapBounds)
+      prefixes.forEach((i) => addIcons(i))
+      const stopsData = await getStops(prefixes, mapBounds, includeBus, availableIcons)
       loadedStopsData = stopsData
 
       const source = map.getSource(ALL_STOPS_LAYER) as GeoJSONSource
