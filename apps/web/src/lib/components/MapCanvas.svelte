@@ -11,7 +11,7 @@
   import type { Region } from '$lib/storage'
 
   import { mapState } from '../../routes/mapstate.svelte'
-  import { getRegionsFromBounds, getStops } from './mapData'
+  import { getRegionsFromBounds, getStops, mapToIcon } from './mapData'
   import { getPins } from './mapIcons'
 
   const { regions }: { regions: Region[] } = $props()
@@ -22,8 +22,9 @@
 
   const ALL_STOPS_LAYER = 'all-stops'
   const CURRENT_STOP_LAYER = 'current-stop'
+  const CURRENT_STOPS_LAYER = 'current-stops'
   const CURRENT_SHAPE_LAYER = 'current-shape'
-  const PIXEL_RATIO = 2
+  const PIXEL_RATIO = 3
 
   const availableIcons: Record<string, { id: string; png: string }[]> = {}
 
@@ -41,7 +42,7 @@
         : ([174.767, -36.844] as [number, number])
     map = new maplibregl.Map({
       container: 'maplibre-canvas',
-      style: 'http://localhost:8090/styles/basic-preview/style.json',
+      style: 'https://tiles.openfreemap.org/styles/bright',
       center,
       zoom: 16,
     })
@@ -89,6 +90,13 @@
           features: [],
         },
       })
+      map.addSource(CURRENT_STOPS_LAYER, {
+        type: 'geojson',
+        data: {
+          type: 'FeatureCollection',
+          features: [],
+        },
+      })
       map.addLayer({
         id: CURRENT_SHAPE_LAYER,
         source: CURRENT_SHAPE_LAYER,
@@ -121,7 +129,7 @@
           'text-variable-anchor': ['left', 'right'],
           'text-radial-offset': 1.25,
           'text-size': 11,
-          'text-font': ['Open Sans Semibold'],
+          'text-font': ['Noto Sans Semibold'],
           'text-justify': 'auto',
           'text-max-width': 20,
         },
@@ -144,12 +152,32 @@
       map.addLayer({
         id: CURRENT_STOP_LAYER,
         source: CURRENT_STOP_LAYER,
+        type: 'symbol',
+        layout: {
+          'icon-image': ['get', 'icon'],
+          'icon-size': 1.5 / PIXEL_RATIO,
+          'icon-offset': [0, -23],
+          'text-field': ['get', 'name'],
+          'text-size': 13,
+          'text-anchor': 'top',
+          'text-font': ['Noto Sans Semibold'],
+        },
+        paint: {
+          'text-color': '#3f3f46',
+          'text-halo-color': '#eeeeee',
+          'text-halo-width': 0.75,
+          'text-translate': [0, 12],
+        },
+      })
+      map.addLayer({
+        id: CURRENT_STOPS_LAYER,
+        source: CURRENT_STOPS_LAYER,
         type: 'circle',
         layout: {},
         paint: {
           'circle-color': '#ffffff',
-          'circle-radius': 8,
-          'circle-stroke-width': 4,
+          'circle-radius': 5,
+          'circle-stroke-width': 3,
           'circle-stroke-color': '#0000ff',
         },
       })
@@ -209,7 +237,14 @@
           features: [
             {
               type: 'Feature',
-              properties: {},
+              properties: {
+                name: mapState.currentStop[0].name,
+                icon: mapToIcon(
+                  mapState.currentStop[0].prefix,
+                  mapState.currentStop[0].routeType,
+                  availableIcons
+                ),
+              },
               geometry: {
                 type: 'Point',
                 coordinates: coordinates,
@@ -257,18 +292,23 @@
                 `#${mapState.currentShape[0].color}`
               )
               map.setPaintProperty(
-                ALL_STOPS_LAYER,
+                CURRENT_STOPS_LAYER,
                 'circle-stroke-color',
                 `#${mapState.currentShape[0].color}`
               )
             } else {
               map.setPaintProperty(CURRENT_SHAPE_LAYER, 'line-color', `#666`)
-              map.setPaintProperty(ALL_STOPS_LAYER, 'circle-stroke-color', `#666`)
+              map.setPaintProperty(CURRENT_STOPS_LAYER, 'circle-stroke-color', `#666`)
             }
 
             const allStopsSource = map.getSource(ALL_STOPS_LAYER) as GeoJSONSource
-            if (allStopsSource) {
-              allStopsSource.setData({
+            allStopsSource.setData({
+              type: 'FeatureCollection',
+              features: [],
+            })
+            const currentStopsSource = map.getSource(CURRENT_STOPS_LAYER) as GeoJSONSource
+            if (currentStopsSource) {
+              currentStopsSource.setData({
                 type: 'FeatureCollection',
                 features: mapState.visibleStops.map((i) => ({
                   type: 'Feature',
@@ -292,8 +332,11 @@
         type: 'FeatureCollection',
         features: [],
       })
-      const allStopsSource = map.getSource(ALL_STOPS_LAYER) as GeoJSONSource
-      allStopsSource.setData(loadedStopsData)
+      const currentStopsSource = map.getSource(CURRENT_STOPS_LAYER) as GeoJSONSource
+      currentStopsSource.setData({
+        type: 'FeatureCollection',
+        features: [],
+      })
     }
   })
 </script>

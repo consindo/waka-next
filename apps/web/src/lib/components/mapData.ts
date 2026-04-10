@@ -18,6 +18,25 @@ export const getRegionsFromBounds = (
   return prefixes
 }
 
+const routeTypeMap: Record<string, string> = {
+  '0': 'pin.svg',
+  '2': 'train-pin.svg',
+  '3': 'bus-pin.svg',
+  '4': 'ferry-pin.svg',
+}
+export const mapToIcon = (
+  prefix: string,
+  routeType: number | undefined,
+  icons: Record<string, { id: string; png: string }[]>
+) => {
+  const baseIconId = routeTypeMap[(routeType || 0).toString()] || routeTypeMap['0']
+  if ((icons[prefix] || []).find((i) => i.id === baseIconId)) {
+    return `${prefix}-${baseIconId}`
+  } else {
+    return `generic-${baseIconId}`
+  }
+}
+
 export const getStops = async (
   prefixes: `${string}-${string}`[],
   mapBounds: [[number, number], [number, number]],
@@ -45,21 +64,6 @@ export const getStops = async (
     )
   )
 
-  const routeTypeMap: Record<string, string> = {
-    '0': 'pin.svg',
-    '2': 'train-pin.svg',
-    '3': 'bus-pin.svg',
-    '4': 'ferry-pin.svg',
-  }
-  const mapToIcon = (prefix: string, routeType: number | undefined) => {
-    const baseIconId = routeTypeMap[(routeType || 0).toString()] || routeTypeMap['0']
-    if ((icons[prefix] || []).find((i) => i.id === baseIconId)) {
-      return `${prefix}-${baseIconId}`
-    } else {
-      return `generic-${baseIconId}`
-    }
-  }
-
   const result: FeatureCollection = {
     type: 'FeatureCollection',
     features: stops
@@ -73,7 +77,7 @@ export const getStops = async (
           stopName:
             i.routes[0]?.routeType !== 3 && i.stopName ? tidyStopName(i.stopName) : undefined,
           shouldZoom: i.routes[0]?.routeType === 3,
-          icon: mapToIcon(i.prefix, i.routes[0]?.routeType),
+          icon: mapToIcon(i.prefix, i.routes[0]?.routeType, icons),
         },
         geometry: {
           type: 'Point',

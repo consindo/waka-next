@@ -11,12 +11,16 @@
   const { data } = $props()
 
   const stopInfo = $derived(data.data?.stopInfo)
+  const name = $derived(tidyStopName(stopInfo?.stopName || ''))
 
   $effect(() => {
     if (stopInfo?.stopLon && stopInfo?.stopLat) {
       mapState.currentStop = [
         {
-          stopType: 'bus',
+          prefix: stopInfo.prefix,
+          name: name,
+          // todo: doesn't work if there are no stop times...
+          routeType: data.data?.stopTimes[0]?.routeType,
           coordinates: [stopInfo?.stopLon, stopInfo?.stopLat],
         },
       ]
@@ -30,10 +34,7 @@
   })
 </script>
 
-<Header
-  title={tidyStopName(stopInfo?.stopName || '')}
-  subtitle={stopInfo?.stopCode ? `Stop ${stopInfo?.stopCode}` : undefined}
-/>
+<Header title={name} subtitle={stopInfo?.stopCode ? `Stop ${stopInfo?.stopCode}` : undefined} />
 <ScrollContainer>
   <StopTimes {stopInfo} stopTimes={data.data?.stopTimes || []} />
 </ScrollContainer>

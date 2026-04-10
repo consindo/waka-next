@@ -2,7 +2,9 @@ import type { Prefix } from '@lib/client'
 
 interface MapState {
   currentStop: {
-    stopType: string
+    prefix: string
+    name: string
+    routeType: number | undefined
     coordinates: [number, number]
   }[]
   currentShape: {
