@@ -19,17 +19,19 @@ export const getRegionsFromBounds = (
 }
 
 const routeTypeMap: Record<string, string> = {
-  '0': 'pin.svg',
+  '-1': 'pin.svg',
+  '0': 'tram-pin.svg',
   '2': 'train-pin.svg',
   '3': 'bus-pin.svg',
   '4': 'ferry-pin.svg',
+  '5': 'funicular-pin.svg',
 }
 export const mapToIcon = (
   prefix: string,
   routeType: number | undefined,
   icons: Record<string, { id: string; png: string }[]>
 ) => {
-  const baseIconId = routeTypeMap[(routeType || 0).toString()] || routeTypeMap['0']
+  const baseIconId = routeTypeMap[(routeType || -1).toString()] || routeTypeMap['-1']
   if ((icons[prefix] || []).find((i) => i.id === baseIconId)) {
     return `${prefix}-${baseIconId}`
   } else {

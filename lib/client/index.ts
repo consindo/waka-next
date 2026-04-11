@@ -355,25 +355,50 @@ export class Client {
       stopId: stops[0].parentStopId,
       stopCode: stops[0].parentStopCode,
       stopName: stops[0].parentStopName,
-      stopLat: stops[0].stopLat,
-      stopLon: stops[0].stopLon,
+      stopLat: stops[0].parentStopLat,
+      stopLon: stops[0].parentStopLon,
       parentStation: stops[0].parentStation,
       childStops: stops
-        .flatMap((i) => {
-          if (!i.stopId) return []
-          return [
-            {
-              stopId: i.stopId,
-              stopName: i.stopName,
-              platformCode: i.platformCode,
-            },
-          ]
-        })
+        .reduce(
+          (acc, cur) => {
+            if (!cur.stopId) return acc
+            if (acc.find((i) => i.stopId === cur.stopId)) return acc
+            acc.push({
+              stopId: cur.stopId,
+              stopName: cur.stopName,
+              platformCode: cur.platformCode,
+              stopLat: cur.stopLat,
+              stopLon: cur.stopLon,
+            })
+            return acc
+          },
+          [] as StopInfoResult['childStops']
+        )
         .sort((a, b) =>
           (a.platformCode || a.stopId).localeCompare(b.platformCode || b.stopId, 'en', {
             numeric: true,
           })
         ),
+      routes: stops.reduce(
+        (acc, cur) => {
+          if (cur.routeType === null) return acc
+          if (
+            acc.find(
+              (i) => i.routeType === cur.routeType && i.routeShortName === cur.routeShortName
+            )
+          )
+            return acc
+
+          acc.push({
+            routeType: cur.routeType,
+            routeShortName: cur.routeShortName,
+            routeColor: cur.routeColor,
+            routeTextColor: cur.routeTextColor,
+          })
+          return acc
+        },
+        [] as StopInfoResult['routes']
+      ),
     }
 
     const yesterday = new Date()

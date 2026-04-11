@@ -19,8 +19,7 @@
         {
           prefix: stopInfo.prefix,
           name: name,
-          // todo: doesn't work if there are no stop times...
-          routeType: data.data?.stopTimes[0]?.routeType,
+          routeType: stopInfo.routes[0]?.routeType || 3,
           coordinates: [stopInfo?.stopLon, stopInfo?.stopLat],
         },
       ]

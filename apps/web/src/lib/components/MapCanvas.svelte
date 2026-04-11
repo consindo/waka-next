@@ -53,6 +53,11 @@
       addEvents()
       mounted = true
 
+      // hides the built in transit icons... and a few more - need to do a custom style
+      map.setLayoutProperty('poi_r7', 'visibility', 'none')
+      map.setLayoutProperty('poi_r1', 'visibility', 'none')
+      map.setLayoutProperty('poi_transit', 'visibility', 'none')
+
       loadStopsOnMap(e)
     })
 
@@ -123,7 +128,7 @@
             1 / PIXEL_RATIO,
           ],
           'icon-offset': [0, -15],
-          'icon-allow-overlap': true,
+          'icon-allow-overlap': false,
           'text-field': ['get', 'stopName'],
           'text-optional': true,
           'text-variable-anchor': ['left', 'right'],
@@ -226,9 +231,12 @@
   })
 
   $effect(() => {
+    // otherwise it's ugly
+    map.getLayer(ALL_STOPS_LAYER)?.setLayoutProperty('icon-allow-overlap', false)
+
     if (mapState.currentStop.length > 0 && mounted) {
       const { coordinates } = mapState.currentStop[0]
-      map.flyTo({ center: coordinates })
+      map.flyTo({ center: coordinates, zoom: 17 })
 
       const source = map.getSource(CURRENT_STOP_LAYER) as GeoJSONSource
       if (source) {
@@ -254,6 +262,8 @@
         })
       }
     } else if (mounted) {
+      map.getLayer(ALL_STOPS_LAYER)?.setLayoutProperty('icon-allow-overlap', true)
+
       const source = map.getSource(CURRENT_STOP_LAYER) as GeoJSONSource
       source.setData({
         type: 'FeatureCollection',

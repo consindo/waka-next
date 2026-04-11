@@ -10,6 +10,10 @@
   const { title, subtitle = '', isCloseButtonEnabled = true }: Props = $props()
 </script>
 
+<svelte:head>
+  <title>{title}</title>
+</svelte:head>
+
 <header>
   <div>
     <h1 {title}>{title}</h1>

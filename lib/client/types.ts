@@ -37,6 +37,8 @@ export interface StopsResult {
   routes: {
     routeType: number
     routeShortName: string
+    routeColor?: string
+    routeTextColor?: string
   }[]
 }
 
@@ -52,6 +54,14 @@ export interface StopInfoResult {
     stopId: string
     stopName?: string
     platformCode?: string
+    stopLat: number
+    stopLon: number
+  }[]
+  routes: {
+    routeType: number
+    routeShortName: string
+    routeColor?: string
+    routeTextColor?: string
   }[]
 }
 
@@ -60,12 +70,18 @@ export interface StopResult {
   parentStopId: string
   parentStopCode?: string
   parentStopName: string
+  parentStopLat: number
+  parentStopLon: number
   stopLat: number
   stopLon: number
   parentStation?: string
   stopId?: string
   stopName?: string
   platformCode?: string
+  routeType: number
+  routeShortName: string
+  routeColor?: string
+  routeTextColor?: string
 }
 
 export interface RouteResult {
