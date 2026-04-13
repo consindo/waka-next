@@ -1,24 +1,27 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
   import { page } from '$app/state'
-  import { bbox, envelope, lineString } from '@turf/turf'
+  import { bbox, booleanContains, envelope, lineString } from '@turf/turf'
   import type { FeatureCollection } from 'geojson'
   import maplibregl, { type GeoJSONSource, type MapLibreEvent } from 'maplibre-gl'
   import 'maplibre-gl/dist/maplibre-gl.css'
   import { onMount } from 'svelte'
 
-  import { resolveData } from '$lib/dataResolver'
-  import type { Region } from '$lib/storage'
+  import type { RegionResponse } from '@lib/client'
 
-  import { mapState } from '../../routes/mapstate.svelte'
+  import { resolveData } from '$lib/dataResolver'
+
+  import { currentCity, mapState } from '../../routes/mapstate.svelte'
   import { getRegionsFromBounds, getStops, mapToIcon } from './mapData'
   import { getPins } from './mapIcons'
 
-  const { regions }: { regions: Region[] } = $props()
-  const regionalBounds = regions.map((region) => ({
-    prefix: region.region,
-    bounds: envelope(lineString(region.bounds)),
-  }))
+  const { regions }: { regions: RegionResponse[] } = $props()
+  const regionalBounds = $derived(
+    regions.map((region) => ({
+      prefix: region.region,
+      bounds: envelope(lineString(region.bounds)),
+    }))
+  )
 
   const ALL_STOPS_LAYER = 'all-stops'
   const CURRENT_STOP_LAYER = 'current-stop'
@@ -35,11 +38,11 @@
   }
   let mounted = $state(false)
   onMount(async () => {
-    // todo: default to regional center
+    // todo: on first load, this can sometimes send you to [0,0]
     const center =
       mapState.currentStop.length > 0
         ? mapState.currentStop[0].coordinates
-        : ([174.767, -36.844] as [number, number])
+        : currentCity.city?.startingLocation
     map = new maplibregl.Map({
       container: 'maplibre-canvas',
       style: 'https://tiles.openfreemap.org/styles/bright',
@@ -262,6 +265,21 @@
         })
       }
     } else if (mounted) {
+      // repositions map according to region
+      if (currentCity.region !== null && currentCity.city !== null) {
+        const center = map.getCenter()
+        const pos = [
+          [center.lng, center.lat],
+          [center.lng, center.lat],
+        ] as [[number, number], [number, number]]
+        const regionsInBounds = getRegionsFromBounds(regionalBounds, pos)
+
+        // flys there if the new region is visible on the map
+        if (!regionsInBounds.includes(currentCity.region.region)) {
+          map.jumpTo({ center: currentCity.city.startingLocation, zoom: 16 })
+        }
+      }
+
       map.getLayer(ALL_STOPS_LAYER)?.setLayoutProperty('icon-allow-overlap', true)
 
       const source = map.getSource(CURRENT_STOP_LAYER) as GeoJSONSource

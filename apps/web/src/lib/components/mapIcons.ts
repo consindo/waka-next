@@ -1,4 +1,4 @@
-const icons = import.meta.glob('../../icons/regional/*.svg')
+const icons = import.meta.glob('@regions/icons/*.svg')
 
 export const getPins = async (region: string, pixelRatio = 1) => {
   const regionalIcons = await Promise.all(

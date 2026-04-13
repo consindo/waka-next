@@ -18,6 +18,7 @@ export default {
   resolve: {
     alias: {
       '@lib': path.resolve(__dirname, '../../lib'),
+      '@regions': path.resolve(__dirname, '../../regions'),
     },
   },
 }

@@ -9,6 +9,7 @@ const config = {
     adapter: adapter(),
     alias: {
       '@lib': '../../lib',
+      '@regions': '../../regions',
     },
   },
 }

@@ -1,23 +1,13 @@
 import { browser } from '$app/environment'
 
-import { Client, type Prefix } from '@lib/client'
+import { Client, type Prefix, type RegionResponse } from '@lib/client'
 import { DB } from '@lib/db'
 
 import { variables } from './variables'
 
 type Fetch = typeof fetch
-export interface Region {
-  region: Prefix
-  bounds: [[number, number], [number, number]]
-  url: string
-  etag: string
-  size: number
-  shapesUrl?: string
-  shapesEtag?: string
-  shapesSize?: number
-}
 
-let regions: Region[] = []
+let regions: RegionResponse[] = []
 let globalClient: Client
 const databases: Record<string, DB> = {}
 
@@ -61,11 +51,12 @@ export const getDatabases = () => {
   return databases
 }
 
+// todo: figure out the logic for when to download - probably only want to do it for PWAs
 export const getRegions = async (fetch: Fetch, loadRegion = createClient) => {
   if (regions.length > 0) return regions // don't refresh until page reload
 
   const data = await fetch('/api/regions').then((r) => r.json())
-  regions = data.regions as Region[]
+  regions = data.regions as RegionResponse[]
 
   // loads all regions that are in the area if the low data mode isn't on
   const geo: { latitude: number; longitude: number } = data.userLocation

@@ -13,6 +13,7 @@ const config = {
     }),
     alias: {
       '@lib': '../../lib',
+      '@regions': '../../regions',
     },
   },
 }

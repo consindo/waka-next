@@ -1,6 +1,8 @@
 <script lang="ts">
   import Header from '$lib/components/Header.svelte'
   import ScrollContainer from '$lib/components/ScrollContainer.svelte'
+
+  import { currentCity } from './mapstate.svelte'
 </script>
 
 <Header title="Waka" isCloseButtonEnabled={false} />
@@ -9,6 +11,8 @@
     <p>this will eventually be the new waka. however it's long way from being done.</p>
     <ul>
       <li><a href="/regions">regions</a></li>
+      <li><a href="/{currentCity.region?.region}/stops">stops</a></li>
+      <li><a href="/{currentCity.region?.region}/routes">routes</a></li>
     </ul>
     <ul>
       <li><a href="/dev/orchestrator">developer console</a></li>

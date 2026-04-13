@@ -20,11 +20,12 @@ import getStopsByLocation from './sql/getStopsByLocation.sql?raw'
 import getStopsByLocationExcludingBus from './sql/getStopsByLocationExcludingBus.sql?raw'
 import getTable from './sql/getTable.sql?raw'
 import getTimetable from './sql/getTimetable.sql?raw'
+import { type InfoSQLResult } from './sqlTypes'
 import { convertFromGtfsDateToISOTimestamp } from './timezone'
 import {
-  type BoundsResult,
+  type BoundsResponse,
   ClientErrors,
-  type InfoResult,
+  type InfoResponse,
   type Prefix,
   type PrefixInput,
   type RouteResult,
@@ -44,6 +45,9 @@ const GetError = (code: ClientErrors) => {
   err.code = code
   return err
 }
+
+// TODO: needs to be updated so the Reponses use a Response Type
+// while the sql responses use a sql type...
 
 export class Client {
   db: Record<Prefix, DB> = {}
@@ -81,7 +85,7 @@ export class Client {
     return this.db[prefix] !== undefined
   }
 
-  getBounds(prefix: PrefixInput): BoundsResult[] {
+  getBounds(prefix: PrefixInput): BoundsResponse[] {
     const result = this.runQuery(prefix, getBounds) as {
       prefix: Prefix
       maxLat: number
@@ -98,14 +102,14 @@ export class Client {
     }))
   }
 
-  getInfo(prefix: PrefixInput): InfoResult[] {
+  getInfo(prefix: PrefixInput): InfoResponse[] {
     const databases = this.runQuery(prefix, getTable, ['feed_info'], false) as Record<
       Prefix,
       unknown[]
     >
     return (Object.keys(databases) as Prefix[]).flatMap((prefix) => {
       if (databases[prefix].length > 0) {
-        return this.runQuery(prefix, getInfoFromFeedInfo) as InfoResult[]
+        return this.runQuery(prefix, getInfoFromFeedInfo) as InfoSQLResult[]
       }
       const calendarInfo = this.runQuery(prefix, getInfoFromCalendar) as {
         feedStartDate: Date

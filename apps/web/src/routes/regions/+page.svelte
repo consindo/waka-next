@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { resolve } from '$app/paths'
+
   import Header from '$lib/components/Header.svelte'
   import ScrollContainer from '$lib/components/ScrollContainer.svelte'
 
@@ -9,7 +11,7 @@
   }
 
   let { data }: Props = $props()
-  const { regions } = data
+  const { regions } = $derived(data)
 </script>
 
 <Header title="Regions" />
@@ -18,13 +20,16 @@
     <p>waka currently loads any regions offline that are in your current location</p>
     <ul>
       {#each regions as region (region.region)}
-        <li>
-          {region.region}
-          <ul>
-            <li><a href="/{region.region}/stops">stops</a></li>
-            <li><a href="/{region.region}/routes">routes</a></li>
-          </ul>
-        </li>
+        {#each region.cities as city (city.id)}
+          <li>
+            <a href={resolve(`/?city=${city.id}`)}>
+              <h2>{city.title}</h2>
+              {#if city.subtitle}
+                <h3>{city.subtitle}</h3>
+              {/if}
+            </a>
+          </li>
+        {/each}
       {/each}
     </ul>
   </div>

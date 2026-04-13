@@ -1,4 +1,4 @@
-import type { Prefix } from '@lib/client'
+import type { Prefix, RegionResponse } from '@lib/client'
 
 interface MapState {
   currentStop: {
@@ -19,6 +19,11 @@ interface MapState {
     coordinates: [number, number]
   }[]
 }
+
+export const currentCity = $state<{ region: RegionResponse | null, city: RegionResponse['cities'][number] | null }>({
+  region: null,
+  city: null
+})
 
 export const mapState = $state<MapState>({
   currentStop: [],
