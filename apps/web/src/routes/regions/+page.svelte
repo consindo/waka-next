@@ -39,4 +39,18 @@
   div {
     padding: 1rem;
   }
+  ul {
+    padding: 0;
+  }
+  li {
+    margin: 0.5rem;
+  }
+  h2 {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+  h3 {
+    font-size: 1rem;
+    margin: 0;
+  }
 </style>

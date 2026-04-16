@@ -1,7 +1,7 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
   import { page } from '$app/state'
-  import { bbox, booleanContains, envelope, lineString } from '@turf/turf'
+  import { bbox, bboxPolygon, booleanContains, envelope, lineString, point } from '@turf/turf'
   import type { FeatureCollection } from 'geojson'
   import maplibregl, { type GeoJSONSource, type MapLibreEvent } from 'maplibre-gl'
   import 'maplibre-gl/dist/maplibre-gl.css'
@@ -11,7 +11,7 @@
 
   import { resolveData } from '$lib/dataResolver'
 
-  import { currentCity, mapState } from '../../routes/mapstate.svelte'
+  import { currentRegions, mapState } from '../../routes/mapstate.svelte'
   import { getRegionsFromBounds, getStops, mapToIcon } from './mapData'
   import { getPins } from './mapIcons'
 
@@ -38,15 +38,26 @@
   }
   let mounted = $state(false)
   onMount(async () => {
-    // todo: on first load, this can sometimes send you to [0,0]
-    const center =
-      mapState.currentStop.length > 0
-        ? mapState.currentStop[0].coordinates
-        : currentCity.city?.startingLocation
+    let center: number[]
+    const cityId = page.url.searchParams.get('city')
+    if (mapState.currentStop.length > 0) {
+      center = mapState.currentStop[0].coordinates
+    } else if (cityId) {
+      const city = regions
+        .find((i) => i.cities.find((j) => j.id === cityId))
+        ?.cities.find((j) => j.id === cityId)
+      center = city?.startingLocation || regions[0].cities[0].startingLocation
+
+      const url = new URL(page.url)
+      url.searchParams.delete('city')
+      goto(url, { replaceState: true })
+    } else {
+      center = regions[0].cities[0].startingLocation
+    }
     map = new maplibregl.Map({
       container: 'maplibre-canvas',
       style: 'https://tiles.openfreemap.org/styles/bright',
-      center,
+      center: center as [number, number],
       zoom: 16,
     })
 
@@ -217,6 +228,8 @@
       ] as [[number, number], [number, number]]
 
       const prefixes = getRegionsFromBounds(regionalBounds, mapBounds)
+      currentRegions.ids = prefixes
+
       prefixes.forEach((i) => addIcons(i))
       const stopsData = await getStops(prefixes, mapBounds, includeBus, availableIcons)
       loadedStopsData = stopsData
@@ -265,21 +278,6 @@
         })
       }
     } else if (mounted) {
-      // repositions map according to region
-      if (currentCity.region !== null && currentCity.city !== null) {
-        const center = map.getCenter()
-        const pos = [
-          [center.lng, center.lat],
-          [center.lng, center.lat],
-        ] as [[number, number], [number, number]]
-        const regionsInBounds = getRegionsFromBounds(regionalBounds, pos)
-
-        // flys there if the new region is visible on the map
-        if (!regionsInBounds.includes(currentCity.region.region)) {
-          map.jumpTo({ center: currentCity.city.startingLocation, zoom: 16 })
-        }
-      }
-
       map.getLayer(ALL_STOPS_LAYER)?.setLayoutProperty('icon-allow-overlap', true)
 
       const source = map.getSource(CURRENT_STOP_LAYER) as GeoJSONSource
@@ -365,6 +363,33 @@
         type: 'FeatureCollection',
         features: [],
       })
+    }
+  })
+
+  // recenters the map if needed...
+  $effect(() => {
+    const cityId = page.url.searchParams.get('city')
+    if (cityId && mounted) {
+      const region = regions.find((i) => i.cities.find((j) => j.id === cityId))
+      const city = region?.cities.find((j) => j.id === cityId)
+
+      const bounds = map.getBounds()
+      const bbox = bboxPolygon([
+        bounds.getWest(),
+        bounds.getSouth(),
+        bounds.getEast(),
+        bounds.getNorth(),
+      ])
+
+      if (city !== undefined) {
+        const url = new URL(page.url)
+        url.searchParams.delete('city')
+        goto(url, { replaceState: true })
+      }
+
+      if (city !== undefined && !booleanContains(bbox, point(city.startingLocation))) {
+        map.jumpTo({ center: city.startingLocation, zoom: 16 })
+      }
     }
   })
 </script>

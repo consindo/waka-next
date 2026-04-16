@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { goto, onNavigate } from '$app/navigation'
+  import { onNavigate } from '$app/navigation'
   import { page } from '$app/state'
 
   import MapCanvas from '$lib/components/MapCanvas.svelte'
@@ -7,7 +7,6 @@
   import '../css/app.css'
   import '../css/fonts.css'
   import type { PageData } from './$types'
-  import { currentCity } from './mapstate.svelte'
 
   interface Props {
     children?: import('svelte').Snippet
@@ -16,40 +15,6 @@
 
   let { children, data }: Props = $props()
   const { regions } = $derived(data)
-
-  $effect(() => {
-    let regionId = page.params.prefix || null
-    const cityId = page.url.searchParams.get('city')
-
-    // we default to the first region available..
-    if (currentCity.region === null && regionId == null && cityId === null) {
-      regionId = regions[0].region
-    }
-
-    let region, city
-    if (regionId) {
-      region = regions.find((i) => i.region === regionId) || null
-      if (region) {
-        city = region.cities[0] || null
-      } else {
-        city = null
-      }
-    } else {
-      region = regions.find((i) => i.cities.find((j) => j.id === cityId)) || null
-      city = region?.cities.find((j) => j.id === cityId) || null
-    }
-    if (region === null || city === null) return
-    if (currentCity.region?.region !== region?.region) {
-      currentCity.region = region
-      currentCity.city = city
-    }
-
-    if (cityId) {
-      const url = new URL(page.url)
-      url.searchParams.delete('city')
-      goto(url, { replaceState: true })
-    }
-  })
 
   let mainElement: HTMLElement | undefined = undefined
 
