@@ -5,13 +5,15 @@ import { resolveData } from '$lib/dataResolver'
 import type { PageLoad } from './$types'
 
 export const load: PageLoad = async ({ fetch, params, url }) => {
-  const prefix = params.prefix as Prefix
+  const prefixes = params.prefix.split(',') as Prefix[]
+
   const query = url.searchParams.get('q') || ''
-  const stops = await resolveData(
-    prefix,
-    `/stops?q=${encodeURIComponent(query)}`,
-    (client) => client.getStops(prefix, query),
-    fetch
-  )
-  return { stops: stops.data || [] }
+  const stops = await Promise.all(prefixes.map(prefix => 
+    resolveData(
+      prefix,
+      `/stops?q=${encodeURIComponent(query)}`,
+      (client) => client.getStops(prefix, query),
+      fetch
+    )))
+  return { stops: stops.map(i => i.data).flat() || [] }
 }

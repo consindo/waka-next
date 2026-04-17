@@ -12,27 +12,27 @@ const defaultQueries = [
 ]
 
 export const load: PageLoad = async ({ fetch, params }) => {
-  const prefix = params.prefix as Prefix
+  const prefixes = params.prefix.split(',') as Prefix[]
 
   const queries = structuredClone(defaultQueries)
   const groups = structuredClone(defaultRouteGroups)
 
   // todo: regional config
-  if (prefix === 'au-nsw') {
+  if (prefixes.includes('au-nsw')) {
     queries.push({ id: 'extended', min: 100, max: 699 })
     queries.push({ id: 'extended-bus', min: 700, max: 711 }) // ignore school bus
     queries.push({ id: 'extended-extra', min: 714, max: 1000 })
   }
 
   const data = await Promise.all(
-    queries.map((i) =>
+    prefixes.flatMap(prefix => queries.map((i) =>
       resolveData(
         prefix,
         `/routes?routeTypeMin=${i.min}&routeTypeMax=${i.max}`,
         (client) => ({ routes: client.getRoutes(prefix, undefined, undefined, i.min, i.max) }),
         fetch
       )
-    )
+    ))
   )
 
   const returnGroups = groups.map((i) => ({ ...i, routes: [] as RouteResult[] }))

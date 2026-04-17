@@ -10,7 +10,7 @@
   <div>
     <p>this will eventually be the new waka. however it's long way from being done.</p>
     <ul>
-      <li><a href="/regions">regions</a></li>
+      <li><a href="/cities">cities</a></li>
       <li><a href="/{currentRegions.ids.join(',')}/stops">stops</a></li>
       <li><a href="/{currentRegions.ids.join(',')}/routes">routes</a></li>
     </ul>

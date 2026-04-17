@@ -15,7 +15,7 @@
   <h1>waka-next-orchestrator</h1>
   <h2>api routes</h2>
   <ul>
-    {#each routes as route}
+    {#each routes as route (route.url)}
       <li><em>{route.method}</em> <a href={route.url}>{route.url}</a></li>
     {/each}
   </ul>
