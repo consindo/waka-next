@@ -15,7 +15,10 @@
 
   let { db, dbName, triggerChange }: Props = $props()
 
-  const importer = new Importer({ db })
+  let importer: Importer
+  ;(() => {
+    importer = new Importer({ db })
+  })()
 
   let dbElement: HTMLInputElement | undefined = $state()
   let zipElement: HTMLInputElement | undefined = $state()

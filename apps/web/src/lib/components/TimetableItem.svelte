@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { resolve } from '$app/paths'
+
   import type { RouteResult, TimetableResult } from '@lib/client'
 
   import { getTextColor } from '$lib/utils/color'
@@ -33,8 +35,8 @@
     }
   }
 
-  const transfersWithoutSelf = time.transfers.filter(
-    (i) => i.routeShortName !== route?.routeShortName
+  const transfersWithoutSelf = $derived(
+    time.transfers.filter((i) => i.routeShortName !== route?.routeShortName)
   )
 
   const relativeTime = $derived(getMinuteDifference(initialTime, departureTime))
@@ -42,7 +44,7 @@
 </script>
 
 <li class="stop-time" class:firstService class:lastService class:isInPast>
-  <a href="/{time.prefix}/stops/{time.parentStopId || time.stopId}">
+  <a href={resolve(`/${time.prefix}/stops/${time.parentStopId || time.stopId}`)}>
     <div>
       <h4>{time.parentStopName || time.stopName}</h4>
       {#if transfersWithoutSelf.length > 0}

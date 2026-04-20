@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths'
   import { page } from '$app/state'
 
   import Header from '$lib/components/Header.svelte'
@@ -15,7 +16,11 @@
   </form>
   <ul>
     {#each data.stops as stop (stop.stopId)}
-      <li><a href="/{stop.prefix}/stops/{stop.stopId}">{stop.stopCode} - {stop.stopName}</a></li>
+      <li>
+        <a href={resolve(`/${stop.prefix}/stops/${stop.stopId}`)}
+          >{stop.stopCode} - {stop.stopName}</a
+        >
+      </li>
     {/each}
   </ul>
 </ScrollContainer>

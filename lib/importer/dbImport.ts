@@ -36,7 +36,6 @@ export class DBImport {
     let batch = -1
     const output: string[] = []
     const reader = data.getReader()
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       const { done, value } = await reader.read() // async interables not supported yet
       if (done) break

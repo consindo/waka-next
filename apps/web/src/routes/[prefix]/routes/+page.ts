@@ -25,14 +25,16 @@ export const load: PageLoad = async ({ fetch, params }) => {
   }
 
   const data = await Promise.all(
-    prefixes.flatMap(prefix => queries.map((i) =>
-      resolveData(
-        prefix,
-        `/routes?routeTypeMin=${i.min}&routeTypeMax=${i.max}`,
-        (client) => ({ routes: client.getRoutes(prefix, undefined, undefined, i.min, i.max) }),
-        fetch
+    prefixes.flatMap((prefix) =>
+      queries.map((i) =>
+        resolveData(
+          prefix,
+          `/routes?routeTypeMin=${i.min}&routeTypeMax=${i.max}`,
+          (client) => ({ routes: client.getRoutes(prefix, undefined, undefined, i.min, i.max) }),
+          fetch
+        )
       )
-    ))
+    )
   )
 
   const returnGroups = groups.map((i) => ({ ...i, routes: [] as RouteResult[] }))
