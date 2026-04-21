@@ -83,7 +83,8 @@ export class ImportManager {
 
     try {
       const res = await this.downloadGtfs('GET', logger)
-      let tidiedGtfs = res.body!
+      if (!res.body) throw new Error('missing response body')
+      let tidiedGtfs = res.body
       if (this.gtfsTidyOptions !== false) {
         tidiedGtfs = await this.tidyGtfs(prefix, res, logger)
       }
@@ -214,6 +215,6 @@ export class ImportManager {
     logger.info('deleted unoptimized gtfs file')
 
     const stream = fs.createReadStream(finalFile)
-    return Readable.toWeb(stream) as ReadableStream<Uint8Array>
+    return Readable.toWeb(stream) as ReadableStream<Uint8Array<ArrayBuffer>>
   }
 }
