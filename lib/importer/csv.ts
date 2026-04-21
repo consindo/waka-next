@@ -9,14 +9,15 @@ const transformContent = () => {
       return
     }, // required.
     async transform(chunkPromise: Promise<string>, controller: TransformStreamDefaultController) {
-      const chunk = await chunkPromise
+      let chunk = await chunkPromise
       if (parser === null) {
         let csvSchema
         try {
           csvSchema = inferSchema(chunk)
         } catch {
           // it crashes if the csv header row doesn't have a newline
-          csvSchema = inferSchema(chunk + '\n')
+          chunk = chunk + '\n'
+          csvSchema = inferSchema(chunk)
         }
         parser = initParser(csvSchema)
         schema = csvSchema.cols.reduce(
@@ -29,11 +30,11 @@ const transformContent = () => {
       }
 
       parser.chunk(chunk, parser.stringArrs as BaseParse<string>, (data) => {
-        controller.enqueue({ schema, data })
+        controller.enqueue({ schema, data: [data] })
       })
     },
     flush() {
-      parser!.end()
+      if (parser) parser.end()
     },
   }
 }
