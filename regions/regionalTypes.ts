@@ -5,4 +5,11 @@ export interface RegionalConfig {
     subtitle: string
     startingLocation: [number, number]
   }[]
+  postImport?: string[]
+  routeGroups?: {
+    name: string
+    where: string
+    groupBy?: string
+    orderBy?: string
+  }[]
 }

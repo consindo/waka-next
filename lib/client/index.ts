@@ -1,6 +1,7 @@
 import { TarReader } from '@gera2ld/tarjs'
 import { parseSync } from '@loaders.gl/core'
 import { WKBLoader } from '@loaders.gl/wkt'
+import { regionalConfig } from '@regions/regionalConfig'
 import type { Feature } from 'geojson'
 
 import type { DB } from '@lib/db'
@@ -235,6 +236,7 @@ export class Client {
 
   /*
    * Returns a list of routes
+   * offset becomes the index of the regionalQuery if it is present
    */
   getRoutes(
     prefix: PrefixInput,
@@ -243,11 +245,29 @@ export class Client {
     routeTypeMin = 0,
     routeTypeMax = 10000
   ): RouteResult[] {
-    return this.runQuery(
-      prefix,
-      getRoutes,
-      [routeTypeMin, routeTypeMax, limit, offset].map((i) => i.toString())
-    ) as RouteResult[]
+    const clauses = [
+      `WHERE route_type >= (${routeTypeMin}) AND route_type <= (${routeTypeMax})`,
+      `GROUP BY routes.route_id`,
+      // -- Not perfect because it doesn't account for calendar_dates or frequencies
+      // -- but should be good enough for a general "popularity" heuristic
+      `ORDER BY services_count DESC LIMIT (${limit}) OFFSET (${offset})`,
+    ]
+
+    const routeGroup = regionalConfig[prefix as Prefix]?.routeGroups?.[offset]
+    if (routeGroup) {
+      clauses[0] = `WHERE ${routeGroup.where}`
+      if (routeGroup.groupBy) {
+        clauses[1] = `GROUP BY ${routeGroup.groupBy}`
+      }
+      if (routeGroup.orderBy) {
+        clauses[2] = `ORDER BY ${routeGroup.orderBy}`
+      } else {
+        clauses[2] = `ORDER BY route_short_name`
+      }
+    }
+    console.log(getRoutes + clauses.join('\n'))
+    const result = this.runQuery(prefix, getRoutes + clauses.join('\n')) as RouteResult[]
+    return result
   }
 
   async getShape(prefix: Prefix, shapeId: string): Promise<Feature | string> {

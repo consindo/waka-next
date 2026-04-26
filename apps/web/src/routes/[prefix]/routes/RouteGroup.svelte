@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { resolve } from '$app/paths'
+
   import type { RouteResult } from '@lib/client'
 
   import { getTextColor } from '$lib/utils/color'
@@ -20,7 +22,7 @@
         ? `background-color: #${route.routeColor};color: ${getTextColor(route.routeColor)}`
         : ''}
       <li>
-        <a href="/{route.prefix}/routes/{route.routeId}">
+        <a href={resolve(`/${route.prefix}/routes/${route.routeId}`)}>
           <span>{route.routeLongName ?? route.tripHeadsign ?? ''}</span>
           <strong style={`${color}`}>{route.routeShortName}</strong>
         </a>
