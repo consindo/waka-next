@@ -3,7 +3,7 @@
   import { page } from '$app/state'
   import { bbox, bboxPolygon, booleanContains, envelope, lineString, point } from '@turf/turf'
   import type { FeatureCollection } from 'geojson'
-  import maplibregl, { type GeoJSONSource, type MapLibreEvent } from 'maplibre-gl'
+  import { type GeoJSONSource, type MapLibreEvent, Map as MapLibreMap } from 'maplibre-gl'
   import 'maplibre-gl/dist/maplibre-gl.css'
   import { onMount } from 'svelte'
 
@@ -31,7 +31,7 @@
 
   const availableIcons: Record<string, { id: string; png: string }[]> = {}
 
-  let map: maplibregl.Map
+  let map: MapLibreMap
   let loadedStopsData: FeatureCollection = {
     type: 'FeatureCollection',
     features: [],
@@ -54,7 +54,7 @@
     } else {
       center = regions[0].cities[0].startingLocation
     }
-    map = new maplibregl.Map({
+    map = new MapLibreMap({
       container: 'maplibre-canvas',
       style: 'https://tiles.openfreemap.org/styles/bright',
       center: center as [number, number],
