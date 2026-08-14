@@ -121,6 +121,7 @@ export interface ServiceResult {
 export interface RoutesByStopsResult {
   prefix: Prefix
   stopId: string
+  agencyId: string
   parentStopId?: string
   routeType: number
   routeShortName: string
@@ -150,6 +151,8 @@ export interface TimetableResult {
   parentStopCode?: string
   parentStopName?: string
   transfers: {
+    prefix: Prefix
+    agencyId: string
     routeType: number
     routeShortName: string
     routeColor?: string

@@ -2,6 +2,7 @@
 
 SELECT DISTINCT stops.stop_id,
                 parentstops.stop_id AS parent_stop_id,
+                routes.agency_id,
                 routes.route_type,
                 routes.route_short_name,
                 routes.route_color,

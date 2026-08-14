@@ -12,4 +12,12 @@ export interface RegionalConfig {
     groupBy?: string
     orderBy?: string
   }[]
+  routeOverrides?: {
+    agencyId?: string
+    routeShortName?: string
+    overrides: {
+      routeLongName?: string
+      routeColor?: string
+    }
+  }[]
 }

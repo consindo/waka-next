@@ -50,6 +50,32 @@ const GetError = (code: ClientErrors) => {
 // TODO: needs to be updated so the Reponses use a Response Type
 // while the sql responses use a sql type...
 
+interface MapRoute {
+  prefix: Prefix
+  agencyId: string
+  routeShortName: string
+  routeLongName?: string
+  routeColor?: string
+}
+const mapRouteOverride = <Type extends MapRoute>(i: Type): Type => {
+  const r = (regionalConfig[i.prefix].routeOverrides || []).find((route) => {
+    if (route.agencyId && route.routeShortName) {
+      return route.agencyId === i.agencyId && route.routeShortName === i.routeShortName
+    } else if (route.agencyId) {
+      return route.agencyId === i.agencyId
+    } else if (route.routeShortName) {
+      return route.routeShortName === i.routeShortName
+    }
+  })
+  if (r?.overrides.routeLongName) {
+    i.routeLongName = r.overrides.routeLongName
+  }
+  if (r?.overrides.routeColor) {
+    i.routeColor = r.overrides.routeColor
+  }
+  return i
+}
+
 export class Client {
   db: Record<Prefix, DB> = {}
   shapes: Record<Prefix, Blob | string> = {}
@@ -229,7 +255,7 @@ export class Client {
 
     let route: RouteResult | null = null
     if (routeResult.length > 0) {
-      route = routeResult[0]
+      route = mapRouteOverride(routeResult[0])
     }
     return { route, services }
   }
@@ -265,8 +291,9 @@ export class Client {
         clauses[2] = `ORDER BY route_short_name`
       }
     }
-    console.log(getRoutes + clauses.join('\n'))
-    const result = this.runQuery(prefix, getRoutes + clauses.join('\n')) as RouteResult[]
+    const result = (this.runQuery(prefix, getRoutes + clauses.join('\n')) as RouteResult[]).map(
+      mapRouteOverride
+    )
     return result
   }
 
@@ -354,6 +381,8 @@ export class Client {
               )
             ) {
               acc.push({
+                prefix: cur.prefix,
+                agencyId: cur.agencyId,
                 routeType: cur.routeType,
                 routeShortName: cur.routeShortName,
                 routeColor: cur.routeColor,
@@ -363,7 +392,8 @@ export class Client {
             return acc
           },
           [] as TimetableResult['transfers']
-        ),
+        )
+        .map(mapRouteOverride),
     }))
     return { timetable: timetableWithTransfers }
   }
@@ -372,6 +402,7 @@ export class Client {
    * Returns the stop times for a particular stop
    */
   getStop(prefix: PrefixInput, stopId: string) {
+    // TODO: needs to be mapped through mapRouteOverride
     const stops = this.runQuery(prefix, getStop, [stopId]) as StopResult[]
     if (stops.length === 0) throw GetError(ClientErrors.NotFound)
     const stopInfo: StopInfoResult = {
