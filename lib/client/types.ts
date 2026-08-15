@@ -58,6 +58,8 @@ export interface StopInfoResult {
     stopLon: number
   }[]
   routes: {
+    prefix: Prefix
+    agencyId: string
     routeType: number
     routeShortName: string
     routeColor?: string
@@ -78,6 +80,7 @@ export interface StopResult {
   stopId?: string
   stopName?: string
   platformCode?: string
+  agencyId: string
   routeType: number
   routeShortName: string
   routeColor?: string
@@ -174,11 +177,12 @@ export interface StopTimesResult {
   tripShortName?: string
   wheelchairAccessible?: number
   bikesAllowed?: number
-  routeShortName?: string
+  routeShortName: string
   routeLongName?: string
   routeColor?: string
   routeTextColor?: string
   routeType: number
+  agencyId: string
   agencyTimezone: string
   agencyName: string
   agencyUrl: string

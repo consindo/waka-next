@@ -402,7 +402,6 @@ export class Client {
    * Returns the stop times for a particular stop
    */
   getStop(prefix: PrefixInput, stopId: string) {
-    // TODO: needs to be mapped through mapRouteOverride
     const stops = this.runQuery(prefix, getStop, [stopId]) as StopResult[]
     if (stops.length === 0) throw GetError(ClientErrors.NotFound)
     const stopInfo: StopInfoResult = {
@@ -434,26 +433,30 @@ export class Client {
             numeric: true,
           })
         ),
-      routes: stops.reduce(
-        (acc, cur) => {
-          if (cur.routeType === null) return acc
-          if (
-            acc.find(
-              (i) => i.routeType === cur.routeType && i.routeShortName === cur.routeShortName
+      routes: stops
+        .reduce(
+          (acc, cur) => {
+            if (cur.routeType === null) return acc
+            if (
+              acc.find(
+                (i) => i.routeType === cur.routeType && i.routeShortName === cur.routeShortName
+              )
             )
-          )
-            return acc
+              return acc
 
-          acc.push({
-            routeType: cur.routeType,
-            routeShortName: cur.routeShortName,
-            routeColor: cur.routeColor,
-            routeTextColor: cur.routeTextColor,
-          })
-          return acc
-        },
-        [] as StopInfoResult['routes']
-      ),
+            acc.push({
+              prefix: cur.prefix,
+              agencyId: cur.agencyId,
+              routeType: cur.routeType,
+              routeShortName: cur.routeShortName,
+              routeColor: cur.routeColor,
+              routeTextColor: cur.routeTextColor,
+            })
+            return acc
+          },
+          [] as StopInfoResult['routes']
+        )
+        .map(mapRouteOverride),
     }
 
     const yesterday = new Date()
@@ -495,6 +498,7 @@ export class Client {
             i.agencyTimezone
           ),
         }))
+        .map(mapRouteOverride)
         .sort(
           (a, b) =>
             new Date(a.departureTime || 0).getTime() - new Date(b.departureTime || 0).getTime()
