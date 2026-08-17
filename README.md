@@ -51,10 +51,11 @@ fly machine run alpine --entrypoint "sh -c 'apk add --no-cache curl && curl -X P
 
 ## Application Structure
 
-There's three apps in this repository.
+There's three apps and a library in this repository.
 
 - **lib**: The library for importing, manipulating, and querying GTFS. This will eventually be published as a NPM module that runs on both client and server.
 - **apps/orchestrator**: The server that downloads, parses GTFS files and serves them to users. It also provides a HTTP API so queries can be run without downloading the whole database.
+- **apps/realtime**: Polls various servers for realtime data and allows it to be queried easily.
 - **apps/web**: The new web frontend. It can download and query the sqlite database directly, or use server side rendering to grab the data from the orchestrator's HTTP API.
 
 ## Notes
