@@ -43,6 +43,20 @@ The `WAKA_ORCHESTRATOR_CACHE_PERIOD` variable can also be set to a number in mil
 
 The `WAKA_ORCHESTRATOR_NO_CACHE` variable can be used to set shouldCache to false globally.
 
+## Realtime Configuration
+
+To get realtime trip updates etc, set `WAKA_REALTIME_CONFIG` to something like.
+
+```yaml
+regions:
+  nz-akl:
+    gtfsRtTripUpdatesUrl: https://api.at.govt.nz/realtime/legacy/tripupdates
+    gtfsRtServiceAlertsUrl: https://api.at.govt.nz/realtime/legacy/servicealerts
+    gtfsRtVehicleLocationsUrl: https://api.at.govt.nz/realtime/legacy/vehiclelocations
+    gtfsRtHeaders:
+      Ocp-Apim-Subscription-Key: SECRET.nz-akl # you can use WAKA_REALTIME_SECRETS to substitute secrets
+```
+
 ## Scheduling Updates
 
 ```bash

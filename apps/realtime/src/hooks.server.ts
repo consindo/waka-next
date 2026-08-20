@@ -1,5 +1,6 @@
 import { type Handle } from '@sveltejs/kit'
 
+import { RealtimeConfigManager } from '$lib/configManager'
 import { startRealtime } from '$lib/realtime'
 
 const jobs: Promise<void>[] = []
@@ -11,9 +12,12 @@ process.on('SIGINT', () => {
   })
 })
 
-const realtimeCache = startRealtime()
+const configManager = new RealtimeConfigManager()
+const regions = configManager.getRegions()
+const realtimeCache = startRealtime(Object.keys(regions).map((id) => ({ ...regions[id], id })))
 
 export const handle: Handle = async ({ event, resolve }) => {
+  event.locals.configManager = configManager
   event.locals.realtimeCache = realtimeCache
 
   const response = await resolve(event)

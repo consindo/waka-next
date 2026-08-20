@@ -1,3 +1,4 @@
+import type { RealtimeConfigManager } from '$lib/configManager'
 import type { RealtimeCache } from '$lib/realtime'
 
 // See https://kit.svelte.dev/docs/types#app
@@ -11,6 +12,7 @@ declare global {
       code?: number | string
     }
     interface Locals {
+      configManager: RealtimeConfigManager
       realtimeCache: RealtimeCache
     }
     // interface PageData {}
