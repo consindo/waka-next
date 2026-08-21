@@ -9,9 +9,9 @@ export interface RealtimeCache {
 
 interface RegionalRealtimeCache {
   lastUpdated: Date
-  serviceAlerts: unknown
-  tripUpdates: unknown
-  vehicleLocations: unknown
+  serviceAlerts: GtfsRealtimeBindings.transit_realtime.IAlert[]
+  tripUpdates: GtfsRealtimeBindings.transit_realtime.ITripUpdate[]
+  vehicleLocations: GtfsRealtimeBindings.transit_realtime.IVehiclePosition[]
 }
 
 const cache: RealtimeCache = {

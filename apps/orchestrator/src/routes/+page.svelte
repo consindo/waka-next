@@ -12,7 +12,7 @@
 </script>
 
 <div>
-  <h1>waka-next-orchestrator</h1>
+  <h1>waka-orchestrator</h1>
   <h2>api routes</h2>
   <ul>
     {#each routes as route (route.url)}
