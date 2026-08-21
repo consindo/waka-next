@@ -5,6 +5,7 @@ import type { RealtimeRegionConfig } from '$lib/configManager'
 
 export interface RealtimeCache {
   regions: Record<string, RegionalRealtimeCache>
+  getRegion: (id: string) => RegionalRealtimeCache
 }
 
 interface RegionalRealtimeCache {
@@ -16,6 +17,14 @@ interface RegionalRealtimeCache {
 
 const cache: RealtimeCache = {
   regions: {},
+  getRegion: function (id: string) {
+    const region = this.regions[id] || {
+      serviceAlerts: [],
+      tripUpdates: [],
+      vehicleLocations: [],
+    }
+    return region
+  },
 }
 
 const getData = async (url?: string, headers?: Record<string, string>) => {

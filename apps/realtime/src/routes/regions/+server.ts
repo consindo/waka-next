@@ -15,12 +15,8 @@ interface RegionResponse {
 export const GET: RequestHandler = ({ locals }) => {
   const { configManager, realtimeCache } = locals
   const regions: RegionResponse[] = Object.keys(configManager.getRegions()).map((id) => {
-    const cache = realtimeCache.regions[id] || {
-      serviceAlerts: [],
-      tripUpdates: [],
-      vehicleLocations: [],
-    }
-    const { lastUpdated, serviceAlerts, tripUpdates, vehicleLocations } = cache
+    const { lastUpdated, serviceAlerts, tripUpdates, vehicleLocations } =
+      realtimeCache.getRegion(id)
     return {
       region: id,
       lastUpdated: lastUpdated || null,

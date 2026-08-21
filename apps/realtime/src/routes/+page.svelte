@@ -1,5 +1,10 @@
 <script>
-  const routes = [{ method: 'get', url: '/regions' }]
+  const routes = [
+    { method: 'get', url: '/regions' },
+    { method: 'get', url: '/[region]/servicealerts' },
+    { method: 'get', url: '/[region]/tripupdates' },
+    { method: 'get', url: '/[region]/vehiclelocations' },
+  ]
 </script>
 
 <div>
