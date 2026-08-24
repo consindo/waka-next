@@ -12,6 +12,7 @@
 
   const stopInfo = $derived(data.data?.stopInfo)
   const name = $derived(tidyStopName(stopInfo?.stopName || ''))
+  const realtimeData = $derived(data.realtimeData)
 
   $effect(() => {
     if (stopInfo?.stopLon && stopInfo?.stopLat) {
@@ -35,5 +36,17 @@
 
 <Header title={name} subtitle={stopInfo?.stopCode ? `Stop ${stopInfo?.stopCode}` : undefined} />
 <ScrollContainer>
+  {#await realtimeData then data}
+    {JSON.stringify(data)}
+  {/await}
+  <noscript>Realtime data requires JavaScript to be enabled.</noscript>
   <StopTimes {stopInfo} stopTimes={data.data?.stopTimes || []} />
 </ScrollContainer>
+
+<style>
+  noscript {
+    display: block;
+    padding: 0.5rem var(--edge-padding);
+    font-size: 14px;
+  }
+</style>

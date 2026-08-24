@@ -1,6 +1,7 @@
 import type { Prefix } from '@lib/client'
 
 import { resolveData } from '$lib/dataResolver'
+import { getRealtimeRegions } from '$lib/realtimeDataResolver'
 
 import type { PageLoad } from './$types'
 
@@ -15,5 +16,7 @@ export const load: PageLoad = async ({ fetch, params }) => {
     fetch
   )
 
-  return data
+  const realtimeData = getRealtimeRegions(fetch)
+
+  return { ...data, realtimeData }
 }
