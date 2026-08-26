@@ -1,7 +1,7 @@
 import type { Prefix } from '@lib/client'
 
 import { resolveData } from '$lib/dataResolver'
-import { getRealtimeRegions } from '$lib/realtimeDataResolver'
+import { getRealtimeServiceAlerts } from '$lib/realtimeDataResolver'
 
 import type { PageLoad } from './$types'
 
@@ -16,7 +16,7 @@ export const load: PageLoad = async ({ fetch, params }) => {
     fetch
   )
 
-  const realtimeData = getRealtimeRegions(fetch)
+  const serviceAlerts = getRealtimeServiceAlerts({ prefix, stopIds: [stopId] }, fetch)
 
-  return { ...data, realtimeData }
+  return { ...data, serviceAlerts }
 }
