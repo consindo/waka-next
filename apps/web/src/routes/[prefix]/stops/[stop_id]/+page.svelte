@@ -7,6 +7,7 @@
   import { tidyStopName } from '$lib/components/tidyStrings.js'
 
   import { mapState } from '../../../mapstate.svelte.js'
+  import ServiceAlerts from '$lib/components/ServiceAlerts.svelte'
 
   const { data } = $props()
 
@@ -37,12 +38,9 @@
 <Header title={name} subtitle={stopInfo?.stopCode ? `Stop ${stopInfo?.stopCode}` : undefined} />
 <ScrollContainer>
   {#await serviceAlerts then alerts}
-    {#each alerts?.data?.serviceAlerts || [] as alert (alert)}
-      <details>
-        <summary>{JSON.stringify(alert.headerText)}</summary>
-        {JSON.stringify(alert)}
-      </details>
-    {/each}
+    {#if alerts.data?.serviceAlerts && alerts.data.serviceAlerts.length > 0}
+      <ServiceAlerts serviceAlerts={alerts.data.serviceAlerts} />
+    {/if}
   {/await}
   <noscript>Realtime data requires JavaScript to be enabled.</noscript>
   <StopTimes {stopInfo} stopTimes={data.data?.stopTimes || []} />
