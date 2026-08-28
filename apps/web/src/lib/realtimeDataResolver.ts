@@ -1,6 +1,10 @@
 import { ClientErrors } from '@lib/client'
 import GtfsRealtimeBindings from 'gtfs-realtime-bindings'
 
+import { variables } from '$lib/variables'
+
+const { realtimeMaxIds } = variables
+
 type Fetch = typeof fetch
 
 const fetchFromRealtimeApi = async <Type>(
@@ -38,10 +42,10 @@ export const getRealtimeServiceAlerts = async (
   fetch: Fetch
 ) => {
   const searchParams = new URLSearchParams()
-  ;(routeIds || []).forEach((i) => {
+  ;(routeIds || []).slice(0, realtimeMaxIds).forEach((i) => {
     searchParams.append('routeid', i)
   })
-  ;(stopIds || []).forEach((i) => {
+  ;(stopIds || []).slice(0, realtimeMaxIds).forEach((i) => {
     searchParams.append('stopid', i)
   })
   return fetchFromRealtimeApi<{ serviceAlerts: GtfsRealtimeBindings.transit_realtime.IAlert[] }>(
@@ -56,10 +60,10 @@ export const getRealtimeTripUpdates = async (
   fetch: Fetch
 ) => {
   const searchParams = new URLSearchParams()
-  ;(routeIds || []).forEach((i) => {
+  ;(routeIds || []).slice(0, realtimeMaxIds).forEach((i) => {
     searchParams.append('routeid', i)
   })
-  ;(tripIds || []).forEach((i) => {
+  ;(tripIds || []).slice(0, realtimeMaxIds).forEach((i) => {
     searchParams.append('tripid', i)
   })
   return fetchFromRealtimeApi<{
@@ -72,10 +76,10 @@ export const getRealtimeVehicleLocations = async (
   fetch: Fetch
 ) => {
   const searchParams = new URLSearchParams()
-  ;(routeIds || []).forEach((i) => {
+  ;(routeIds || []).slice(0, realtimeMaxIds).forEach((i) => {
     searchParams.append('routeid', i)
   })
-  ;(tripIds || []).forEach((i) => {
+  ;(tripIds || []).slice(0, realtimeMaxIds).forEach((i) => {
     searchParams.append('tripid', i)
   })
   return fetchFromRealtimeApi<{

@@ -13,6 +13,7 @@
 
   const stopInfo = $derived(data.data?.stopInfo)
   const name = $derived(tidyStopName(stopInfo?.stopName || ''))
+  const tripUpdates = $derived(data.tripUpdates)
   const serviceAlerts = $derived(data.serviceAlerts)
 
   $effect(() => {
@@ -43,7 +44,11 @@
     {/if}
   {/await}
   <noscript>Realtime data requires JavaScript to be enabled.</noscript>
-  <StopTimes {stopInfo} stopTimes={data.data?.stopTimes || []} />
+  {#await tripUpdates}
+    <StopTimes {stopInfo} stopTimes={data.data?.stopTimes || []} />
+  {:then tripUpdates}
+    <StopTimes {stopInfo} stopTimes={data.data?.stopTimes || []} tripUpdates={tripUpdates.data?.tripUpdates} />
+  {/await}
 </ScrollContainer>
 
 <style>

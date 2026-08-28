@@ -1,5 +1,5 @@
 <script lang="ts">
-  import close from '../../icons/close.svg'
+  import closeIcon from '../../icons/close.svg'
 
   interface Props {
     title: string
@@ -30,7 +30,7 @@
         }
       }}
     >
-      <img src={close} alt="Close" class="img-invert" />
+      <img src={closeIcon} alt="Close" class="img-invert" />
     </a>
   {/if}
 </header>

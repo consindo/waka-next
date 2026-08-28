@@ -3,13 +3,16 @@
 
   import { getTextColor } from '$lib/utils/color'
   import { formatShortDate } from '$lib/utils/formatDate'
+  import type GtfsRealtimeBindings from 'gtfs-realtime-bindings'
 
   const {
     stopInfo,
     stopTimes,
+    tripUpdates 
   }: {
     stopInfo?: StopInfoResult
     stopTimes: StopTimesResult[]
+    tripUpdates?: GtfsRealtimeBindings.transit_realtime.ITripUpdate[]
   } = $props()
 
   const filteredTimes = $derived(
@@ -25,6 +28,15 @@
   )
   const groupedTimes = $derived(Object.groupBy(filteredTimes, (i) => i.routeId + i.directionId))
 </script>
+
+{#if (tripUpdates || []).length > 0}
+  <details>
+    <summary>{tripUpdates!.length} realtime updates</summary>
+    <pre>
+      {JSON.stringify(tripUpdates, null, 2)}
+    </pre>
+  </details>
+{/if}
 
 <ul>
   {#if Object.keys(groupedTimes).length === 0}
