@@ -54,25 +54,25 @@ const pullRealtimeData = (regionId: string, region: RealtimeRegionConfig) => asy
     ])
   ).flat()
 
-  const serviceAlerts: GtfsRealtimeBindings.transit_realtime.IAlert[] = []
-  const tripUpdates: GtfsRealtimeBindings.transit_realtime.ITripUpdate[] = []
-  const vehicleLocations: GtfsRealtimeBindings.transit_realtime.IVehiclePosition[] = []
+  const serviceAlerts = new Map<string, GtfsRealtimeBindings.transit_realtime.IAlert>()
+  const tripUpdates = new Map<string, GtfsRealtimeBindings.transit_realtime.ITripUpdate>()
+  const vehicleLocations = new Map<string, GtfsRealtimeBindings.transit_realtime.IVehiclePosition>()
   gtfsRtUpdates.forEach((i) => {
     if (i.alert) {
-      serviceAlerts.push(i.alert)
+      serviceAlerts.set(i.id, i.alert)
     }
     if (i.tripUpdate) {
-      tripUpdates.push(i.tripUpdate)
+      tripUpdates.set(i.id, i.tripUpdate)
     }
     if (i.vehicle) {
-      vehicleLocations.push(i.vehicle)
+      vehicleLocations.set(i.id, i.vehicle)
     }
   })
   cache.regions[regionId] = {
     lastUpdated: new Date(),
-    serviceAlerts,
-    tripUpdates,
-    vehicleLocations,
+    serviceAlerts: Array.from(serviceAlerts.values()),
+    tripUpdates: Array.from(tripUpdates.values()),
+    vehicleLocations: Array.from(vehicleLocations.values()),
   }
   const elapsedTime = new Date().getTime() - timeStart
   logger.info(`${regionId} rt update (${elapsedTime}ms)`)
