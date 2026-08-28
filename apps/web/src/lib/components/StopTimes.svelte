@@ -3,12 +3,28 @@
 
   import { getTextColor } from '$lib/utils/color'
   import { formatShortDate } from '$lib/utils/formatDate'
-  import type GtfsRealtimeBindings from 'gtfs-realtime-bindings'
+  import GtfsRealtimeBindings from 'gtfs-realtime-bindings'
+
+  // todo: needs to be translatable
+  const formatHeadsign = (headsign = ''): string[] => {
+    const parts = headsign
+      .replace(/ TO /gi, ' to ')
+      .replace(/ AND /gi, ' & ')
+      .replace(/ VIA /gi, ' via ')
+      .split(' via ')
+      .map((i, k) => {
+        if (k > 0) {
+          return 'via ' + i + ' '
+        }
+        return i
+      })
+    return parts
+  }
 
   const {
     stopInfo,
     stopTimes,
-    tripUpdates 
+    tripUpdates,
   }: {
     stopInfo?: StopInfoResult
     stopTimes: StopTimesResult[]
@@ -16,27 +32,49 @@
   } = $props()
 
   const filteredTimes = $derived(
-    stopTimes.flatMap((i) => {
-      if (!i.departureTime) return []
-      const now = new Date()
-      const departureTime = new Date(i.departureTime)
-      // don't show if it was supposed to show up 3 minutes ago
-      if (departureTime.getTime() < now.getTime() - 3 * 60 * 1000) return []
+    stopTimes
+      .flatMap((i) => {
+        if (!i.departureTime) return []
 
-      return [{ ...i, departureTime }]
-    })
+        const now = new Date()
+        let departureTime = new Date(i.departureTime)
+
+        let isRealtime = false
+        const realtimeTrip = (tripUpdates || []).find((r) => r.trip.tripId === i.tripId)
+        if (realtimeTrip) {
+          isRealtime = true
+          if (
+            realtimeTrip.trip.scheduleRelationship ===
+            GtfsRealtimeBindings.transit_realtime.TripDescriptor.ScheduleRelationship.CANCELED
+          ) {
+            return []
+          }
+
+          let delay = realtimeTrip.delay || 0
+          const stopTimeUpdate = (realtimeTrip.stopTimeUpdate || []).find((i) => i.stopSequence)
+          if (stopTimeUpdate) {
+            if (stopTimeUpdate.departure?.delay) {
+              delay = stopTimeUpdate.departure.delay
+            } else if (stopTimeUpdate.arrival?.delay) {
+              delay = stopTimeUpdate.arrival.delay
+            }
+          }
+          departureTime = new Date(departureTime.getTime() - delay * 1000)
+
+          // if the departure time has passed, then the service has gone
+          if (departureTime.getTime() < now.getTime()) return []
+        } else {
+          // if it's not realtime, there is a 3 minute grace period
+          if (departureTime.getTime() < now.getTime() - 3 * 60 * 1000) return []
+        }
+
+        return [{ ...i, departureTime, isRealtime }]
+      })
+      // todo: need to put the same route short names next to each other
+      .sort((a, b) => a.departureTime.getTime() - b.departureTime.getTime())
   )
   const groupedTimes = $derived(Object.groupBy(filteredTimes, (i) => i.routeId + i.directionId))
 </script>
-
-{#if (tripUpdates || []).length > 0}
-  <details>
-    <summary>{tripUpdates!.length} realtime updates</summary>
-    <pre>
-      {JSON.stringify(tripUpdates, null, 2)}
-    </pre>
-  </details>
-{/if}
 
 <ul>
   {#if Object.keys(groupedTimes).length === 0}
@@ -48,6 +86,7 @@
     {@const departureTime = formatShortDate(trip.departureTime, trip.agencyTimezone, 'short')}
     <li>
       <a
+        class={{ isRealtime: trip.isRealtime }}
         href="/{trip.prefix}/routes/{trip.routeId}?tripId={encodeURIComponent(
           trip.tripId
         )}&stopId={encodeURIComponent(trip.stopId)}"
@@ -55,7 +94,17 @@
       >
         <div class="direction">
           <h3>{trip.routeShortName}</h3>
-          <p>{trip.directionId === 1 ? '→' : '←'} {trip.tripHeadsign}</p>
+          <div class="destination">
+            <span class="direction-icon">{trip.directionId === 1 ? '➡️' : '⬅️'}</span>
+            <p class="headsign">
+              <!-- todo: should probably be a nice format headsign function -->
+              {#each formatHeadsign(trip.tripHeadsign) as headsignPart, index (index)}
+                <span class="headsign-segment">
+                  {headsignPart}&nbsp;
+                </span>
+              {/each}
+            </p>
+          </div>
           {#if stopInfo}
             {@const substop =
               stopInfo.childStops
@@ -71,10 +120,12 @@
         </div>
         <div class="time">
           <h4>
-            <span>{(departureTime.match(/[0-9:]*/g) || [''])[0]}</span>{departureTime.replace(
-              /[0-9:]*/g,
-              ''
-            )}
+            <time datetime={trip.departureTime.toISOString()}
+              ><span>{(departureTime.match(/[0-9:]*/g) || [''])[0]}</span>{departureTime.replace(
+                /[0-9:]*/g,
+                ''
+              )}
+            </time>
           </h4>
           {#if route[1] && route[2]}
             {@const secondTime = formatShortDate(
@@ -92,10 +143,12 @@
             <!-- todo: this is very messy -->
             <p>
               also {#if secondTime.includes('min')}in{:else}at{/if}
-              {#if thirdTime.includes('min')}<strong>{secondTimeShort}</strong>,&nbsp;{:else}<strong
-                  >{secondTimeShort}</strong
-                >{#if secondTime.includes('min')}&nbsp;mins{/if}&nbsp;&amp;&nbsp;{/if}<strong
-                >{thirdTimeShort}</strong
+              {#if thirdTime.includes('min')}<time datetime={route[1].departureTime.toISOString()}
+                  >{secondTimeShort}</time
+                >,&nbsp;{:else}<time datetime={route[1].departureTime.toISOString()}
+                  >{secondTimeShort}</time
+                >{#if secondTime.includes('min')}&nbsp;mins{/if}&nbsp;&amp;&nbsp;{/if}<time
+                datetime={route[2].departureTime.toISOString()}>{thirdTimeShort}</time
               >{#if thirdTime.includes('min')}&nbsp;mins{/if}
             </p>
           {:else if route[1]}
@@ -105,7 +158,8 @@
               'long'
             )}
             <p>
-              also {#if secondTime.includes('min')}in{:else}at{/if} <strong>{secondTime}</strong>
+              also {#if secondTime.includes('min')}in{:else}at{/if}
+              <time datetime={route[2].departureTime.toISOString()}>{secondTime}</time>
             </p>
           {/if}
         </div>
@@ -145,7 +199,8 @@
     margin: 0;
     font-size: 12px;
     text-wrap: pretty;
-    letter-spacing: -0.2px;
+    letter-spacing: -0.1px;
+    font-weight: 500;
   }
   li.empty {
     text-align: center;
@@ -153,6 +208,23 @@
     padding: 1.5rem 1rem;
     color: var(--surface-text-subtle);
     font-size: 14px;
+  }
+  .destination {
+    display: flex;
+    align-items: top;
+    gap: 0.25rem;
+    vertical-align: top;
+  }
+  .direction-icon {
+    display: block;
+    font-size: 10px;
+    line-height: 16px;
+  }
+  .headsign {
+    flex: 1;
+  }
+  .headsign-segment {
+    display: inline-block;
   }
   .substop {
     margin-top: 0.375rem;
@@ -172,11 +244,18 @@
   .time h4 {
     font-size: 1rem;
     margin: 0;
+    opacity: 0.7;
+  }
+  .isRealtime .time h4 {
+    opacity: 1;
   }
   .time h4 span {
     font-size: 1.25rem;
   }
   .time p {
     font-size: 13px;
+  }
+  .time time {
+    font-weight: bold;
   }
 </style>

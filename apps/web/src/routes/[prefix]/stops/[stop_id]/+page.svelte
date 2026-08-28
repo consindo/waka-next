@@ -47,7 +47,11 @@
   {#await tripUpdates}
     <StopTimes {stopInfo} stopTimes={data.data?.stopTimes || []} />
   {:then tripUpdates}
-    <StopTimes {stopInfo} stopTimes={data.data?.stopTimes || []} tripUpdates={tripUpdates.data?.tripUpdates} />
+    <StopTimes
+      {stopInfo}
+      stopTimes={data.data?.stopTimes || []}
+      tripUpdates={tripUpdates.data?.tripUpdates}
+    />
   {/await}
 </ScrollContainer>
 
