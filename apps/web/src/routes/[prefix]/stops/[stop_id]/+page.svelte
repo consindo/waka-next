@@ -1,16 +1,18 @@
 <script lang="ts">
   import { onDestroy, onMount } from 'svelte'
+  import type { transit_realtime } from 'gtfs-realtime-bindings'
 
+  import { invalidate } from '$app/navigation'
   import Header from '$lib/components/Header.svelte'
   import ScrollContainer from '$lib/components/ScrollContainer.svelte'
   import StopTimes from '$lib/components/StopTimes.svelte'
   import { tidyStopName } from '$lib/components/tidyStrings.js'
+  import { variables } from '$lib/variables'
+  import ServiceAlerts from '$lib/components/ServiceAlerts.svelte'
 
   import { mapState } from '../../../mapstate.svelte.js'
-  import ServiceAlerts from '$lib/components/ServiceAlerts.svelte'
-  import { invalidate } from '$app/navigation'
-  import type { transit_realtime } from 'gtfs-realtime-bindings'
 
+  const { realtimeInvalidationInterval } = variables
   const { data } = $props()
 
   const stopInfo = $derived(data.data?.stopInfo)
@@ -43,7 +45,7 @@
   onMount(() => {
     const interval = setInterval(() => {
       invalidate('stop:stoptimes')
-    }, 10_000)
+    }, realtimeInvalidationInterval)
     return () => clearInterval(interval)
   })
 

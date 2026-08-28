@@ -4,17 +4,20 @@
   import type { ServiceResult } from '@lib/client'
 
   import ServiceItem from './ServiceItem.svelte'
+  import type { transit_realtime } from 'gtfs-realtime-bindings'
 
   const {
     routeName,
     directionId,
     services,
     selectedService,
+    tripUpdates,
   }: {
     routeName: string
     directionId: number
     services: ServiceResult[]
     selectedService: string | null
+    tripUpdates: transit_realtime.ITripUpdate[]
   } = $props()
 
   const currentService = $derived(services.find((i) => i.tripId === selectedService))
@@ -46,6 +49,8 @@
       detailsElement.removeAttribute('open')
     }
   }
+
+  $inspect(tripUpdates)
 </script>
 
 <h2>
@@ -79,7 +84,7 @@
 
   {#if (isShowingHiddenService && filteredServices.length > 0 && currentService) || filteredServices.length > 3}
     <details bind:this={detailsElement}>
-      <summary>More Departures</summary>
+      <summary>Departures</summary>
       <ul>
         {#each filteredServices.slice(isShowingHiddenService ? firstVisibleServiceIndex : firstVisibleServiceIndex + 3) as service, i (i)}
           <ServiceItem {service} {selectedService} {triggerCloseDetails} />
@@ -128,6 +133,10 @@
       background: var(--surface-bg-hover);
     }
   }
+  details {
+    display: flex;
+    flex-direction: column;
+  }
   summary {
     list-style-type: none;
     font-weight: 600;
@@ -135,12 +144,23 @@
     border-top: 0.5px solid var(--surface-border);
     font-size: 14px;
     cursor: default;
+    user-select: none;
+
+    &:before {
+      content: 'More ';
+    }
 
     &:hover {
       background: var(--surface-bg-hover);
     }
   }
+  details[open] {
+    flex-direction: column-reverse;
+    border-top: 0.5px solid var(--surface-border);
+  }
   details[open] summary {
-    border-bottom: 0.5px solid var(--surface-border);
+    &:before {
+      content: 'Fewer ';
+    }
   }
 </style>

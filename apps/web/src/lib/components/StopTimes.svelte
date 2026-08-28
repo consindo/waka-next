@@ -1,25 +1,10 @@
 <script lang="ts">
+  import { transit_realtime } from 'gtfs-realtime-bindings'
   import type { StopInfoResult, StopTimesResult } from '@lib/client'
 
   import { getTextColor } from '$lib/utils/color'
+  import { formatTripHeadsign } from '$lib/utils/formatHeadsign'
   import { formatShortDate } from '$lib/utils/formatDate'
-  import GtfsRealtimeBindings from 'gtfs-realtime-bindings'
-
-  // todo: needs to be translatable
-  const formatHeadsign = (headsign = ''): string[] => {
-    const parts = headsign
-      .replace(/ TO /gi, ' to ')
-      .replace(/ AND /gi, ' & ')
-      .replace(/ VIA /gi, ' via ')
-      .split(' via ')
-      .map((i, k) => {
-        if (k > 0) {
-          return 'via ' + i + ' '
-        }
-        return i
-      })
-    return parts
-  }
 
   const {
     stopInfo,
@@ -28,7 +13,7 @@
   }: {
     stopInfo?: StopInfoResult
     stopTimes: StopTimesResult[]
-    tripUpdates?: GtfsRealtimeBindings.transit_realtime.ITripUpdate[]
+    tripUpdates?: transit_realtime.ITripUpdate[]
   } = $props()
 
   const filteredTimes = $derived(
@@ -45,7 +30,7 @@
           isRealtime = true
           if (
             realtimeTrip.trip.scheduleRelationship ===
-            GtfsRealtimeBindings.transit_realtime.TripDescriptor.ScheduleRelationship.CANCELED
+            transit_realtime.TripDescriptor.ScheduleRelationship.CANCELED
           ) {
             return []
           }
@@ -98,7 +83,7 @@
             <span class="direction-icon">{trip.directionId === 1 ? '➡️' : '⬅️'}</span>
             <p class="headsign">
               <!-- todo: should probably be a nice format headsign function -->
-              {#each formatHeadsign(trip.tripHeadsign) as headsignPart, index (index)}
+              {#each formatTripHeadsign(trip.tripHeadsign) as headsignPart, index (index)}
                 <span class="headsign-segment">
                   {headsignPart}&nbsp;
                 </span>

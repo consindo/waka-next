@@ -5,6 +5,7 @@
   import type { ServiceResult } from '@lib/client'
 
   import { formatShortDate } from '$lib/utils/formatDate'
+  import { formatTripHeadsign } from '$lib/utils/formatHeadsign'
 
   const {
     service,
@@ -38,7 +39,11 @@
         'long'
       )}</strong
     >
-    <span>{service.tripHeadsign}</span>
+
+    <div>
+      {#each formatTripHeadsign(service.tripHeadsign) as headsignSegment, index (index)}
+        <span>{headsignSegment}</span>{/each}
+    </div>
   </a>
 </li>
 
@@ -56,10 +61,13 @@
     gap: 0.75rem;
     align-items: center;
   }
-  a span {
+  a div {
     flex: 1;
     font-size: 14px;
     text-wrap: pretty;
+  }
+  a span {
+    display: inline-block;
   }
   li:has(a:hover) {
     background: var(--surface-bg-hover);

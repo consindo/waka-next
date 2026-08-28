@@ -253,6 +253,7 @@
     map.on('moveend', loadStopsOnMap)
   })
 
+  let previousShape = $state('')
   $effect(() => {
     // otherwise it's ugly
     map.getLayer(ALL_STOPS_LAYER)?.setLayoutProperty('icon-allow-overlap', false)
@@ -293,6 +294,14 @@
         features: [],
       })
     }
+
+    // stops the load function from running if it doesn't need to be run
+    if (JSON.stringify(mapState.currentShape) === previousShape) {
+      return
+    } else if (mounted) {
+      previousShape = JSON.stringify(mapState.currentShape)
+    }
+
     if (mapState.currentShape.length > 0 && mounted) {
       // we fetch the shape here rather than resolving the data on the client like usual
       // this should only run on the client
