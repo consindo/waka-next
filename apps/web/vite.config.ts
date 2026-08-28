@@ -1,8 +1,9 @@
 import { sveltekit } from '@sveltejs/kit/vite'
+import devtoolsJson from 'vite-plugin-devtools-json'
 import path from 'path'
 
 export default {
-  plugins: [sveltekit()],
+  plugins: [sveltekit(), devtoolsJson()],
   server: {
     port: 5180,
   },

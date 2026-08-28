@@ -208,6 +208,7 @@
       })
     }
 
+    let previousBounds = $state('')
     const loadStopsOnMap = async (e: MapLibreEvent) => {
       const zoom = e.target.getZoom()
       const bounds = e.target.getBounds()
@@ -227,9 +228,15 @@
         [minLon, minLat],
       ] as [[number, number], [number, number]]
 
+      // stops the load function from running if it doesn't need to be run
+      if (JSON.stringify(mapBounds) === previousBounds) {
+        return
+      } else {
+        previousBounds = JSON.stringify(mapBounds)
+      }
+
       const prefixes = getRegionsFromBounds(regionalBounds, mapBounds)
       currentRegions.ids = prefixes
-
       prefixes.forEach((i) => addIcons(i))
       const stopsData = await getStops(prefixes, mapBounds, includeBus, availableIcons)
       loadedStopsData = stopsData

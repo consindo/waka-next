@@ -8,7 +8,8 @@ import { variables } from '$lib/variables'
 
 const { realtimeMaxDelay, realtimeMaxAdvance } = variables
 
-export const load: PageLoad = async ({ fetch, params }) => {
+export const load: PageLoad = async ({ fetch, params, depends }) => {
+  depends('stop:stoptimes')
   const prefix = params.prefix as Prefix
   const stopId = params.stop_id
 
