@@ -216,7 +216,7 @@ export class Client {
   getRoute(
     prefix: PrefixInput,
     routeId: string,
-    stopSequence = 1
+    stopId?: string
   ): { route: RouteResult | null; services: ServiceResult[] } {
     const routeResult = this.runQuery(prefix, getRoute, [routeId]) as RouteResult[]
 
@@ -230,11 +230,15 @@ export class Client {
       const dateInput = dateObj.toISOString().split('T')[0]
       const date = dateInput.split('-').join('')
       const dayofweek = new Date(dateInput).getUTCDay()
+      let getServicesQuery = getServices
+      if (stopId) {
+        getServicesQuery = getServicesQuery.replace('AND stop_sequence = (?)', 'AND stop_id = (?)')
+      }
       return (
-        this.runQuery(prefix, getServices, [
+        this.runQuery(prefix, getServicesQuery, [
           date,
           routeId,
-          stopSequence.toString(),
+          stopId || '1',
           date,
           date,
           dayofweek === 1 ? '1' : '0',

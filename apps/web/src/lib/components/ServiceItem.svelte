@@ -42,7 +42,7 @@
 
     <div>
       {#each formatTripHeadsign(service.tripHeadsign) as headsignSegment, index (index)}
-        <span>{headsignSegment}</span>{/each}
+        <span>{headsignSegment}&nbsp;</span>{/each}
     </div>
   </a>
 </li>
@@ -73,6 +73,6 @@
     background: var(--surface-bg-hover);
   }
   .selected {
-    color: var(--surface-bg-interactive);
+    color: var(--surface-text-primary);
   }
 </style>

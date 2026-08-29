@@ -17,8 +17,12 @@ export const formatShortDate = (date: Date, timeZone: string, suffix?: 'long' | 
   })
 }
 
-export const getDate = (date: string, time: TimetableResult | ServiceResult) => {
-  const timeComponent = time.departureTime || time.arrivalTime || '0:00:00'
+export const getDate = (
+  date: string,
+  time: TimetableResult | ServiceResult,
+  property?: 'departureTime' | 'arrivalTime'
+) => {
+  const timeComponent = (property ? time[property] : null) || '0:00:00'
   const [hours, minutes, seconds] = timeComponent.split(':').map((i) => parseInt(i))
   const dateObj = new Date(`${date || ''} ${hours % 24}:${minutes}:${seconds}`)
   if (hours >= 24) {

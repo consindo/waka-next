@@ -22,7 +22,54 @@
 
   const currentService = $derived(services.find((i) => i.tripId === selectedService))
   const derivedDirectionId = $derived(currentService ? currentService.directionId : directionId)
-  const filteredServices = $derived(services.filter((i) => i.directionId === derivedDirectionId))
+  const filteredServices = $derived(
+    services
+      .filter((i) => i.directionId === derivedDirectionId)
+      .map((i) => {
+        const realtimeTrip = tripUpdates.find((j) => j.trip.tripId === i.tripId)
+        if (!realtimeTrip) {
+          return i
+        }
+
+        // this probably has a bit more nuance to think about
+        // especially for those european trains that are delayed all the time
+        // will build the ui first and see how best to handle this
+        let arrivalDelay = realtimeTrip.delay || 0
+        let departureDelay = realtimeTrip.delay || 0
+        const stopTimeUpdate = realtimeTrip.stopTimeUpdate?.find(
+          (j) => j.stopSequence === i.stopSequence
+        )
+        if (stopTimeUpdate) {
+          if (stopTimeUpdate.arrival?.delay) {
+            arrivalDelay = stopTimeUpdate.arrival.delay
+          }
+          if (stopTimeUpdate.departure?.delay) {
+            departureDelay = stopTimeUpdate.departure.delay
+          }
+        }
+
+        let arrivalTime, departureTime
+        if (i.arrivalTime) {
+          arrivalTime = new Date(
+            new Date(i.arrivalTime).getTime() + arrivalDelay * 1000
+          ).toISOString()
+        }
+        if (i.departureTime) {
+          departureTime = new Date(
+            new Date(i.departureTime).getTime() + departureDelay * 1000
+          ).toISOString()
+        }
+
+        return {
+          ...i,
+          arrivalTime,
+          arrivalDelay,
+          departureTime,
+          departureDelay,
+          isRealtime: true,
+        }
+      })
+  )
   const firstVisibleServiceIndex = $derived(
     (() => {
       const now = new Date()
@@ -49,8 +96,6 @@
       detailsElement.removeAttribute('open')
     }
   }
-
-  $inspect(tripUpdates)
 </script>
 
 <h2>

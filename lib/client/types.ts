@@ -113,6 +113,7 @@ export interface ServiceResult {
   directionId: number
   tripId: string
   date: string
+  stopSequence: number
   arrivalTime?: string
   departureTime?: string
   timezone: string

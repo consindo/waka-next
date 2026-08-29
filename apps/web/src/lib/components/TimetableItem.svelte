@@ -1,22 +1,39 @@
 <script lang="ts">
   import { resolve } from '$app/paths'
 
-  import type { RouteResult, TimetableResult } from '@lib/client'
+  import type { Prefix, RouteResult } from '@lib/client'
 
   import { getTextColor } from '$lib/utils/color'
   import { formatTime } from '$lib/utils/formatDate'
 
   let {
-    time,
+    prefix,
+    stopId,
+    stopName,
+    transfers,
     initialTime,
     departureTime,
+    departureDelay,
+    isRealtime,
     route,
     firstService,
     lastService,
   }: {
-    time: TimetableResult
-    initialTime: Date
-    departureTime: Date
+    prefix: Prefix
+    stopId: string
+    stopName: string
+    transfers: {
+      prefix: Prefix
+      agencyId: string
+      routeType: number
+      routeShortName: string
+      routeColor?: string
+      routeTextColor?: string
+    }[]
+    initialTime?: Date
+    departureTime?: Date
+    departureDelay: number
+    isRealtime: boolean
     route: RouteResult
     firstService: boolean
     lastService: boolean
@@ -36,17 +53,24 @@
   }
 
   const transfersWithoutSelf = $derived(
-    time.transfers.filter((i) => i.routeShortName !== route?.routeShortName)
+    transfers.filter((i) => i.routeShortName !== route?.routeShortName)
   )
 
-  const relativeTime = $derived(getMinuteDifference(initialTime, departureTime))
+  const relativeTime = $derived(
+    initialTime && departureTime ? getMinuteDifference(initialTime, departureTime) : ''
+  )
   const isInPast = $derived(relativeTime.startsWith('-'))
+  const originalTime = $derived(
+    departureTime && departureDelay
+      ? formatTime(new Date(departureTime.getTime() - departureDelay * 1000))
+      : ''
+  )
 </script>
 
 <li class="stop-time" class:firstService class:lastService class:isInPast>
-  <a href={resolve(`/${time.prefix}/stops/${time.parentStopId || time.stopId}`)}>
+  <a href={resolve(`/${prefix}/stops/${stopId}`)}>
     <div>
-      <h4>{time.parentStopName || time.stopName}</h4>
+      <h4>{stopName}</h4>
       {#if transfersWithoutSelf.length > 0}
         <ul>
           {#each transfersWithoutSelf as route (route.routeShortName)}
@@ -59,9 +83,17 @@
         </ul>
       {/if}
     </div>
-    <time
-      ><strong>{relativeTime}</strong>
-      {formatTime(departureTime)}</time
+    <time datetime={departureTime?.toISOString()}>
+      <strong>{relativeTime}</strong>
+      <span
+        class={{
+          isRealtime,
+          // we show the original time if more than 180 seconds early/late
+          isEarly: departureDelay < -180,
+          isLate: departureDelay > 180,
+        }}>{departureTime ? formatTime(departureTime) : 'Unknown'}</span
+      >
+      {#if Math.abs(departureDelay) > 180}<s>{originalTime}</s>{/if}</time
     >
   </a>
 </li>
@@ -165,5 +197,14 @@
   .stop-time time strong {
     color: var(--surface-text);
     display: block;
+  }
+  .isRealtime {
+    color: var(--surface-text-success);
+  }
+  .isRealtime.isEarly {
+    color: var(--surface-text-primary);
+  }
+  .isRealtime.isLate {
+    color: var(--surface-text-danger);
   }
 </style>

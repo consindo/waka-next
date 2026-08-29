@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { RouteResult, ServiceResult, TimetableResult } from '@lib/client'
+  import type { transit_realtime } from 'gtfs-realtime-bindings'
 
   import { getDate } from '$lib/utils/formatDate'
 
@@ -10,12 +11,61 @@
     route,
     currentService,
     stopId,
+    tripUpdates,
   }: {
     timetable: TimetableResult[]
     route: RouteResult
     currentService: ServiceResult
     stopId: string | null
+    tripUpdates: transit_realtime.ITripUpdate[]
   } = $props()
+
+  const realtimeTrip = $derived(tripUpdates.find((i) => i.trip.tripId === currentService.tripId))
+
+  const realtimeTimetable = $derived(
+    timetable.map((i) => {
+      let arrivalTime = i.arrivalTime ? getDate(currentService.date, i, 'arrivalTime') : undefined
+      let departureTime = i.departureTime
+        ? getDate(currentService.date, i, 'departureTime')
+        : undefined
+
+      let arrivalDelay = 0
+      let departureDelay = 0
+      if (realtimeTrip) {
+        if (realtimeTrip.delay) {
+          arrivalDelay = realtimeTrip.delay
+          departureDelay = realtimeTrip.delay
+        }
+        const stopTimeUpdate = realtimeTrip.stopTimeUpdate?.find(
+          (j) => j.stopSequence === i.stopSequence
+        )
+        if (stopTimeUpdate) {
+          if (stopTimeUpdate.arrival?.delay) {
+            arrivalDelay = stopTimeUpdate.arrival.delay
+          }
+          if (stopTimeUpdate.departure?.delay) {
+            departureDelay = stopTimeUpdate.departure.delay
+          }
+        }
+      }
+
+      if (arrivalTime) {
+        arrivalTime = new Date(arrivalTime.getTime() + arrivalDelay * 1000)
+      }
+      if (departureTime) {
+        departureTime = new Date(departureTime.getTime() + departureDelay * 1000)
+      }
+
+      return {
+        ...i,
+        arrivalTime,
+        arrivalDelay,
+        departureTime,
+        departureDelay,
+        isRealtime: !!realtimeTrip,
+      }
+    })
+  )
 
   const initialStopIndex = $derived(
     (() => {
@@ -26,7 +76,10 @@
       return 0
     })()
   )
-  const initialTime = $derived(getDate(currentService?.date, timetable[initialStopIndex]))
+  const initialTime = $derived(
+    realtimeTimetable[initialStopIndex].departureTime ||
+      realtimeTimetable[initialStopIndex].arrivalTime
+  )
 </script>
 
 {#if initialStopIndex > 0}
@@ -39,12 +92,17 @@
       class="stop-times-wrapper"
       style={`${route.routeColor ? `--route-color: #${route.routeColor};` : ''}`}
     >
-      {#each timetable.slice(0, initialStopIndex) as time, i (i)}
+      {#each realtimeTimetable.slice(0, initialStopIndex) as time, i (i)}
         <TimetableItem
-          departureTime={getDate(currentService?.date, time)}
+          prefix={time.prefix}
+          stopId={time.parentStopId || time.stopId}
+          stopName={time.parentStopName || time.stopName || 'Unknown Stop'}
+          transfers={time.transfers}
+          departureTime={time.departureTime || time.arrivalTime}
+          departureDelay={time.departureDelay || time.arrivalDelay}
+          isRealtime={time.isRealtime}
           firstService={i === 0}
           lastService={false}
-          {time}
           {route}
           {initialTime}
         />
@@ -56,12 +114,17 @@
   class="stop-times-wrapper"
   style={`${route.routeColor ? `--route-color: #${route.routeColor};` : ''}`}
 >
-  {#each timetable.slice(initialStopIndex) as time, i (i)}
+  {#each realtimeTimetable.slice(initialStopIndex) as time, i (i)}
     <TimetableItem
-      departureTime={getDate(currentService.date, time)}
+      prefix={time.prefix}
+      stopId={time.parentStopId || time.stopId}
+      stopName={time.parentStopName || time.stopName || 'Unknown Stop'}
+      transfers={time.transfers}
+      departureTime={time.departureTime || time.arrivalTime}
+      departureDelay={time.departureDelay || time.arrivalDelay}
+      isRealtime={time.isRealtime}
       firstService={initialStopIndex === 0 && i === 0}
       lastService={i === timetable.length - initialStopIndex - 1}
-      {time}
       {route}
       {initialTime}
     />

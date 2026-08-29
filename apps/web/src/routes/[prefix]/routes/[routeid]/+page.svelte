@@ -90,7 +90,13 @@
     </div>
     <div>
       {#if currentService}
-        <Timetable timetable={data.timetable} route={data.route} {currentService} {stopId} />
+        <Timetable
+          timetable={data.timetable}
+          route={data.route}
+          {currentService}
+          {stopId}
+          {tripUpdates}
+        />
       {/if}
     </div>
   </ScrollContainer>

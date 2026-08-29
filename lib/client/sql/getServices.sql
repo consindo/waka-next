@@ -6,6 +6,7 @@ SELECT trips.route_id,
        arrival_time,
        agency_timezone as timezone,
        shape_id,
+       stop_sequence,
        route_color,
        route_text_color
 FROM trips

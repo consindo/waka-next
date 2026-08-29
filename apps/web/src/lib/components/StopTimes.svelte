@@ -35,16 +35,20 @@
             return []
           }
 
-          let delay = realtimeTrip.delay || 0
+          let arrivalDelay = realtimeTrip.delay || 0
+          let departureDelay = realtimeTrip.delay || 0
           const stopTimeUpdate = (realtimeTrip.stopTimeUpdate || []).find((i) => i.stopSequence)
           if (stopTimeUpdate) {
+            if (stopTimeUpdate.arrival?.delay) {
+              arrivalDelay = stopTimeUpdate.arrival.delay
+            }
             if (stopTimeUpdate.departure?.delay) {
-              delay = stopTimeUpdate.departure.delay
-            } else if (stopTimeUpdate.arrival?.delay) {
-              delay = stopTimeUpdate.arrival.delay
+              departureDelay = stopTimeUpdate.departure.delay
             }
           }
-          departureTime = new Date(departureTime.getTime() - delay * 1000)
+          departureTime = new Date(
+            departureTime.getTime() + (departureDelay || arrivalDelay) * 1000
+          )
 
           // if the departure time has passed, then the service has gone
           if (departureTime.getTime() < now.getTime()) return []
@@ -236,6 +240,7 @@
   }
   .time h4 span {
     font-size: 1.25rem;
+    letter-spacing: -0.25px;
   }
   .time p {
     font-size: 13px;
