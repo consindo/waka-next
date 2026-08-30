@@ -3,7 +3,11 @@ import type { Prefix } from '@lib/client'
 import { resolveData } from '$lib/dataResolver'
 
 import type { PageLoad } from './$types'
-import { getRealtimeServiceAlerts, getRealtimeTripUpdates } from '$lib/realtimeDataResolver'
+import {
+  getRealtimeServiceAlerts,
+  getRealtimeTripUpdates,
+  getRealtimeVehicleLocations,
+} from '$lib/realtimeDataResolver'
 import { variables } from '$lib/variables'
 
 const { realtimeMaxDelay, realtimeMaxAdvance } = variables
@@ -45,6 +49,7 @@ export const load: PageLoad = async ({ fetch, params, url, depends }) => {
 
   const serviceAlerts = getRealtimeServiceAlerts({ prefix, routeIds: [routeId] }, fetch)
   const tripUpdates = getRealtimeTripUpdates({ prefix, tripIds }, fetch)
+  const vehicleLocations = getRealtimeVehicleLocations({ prefix, tripIds }, fetch)
 
   return {
     route: route.data?.route,
@@ -52,5 +57,6 @@ export const load: PageLoad = async ({ fetch, params, url, depends }) => {
     timetable: trip?.data?.timetable || [],
     serviceAlerts,
     tripUpdates,
+    vehicleLocations,
   }
 }

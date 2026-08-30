@@ -8,7 +8,7 @@
 <Header title="Waka" isCloseButtonEnabled={false} />
 <ScrollContainer>
   <div>
-    <p>this will eventually be the new waka. however it's long way from being done.</p>
+    <p>this will eventually be the new waka. it's not too far off being done.</p>
     <ul>
       <li><a href="/cities">cities</a></li>
       <li><a href="/{currentRegions.ids.join(',')}/stops">stops</a></li>

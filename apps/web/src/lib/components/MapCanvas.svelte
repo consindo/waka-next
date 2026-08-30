@@ -12,8 +12,17 @@
   import { resolveData } from '$lib/dataResolver'
 
   import { currentRegions, mapState } from '../../routes/mapstate.svelte'
-  import { getRegionsFromBounds, getStops, mapToIcon } from './mapData'
-  import { getPins } from './mapIcons'
+
+  import { addLayers } from './map/mapLayers'
+  import {
+    ALL_STOPS_LAYER,
+    CURRENT_SHAPE_LAYER,
+    CURRENT_STOP_LAYER,
+    CURRENT_STOPS_LAYER,
+    PIXEL_RATIO,
+  } from './map/mapConstants'
+  import { getRegionsFromBounds, getStops, mapToIcon } from './map/mapData'
+  import { getPins } from './map/mapIcons'
 
   const { regions }: { regions: RegionResponse[] } = $props()
   const regionalBounds = $derived(
@@ -22,12 +31,6 @@
       bounds: envelope(lineString(region.bounds)),
     }))
   )
-
-  const ALL_STOPS_LAYER = 'all-stops'
-  const CURRENT_STOP_LAYER = 'current-stop'
-  const CURRENT_STOPS_LAYER = 'current-stops'
-  const CURRENT_SHAPE_LAYER = 'current-shape'
-  const PIXEL_RATIO = 3
 
   const availableIcons: Record<string, { id: string; png: string }[]> = {}
 
@@ -63,7 +66,7 @@
 
     map.on('load', (e) => {
       addIcons('generic')
-      addLayers()
+      addLayers(map)
       addEvents()
       mounted = true
 
@@ -87,120 +90,6 @@
       )
     }
 
-    const addLayers = () => {
-      map.addSource(CURRENT_SHAPE_LAYER, {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: [],
-        },
-      })
-      map.addSource(ALL_STOPS_LAYER, {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: [],
-        },
-      })
-      map.addSource(CURRENT_STOP_LAYER, {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: [],
-        },
-      })
-      map.addSource(CURRENT_STOPS_LAYER, {
-        type: 'geojson',
-        data: {
-          type: 'FeatureCollection',
-          features: [],
-        },
-      })
-      map.addLayer({
-        id: CURRENT_SHAPE_LAYER,
-        source: CURRENT_SHAPE_LAYER,
-        type: 'line',
-        layout: {},
-        paint: {
-          'line-color': '#666',
-          'line-width': 5,
-        },
-      })
-      map.addLayer({
-        id: ALL_STOPS_LAYER,
-        source: ALL_STOPS_LAYER,
-        type: 'symbol',
-        layout: {
-          'icon-image': ['get', 'icon'],
-          'icon-size': [
-            'interpolate',
-            ['linear'],
-            ['zoom'],
-            15,
-            ['case', ['==', ['get', 'shouldZoom'], true], 0.75 / PIXEL_RATIO, 1 / PIXEL_RATIO],
-            16,
-            1 / PIXEL_RATIO,
-          ],
-          'icon-offset': [0, -15],
-          'icon-allow-overlap': false,
-          'text-field': ['get', 'stopName'],
-          'text-optional': true,
-          'text-variable-anchor': ['left', 'right'],
-          'text-radial-offset': 1.25,
-          'text-size': 11,
-          'text-font': ['Noto Sans Semibold'],
-          'text-justify': 'auto',
-          'text-max-width': 20,
-        },
-        paint: {
-          // todo: maybe this needs to be moved to js, so we can use a transition instead
-          'icon-opacity': [
-            'step',
-            ['zoom'],
-            ['case', ['==', ['get', 'shouldZoom'], true], 0, 1],
-            14.5,
-            1,
-          ],
-          'text-opacity': ['step', ['zoom'], 0, 12.5, 1],
-          'text-color': '#3f3f46',
-          'text-halo-color': '#eeeeee',
-          'text-halo-width': 0.75,
-          'text-translate': [0, -10],
-        },
-      })
-      map.addLayer({
-        id: CURRENT_STOP_LAYER,
-        source: CURRENT_STOP_LAYER,
-        type: 'symbol',
-        layout: {
-          'icon-image': ['get', 'icon'],
-          'icon-size': 1.5 / PIXEL_RATIO,
-          'icon-offset': [0, -23],
-          'text-field': ['get', 'name'],
-          'text-size': 13,
-          'text-anchor': 'top',
-          'text-font': ['Noto Sans Semibold'],
-        },
-        paint: {
-          'text-color': '#3f3f46',
-          'text-halo-color': '#eeeeee',
-          'text-halo-width': 0.75,
-          'text-translate': [0, 12],
-        },
-      })
-      map.addLayer({
-        id: CURRENT_STOPS_LAYER,
-        source: CURRENT_STOPS_LAYER,
-        type: 'circle',
-        layout: {},
-        paint: {
-          'circle-color': '#ffffff',
-          'circle-radius': 5,
-          'circle-stroke-width': 3,
-          'circle-stroke-color': '#0000ff',
-        },
-      })
-    }
     const addEvents = () => {
       map.on('click', ALL_STOPS_LAYER, (e) => {
         const { prefix, stopId } = (e.features || [])[0].properties
@@ -244,16 +133,14 @@
       const source = map.getSource(ALL_STOPS_LAYER) as GeoJSONSource
       if (source) {
         // we just cache the data for later if a shape is being shown
-
         if (mapState.currentShape.length > 0) return
         source.setData(loadedStopsData)
       }
     }
-
     map.on('moveend', loadStopsOnMap)
   })
 
-  let previousShape = $state('')
+  // current stop effect
   $effect(() => {
     // otherwise it's ugly
     map.getLayer(ALL_STOPS_LAYER)?.setLayoutProperty('icon-allow-overlap', false)
@@ -294,7 +181,11 @@
         features: [],
       })
     }
+  })
 
+  // current shape / visibleStops effect
+  let previousShape = $state('')
+  $effect(() => {
     // stops the load function from running if it doesn't need to be run
     if (JSON.stringify(mapState.currentShape) === previousShape) {
       return
@@ -380,6 +271,11 @@
         features: [],
       })
     }
+  })
+
+  // vehicle locations effect
+  $effect(() => {
+    console.log('locations', mapState.vehicleLocations)
   })
 
   // recenters the map if needed...

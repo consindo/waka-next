@@ -48,6 +48,9 @@ export const getRealtimeServiceAlerts = async (
   ;(stopIds || []).slice(0, realtimeMaxIds).forEach((i) => {
     searchParams.append('stopid', i)
   })
+  if (Array.from(searchParams).length === 0) {
+    return { provider: 'server', data: { serviceAlerts: [] } }
+  }
   return fetchFromRealtimeApi<{ serviceAlerts: GtfsRealtimeBindings.transit_realtime.IAlert[] }>(
     prefix,
     `/servicealerts?${searchParams.toString()}`,
@@ -66,6 +69,9 @@ export const getRealtimeTripUpdates = async (
   ;(tripIds || []).slice(0, realtimeMaxIds).forEach((i) => {
     searchParams.append('tripid', i)
   })
+  if (Array.from(searchParams).length === 0) {
+    return { provider: 'server', data: { tripUpdates: [] } }
+  }
   return fetchFromRealtimeApi<{
     tripUpdates: GtfsRealtimeBindings.transit_realtime.ITripUpdate[]
   }>(prefix, `/tripupdates?${searchParams.toString()}`, fetch)
@@ -82,6 +88,9 @@ export const getRealtimeVehicleLocations = async (
   ;(tripIds || []).slice(0, realtimeMaxIds).forEach((i) => {
     searchParams.append('tripid', i)
   })
+  if (Array.from(searchParams).length === 0) {
+    return { provider: 'server', data: { vehicleLocations: [] } }
+  }
   return fetchFromRealtimeApi<{
     vehicleLocations: GtfsRealtimeBindings.transit_realtime.IVehiclePosition[]
   }>(prefix, `/vehiclelocations?${searchParams.toString()}`, fetch)

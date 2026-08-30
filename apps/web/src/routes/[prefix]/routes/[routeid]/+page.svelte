@@ -27,6 +27,16 @@
     parseInt(searchParams.get('directionId') || currentService?.directionId.toString() || '0')
   )
 
+  // we resolve the realtime promises here, so it doesn't flicker when we invalidate the page
+  let tripUpdates = $state<transit_realtime.ITripUpdate[]>([])
+  let serviceAlerts = $state<transit_realtime.IAlert[]>([])
+  let vehicleLocations = $state<transit_realtime.IVehiclePosition[]>([])
+  $effect(() => {
+    ;(async () => (tripUpdates = (await data.tripUpdates).data?.tripUpdates || []))()
+    ;(async () => (serviceAlerts = (await data.serviceAlerts).data?.serviceAlerts || []))()
+    ;(async () => (vehicleLocations = (await data.vehicleLocations).data?.vehicleLocations || []))()
+  })
+
   $effect(() => {
     if (currentService?.shapeId !== undefined) {
       mapState.currentShape = [
@@ -45,12 +55,16 @@
     }))
   })
 
-  // we resolve the realtime promises here, so it doesn't flicker when we invalidate the page
-  let tripUpdates = $state<transit_realtime.ITripUpdate[]>([])
-  let serviceAlerts = $state<transit_realtime.IAlert[]>([])
   $effect(() => {
-    ;(async () => (tripUpdates = (await data.tripUpdates).data?.tripUpdates || []))()
-    ;(async () => (serviceAlerts = (await data.serviceAlerts).data?.serviceAlerts || []))()
+    mapState.vehicleLocations = vehicleLocations.flatMap((i) => {
+      const lat = i.position?.latitude
+      const lon = i.position?.longitude
+      if (!(lat && lon && data.route)) return []
+      return {
+        coordinates: [lon, lat],
+        routeType: data.route.routeType,
+      }
+    })
   })
 
   // we invalidate all the data every 10 seconds
@@ -64,6 +78,7 @@
   onDestroy(() => {
     mapState.currentShape = []
     mapState.visibleStops = []
+    mapState.vehicleLocations = []
   })
 </script>
 

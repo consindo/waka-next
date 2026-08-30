@@ -6,7 +6,7 @@
   import Header from '$lib/components/Header.svelte'
   import ScrollContainer from '$lib/components/ScrollContainer.svelte'
   import StopTimes from '$lib/components/StopTimes.svelte'
-  import { tidyStopName } from '$lib/components/tidyStrings.js'
+  import { formatStopName } from '$lib/utils/formatStopName'
   import { variables } from '$lib/variables'
   import ServiceAlerts from '$lib/components/ServiceAlerts.svelte'
 
@@ -16,7 +16,7 @@
   const { data } = $props()
 
   const stopInfo = $derived(data.data?.stopInfo)
-  const name = $derived(tidyStopName(stopInfo?.stopName || ''))
+  const name = $derived(formatStopName(stopInfo?.stopName || ''))
 
   $effect(() => {
     if (stopInfo?.stopLon && stopInfo?.stopLat) {

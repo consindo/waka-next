@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { transit_realtime } from 'gtfs-realtime-bindings'
+  import gtfsRealtimeBindings from 'gtfs-realtime-bindings'
   import type { StopInfoResult, StopTimesResult } from '@lib/client'
 
   import { getTextColor } from '$lib/utils/color'
@@ -13,7 +13,7 @@
   }: {
     stopInfo?: StopInfoResult
     stopTimes: StopTimesResult[]
-    tripUpdates?: transit_realtime.ITripUpdate[]
+    tripUpdates?: gtfsRealtimeBindings.transit_realtime.ITripUpdate[]
   } = $props()
 
   const filteredTimes = $derived(
@@ -30,7 +30,7 @@
           isRealtime = true
           if (
             realtimeTrip.trip.scheduleRelationship ===
-            transit_realtime.TripDescriptor.ScheduleRelationship.CANCELED
+            gtfsRealtimeBindings.transit_realtime.TripDescriptor.ScheduleRelationship.CANCELED
           ) {
             return []
           }

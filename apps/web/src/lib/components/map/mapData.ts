@@ -5,7 +5,7 @@ import type { Prefix } from '@lib/client'
 
 import { resolveData } from '$lib/dataResolver'
 
-import { tidyStopName } from './tidyStrings'
+import { formatStopName } from '$lib/utils/formatStopName'
 
 export const getRegionsFromBounds = (
   regionalBounds: { prefix: Prefix; bounds: Feature }[],
@@ -77,7 +77,7 @@ export const getStops = async (
           prefix: i.prefix,
           stopId: i.stopId,
           stopName:
-            i.routes[0]?.routeType !== 3 && i.stopName ? tidyStopName(i.stopName) : undefined,
+            i.routes[0]?.routeType !== 3 && i.stopName ? formatStopName(i.stopName) : undefined,
           shouldZoom: i.routes[0]?.routeType === 3,
           icon: mapToIcon(i.prefix, i.routes[0]?.routeType, icons),
         },

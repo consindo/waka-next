@@ -12,6 +12,10 @@ interface MapState {
     shapeId: string
     color?: string
   }[]
+  vehicleLocations: {
+    coordinates: [number, number]
+    routeType: number
+  }[]
   visibleStops: {
     prefix: Prefix
     stopId: string
@@ -27,5 +31,6 @@ export const currentRegions = $state<{
 export const mapState = $state<MapState>({
   currentStop: [],
   currentShape: [],
+  vehicleLocations: [],
   visibleStops: [],
 })
