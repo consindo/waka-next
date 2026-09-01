@@ -23,7 +23,7 @@
     PIXEL_RATIO,
   } from './map/mapConstants'
   import { getRegionsFromBounds, getStops, mapToIcon } from './map/mapData'
-  import { getPins } from './map/mapIcons'
+  import { getMapIcons } from './map/mapIcons'
 
   const { regions }: { regions: RegionResponse[] } = $props()
   const regionalBounds = $derived(
@@ -33,7 +33,8 @@
     }))
   )
 
-  const availableIcons: Record<string, { id: string; png: string }[]> = {}
+  const availablePinIcons: Record<string, { id: string; png: string }[]> = {}
+  const availableVehicleIcons: Record<string, { id: string; png: string }[]> = {}
 
   let map: MapLibreMap
   let loadedStopsData: FeatureCollection = {
@@ -80,11 +81,13 @@
     })
 
     const addIcons = async (region: string) => {
-      if (availableIcons[region]) return // already loaded
-      const pins = await getPins(region, PIXEL_RATIO)
-      availableIcons[region] = pins
+      if (availablePinIcons[region]) return // already loaded
+      const pins = await getMapIcons(region, 'pins', PIXEL_RATIO)
+      const vehicles = await getMapIcons(region, 'vehicles', PIXEL_RATIO)
+      availablePinIcons[region] = pins
+      availableVehicleIcons[region] = vehicles
       await Promise.all(
-        pins.map(async (i) => {
+        [pins, vehicles].flat().map(async (i) => {
           const image = await map.loadImage(i.png)
           map.addImage(`${region}-${i.id}`, image.data)
         })
@@ -128,7 +131,7 @@
       const prefixes = getRegionsFromBounds(regionalBounds, mapBounds)
       currentRegions.ids = prefixes
       prefixes.forEach((i) => addIcons(i))
-      const stopsData = await getStops(prefixes, mapBounds, includeBus, availableIcons)
+      const stopsData = await getStops(prefixes, mapBounds, includeBus, availablePinIcons)
       loadedStopsData = stopsData
 
       const source = map.getSource(ALL_STOPS_LAYER) as GeoJSONSource
@@ -162,7 +165,8 @@
                 icon: mapToIcon(
                   mapState.currentStop[0].prefix,
                   mapState.currentStop[0].routeType,
-                  availableIcons
+                  'pin',
+                  availablePinIcons
                 ),
               },
               geometry: {
@@ -284,7 +288,8 @@
         features: mapState.vehicleLocations.map((i) => ({
           type: 'Feature',
           properties: {
-            routeType: i.routeType,
+            status: i.status,
+            icon: mapToIcon(i.prefix, i.routeType, 'vehicle', availableVehicleIcons),
           },
           geometry: {
             type: 'Point',

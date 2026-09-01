@@ -15,7 +15,7 @@
   import { mapState } from '../../../../routes/mapstate.svelte'
 
   const { realtimeInvalidationInterval } = variables
-  const { data } = $props()
+  const { data, params } = $props()
 
   const searchParams = $derived(new URLSearchParams(page.url.search))
   const tripId = $derived(searchParams.get('tripId'))
@@ -59,8 +59,11 @@
     mapState.vehicleLocations = vehicleLocations.flatMap((i) => {
       const lat = i.position?.latitude
       const lon = i.position?.longitude
-      if (!(lat && lon && data.route)) return []
+      if (!(lat && lon && data.route && currentService?.prefix)) return []
       return {
+        prefix: currentService.prefix,
+        // todo: should say how many mins away? or stops away
+        status: i.vehicle?.label || '???',
         coordinates: [lon, lat],
         routeType: data.route.routeType,
       }

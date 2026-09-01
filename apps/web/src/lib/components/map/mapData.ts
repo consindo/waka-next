@@ -19,23 +19,25 @@ export const getRegionsFromBounds = (
 }
 
 const routeTypeMap: Record<string, string> = {
-  '-1': 'pin.svg',
-  '0': 'tram-pin.svg',
-  '2': 'train-pin.svg',
-  '3': 'bus-pin.svg',
-  '4': 'ferry-pin.svg',
-  '5': 'funicular-pin.svg',
+  '-1': 'pin',
+  '0': 'tram',
+  '2': 'train',
+  '3': 'bus',
+  '4': 'ferry',
+  '5': 'funicular',
 }
 export const mapToIcon = (
   prefix: string,
   routeType: number | undefined,
+  iconType: 'pin' | 'vehicle',
   icons: Record<string, { id: string; png: string }[]>
 ) => {
   const baseIconId = routeTypeMap[(routeType || -1).toString()] || routeTypeMap['-1']
-  if ((icons[prefix] || []).find((i) => i.id === baseIconId)) {
-    return `${prefix}-${baseIconId}`
+  const baseFile = `${baseIconId}-${iconType}.svg`
+  if ((icons[prefix] || []).find((i) => i.id === baseFile)) {
+    return `${prefix}-${baseFile}`
   } else {
-    return `generic-${baseIconId}`
+    return `generic-${baseFile}`
   }
 }
 
@@ -79,7 +81,7 @@ export const getStops = async (
           stopName:
             i.routes[0]?.routeType !== 3 && i.stopName ? formatStopName(i.stopName) : undefined,
           shouldZoom: i.routes[0]?.routeType === 3,
-          icon: mapToIcon(i.prefix, i.routes[0]?.routeType, icons),
+          icon: mapToIcon(i.prefix, i.routes[0]?.routeType, 'pin', icons),
         },
         geometry: {
           type: 'Point',

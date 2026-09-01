@@ -1,6 +1,14 @@
-const icons = import.meta.glob('@regions/icons/*.svg')
+const pins = import.meta.glob('@regions/icons/*-pin.svg')
+const vehicles = import.meta.glob('@regions/icons/*-vehicle.svg')
 
-export const getPins = async (region: string, pixelRatio = 1) => {
+export const getMapIcons = async (region: string, iconType = 'pins', pixelRatio = 1) => {
+  let icons
+  if (iconType === 'pins') {
+    icons = pins
+  } else {
+    icons = vehicles
+  }
+
   const regionalIcons = await Promise.all(
     Object.keys(icons)
       .filter((i) => i.includes(region))

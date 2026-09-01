@@ -125,19 +125,28 @@ export const addLayers = (map: MapLibreMap) => {
       'circle-color': '#ffffff',
       'circle-radius': 5,
       'circle-stroke-width': 3,
-      'circle-stroke-color': '#0000ff',
+      'circle-stroke-color': '#3f3f46',
     },
   })
   map.addLayer({
     id: CURRENT_VEHICLES_LAYER,
     source: CURRENT_VEHICLES_LAYER,
-    type: 'circle',
-    layout: {},
+    type: 'symbol',
+    layout: {
+      'icon-image': ['get', 'icon'],
+      'icon-size': 1 / PIXEL_RATIO,
+      'text-field': ['get', 'status'],
+      'text-variable-anchor': ['left', 'right'],
+      'text-radial-offset': 1.25,
+      'text-size': 12,
+      'text-font': ['Noto Sans Semibold'],
+      'text-justify': 'auto',
+      'text-max-width': 20,
+    },
     paint: {
-      'circle-color': '#ffffff',
-      'circle-radius': 10,
-      'circle-stroke-width': 4,
-      'circle-stroke-color': '#ff00ff',
+      'text-color': '#3f3f46',
+      'text-halo-color': '#eeeeee',
+      'text-halo-width': 0.75,
     },
   })
 }

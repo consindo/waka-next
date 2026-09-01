@@ -15,6 +15,8 @@ interface MapState {
   vehicleLocations: {
     coordinates: [number, number]
     routeType: number
+    status: string
+    prefix: Prefix
   }[]
   visibleStops: {
     prefix: Prefix
