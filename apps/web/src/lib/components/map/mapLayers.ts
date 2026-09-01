@@ -4,6 +4,7 @@ import {
   CURRENT_SHAPE_LAYER,
   CURRENT_STOP_LAYER,
   CURRENT_STOPS_LAYER,
+  CURRENT_VEHICLES_LAYER,
   PIXEL_RATIO,
 } from './mapConstants'
 
@@ -30,6 +31,13 @@ export const addLayers = (map: MapLibreMap) => {
     },
   })
   map.addSource(CURRENT_STOPS_LAYER, {
+    type: 'geojson',
+    data: {
+      type: 'FeatureCollection',
+      features: [],
+    },
+  })
+  map.addSource(CURRENT_VEHICLES_LAYER, {
     type: 'geojson',
     data: {
       type: 'FeatureCollection',
@@ -118,6 +126,18 @@ export const addLayers = (map: MapLibreMap) => {
       'circle-radius': 5,
       'circle-stroke-width': 3,
       'circle-stroke-color': '#0000ff',
+    },
+  })
+  map.addLayer({
+    id: CURRENT_VEHICLES_LAYER,
+    source: CURRENT_VEHICLES_LAYER,
+    type: 'circle',
+    layout: {},
+    paint: {
+      'circle-color': '#ffffff',
+      'circle-radius': 10,
+      'circle-stroke-width': 4,
+      'circle-stroke-color': '#ff00ff',
     },
   })
 }

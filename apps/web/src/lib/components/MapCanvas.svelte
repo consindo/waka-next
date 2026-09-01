@@ -19,6 +19,7 @@
     CURRENT_SHAPE_LAYER,
     CURRENT_STOP_LAYER,
     CURRENT_STOPS_LAYER,
+    CURRENT_VEHICLES_LAYER,
     PIXEL_RATIO,
   } from './map/mapConstants'
   import { getRegionsFromBounds, getStops, mapToIcon } from './map/mapData'
@@ -147,7 +148,7 @@
 
     if (mapState.currentStop.length > 0 && mounted) {
       const { coordinates } = mapState.currentStop[0]
-      map.flyTo({ center: coordinates, zoom: 17 })
+      map.flyTo({ center: coordinates, zoom: 17, speed: 1.5 })
 
       const source = map.getSource(CURRENT_STOP_LAYER) as GeoJSONSource
       if (source) {
@@ -216,6 +217,7 @@
             source.setData(shape[0])
             map.fitBounds(extent as [number, number, number, number], {
               padding: 32,
+              speed: 2,
             })
 
             if (mapState.currentShape[0].color) {
@@ -275,7 +277,22 @@
 
   // vehicle locations effect
   $effect(() => {
-    console.log('locations', mapState.vehicleLocations)
+    if (mounted) {
+      const source = map.getSource(CURRENT_VEHICLES_LAYER) as GeoJSONSource
+      source.setData({
+        type: 'FeatureCollection',
+        features: mapState.vehicleLocations.map((i) => ({
+          type: 'Feature',
+          properties: {
+            routeType: i.routeType,
+          },
+          geometry: {
+            type: 'Point',
+            coordinates: i.coordinates,
+          },
+        })),
+      })
+    }
   })
 
   // recenters the map if needed...

@@ -148,7 +148,7 @@
             )}
             <p>
               also {#if secondTime.includes('min')}in{:else}at{/if}
-              <time datetime={route[2].departureTime.toISOString()}>{secondTime}</time>
+              <time datetime={route[1].departureTime.toISOString()}>{secondTime}</time>
             </p>
           {/if}
         </div>

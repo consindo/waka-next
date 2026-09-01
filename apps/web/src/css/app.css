@@ -26,9 +26,9 @@
 
   --surface-shadow: lch(0 0 0 / 0.022) 0px 3px 6px -2px, lch(0 0 0 / 0.044) 0px 1px 1px;
 
-  --surface-text-primary: #2d72d2;
-  --surface-text-success: #238551;
-  --surface-text-danger: #cd4246;
+  --surface-text-primary: light-dark(#2d72d2, #8abbff);
+  --surface-text-success: light-dark(#238551, #72ca9b);
+  --surface-text-danger: light-dark(#cd4246, #fa999c);
 
   --edge-padding: 0.75rem;
 }
