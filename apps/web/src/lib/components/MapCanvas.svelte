@@ -288,8 +288,9 @@
         features: mapState.vehicleLocations.map((i) => ({
           type: 'Feature',
           properties: {
-            status: i.status,
             icon: mapToIcon(i.prefix, i.routeType, 'vehicle', availableVehicleIcons),
+            occupancy: i.occupancy,
+            lastUpdated: i.lastUpdated,
           },
           geometry: {
             type: 'Point',

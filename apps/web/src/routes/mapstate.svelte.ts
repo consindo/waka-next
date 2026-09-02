@@ -13,10 +13,11 @@ interface MapState {
     color?: string
   }[]
   vehicleLocations: {
+    prefix: Prefix
     coordinates: [number, number]
     routeType: number
-    status: string
-    prefix: Prefix
+    occupancy?: string
+    lastUpdated: Date
   }[]
   visibleStops: {
     prefix: Prefix

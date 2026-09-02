@@ -62,10 +62,10 @@
       if (!(lat && lon && data.route && currentService?.prefix)) return []
       return {
         prefix: currentService.prefix,
-        // todo: should say how many mins away? or stops away
-        status: i.vehicle?.label || '???',
         coordinates: [lon, lat],
         routeType: data.route.routeType,
+        occupancy: i.occupancyStatus,
+        lastUpdated: typeof i.timestamp === 'number' ? new Date(i.timestamp * 1000) : new Date(),
       }
     })
   })

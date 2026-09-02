@@ -135,18 +135,7 @@ export const addLayers = (map: MapLibreMap) => {
     layout: {
       'icon-image': ['get', 'icon'],
       'icon-size': 1 / PIXEL_RATIO,
-      'text-field': ['get', 'status'],
-      'text-variable-anchor': ['left', 'right'],
-      'text-radial-offset': 1.25,
-      'text-size': 12,
-      'text-font': ['Noto Sans Semibold'],
-      'text-justify': 'auto',
-      'text-max-width': 20,
-    },
-    paint: {
-      'text-color': '#3f3f46',
-      'text-halo-color': '#eeeeee',
-      'text-halo-width': 0.75,
+      // todo: [TM-468] [TM-469] we want to show occupancy and lastupdated
     },
   })
 }
