@@ -52,12 +52,14 @@
   onDestroy(() => {
     mapState.currentStop = []
   })
+
+  const jono = 'NO_CHANGE'
 </script>
 
 <Header title={name} subtitle={stopInfo?.stopCode ? `Stop ${stopInfo?.stopCode}` : undefined} />
 <ScrollContainer>
   {#if serviceAlerts.length > 0}
-    <ServiceAlerts {serviceAlerts} />
+    <ServiceAlerts compact {serviceAlerts} />
   {/if}
   <noscript>Realtime data requires JavaScript to be enabled.</noscript>
   <StopTimes {stopInfo} stopTimes={data.data?.stopTimes || []} {tripUpdates} />

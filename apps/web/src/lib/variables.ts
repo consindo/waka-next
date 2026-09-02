@@ -5,4 +5,5 @@ export const variables = {
   realtimeMaxAdvance: 3 * 60 * 60 * 1000, // 3 hours
   realtimeMaxIds: 200,
   realtimeInvalidationInterval: 10_000, // 10 seconds
+  language: 'en', // todo: needs to be configurable
 }

@@ -141,7 +141,7 @@
 
 <style>
   h2 {
-    font-size: 15px;
+    font-size: 16px;
     color: var(--surface-text-subtle);
     padding: 1rem 0.75rem 0.25rem;
     margin: 0;
