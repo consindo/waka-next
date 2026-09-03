@@ -6,6 +6,9 @@
   import { formatTripHeadsign } from '$lib/utils/formatHeadsign'
   import { formatShortDate } from '$lib/utils/formatDate'
 
+  import arrowRightSmallSvg from '../../icons/arrow-right-small.svg?raw'
+  import realtimeSvg from '../../icons/realtime.svg?raw'
+
   const {
     stopInfo,
     stopTimes,
@@ -84,7 +87,9 @@
         <div class="direction">
           <h3>{trip.routeShortName}</h3>
           <div class="destination">
-            <span class="direction-icon">{trip.directionId === 1 ? '➡️' : '⬅️'}</span>
+            <span class={{ 'direction-icon': true, 'direction-reverse': trip.directionId === 1 }}
+              >{@html arrowRightSmallSvg}</span
+            >
             <p class="headsign">
               <!-- todo: should probably be a nice format headsign function -->
               {#each formatTripHeadsign(trip.tripHeadsign) as headsignPart, index (index)}
@@ -109,6 +114,9 @@
         </div>
         <div class="time">
           <h4>
+            {#if trip.isRealtime}
+              <div class="realtime-icon">{@html realtimeSvg}</div>
+            {/if}
             <time datetime={trip.departureTime.toISOString()}
               ><span>{(departureTime.match(/[0-9:]*/g) || [''])[0]}</span>{departureTime.replace(
                 /[0-9:]*/g,
@@ -206,8 +214,15 @@
   }
   .direction-icon {
     display: block;
-    font-size: 10px;
-    line-height: 16px;
+    color: inherit;
+    height: 8px;
+    padding: 3px 0;
+  }
+  .direction-reverse :global(svg) {
+    transform: rotate(180deg);
+  }
+  .direction-icon :global(svg) {
+    display: block;
   }
   .headsign {
     flex: 1;
@@ -234,6 +249,30 @@
     font-size: 1rem;
     margin: 0;
     opacity: 0.7;
+    position: relative;
+  }
+  @keyframes realtime-flicker {
+    0% {
+      opacity: 0.5;
+    }
+    50% {
+      opacity: 0.5;
+    }
+    75% {
+      opacity: 0.9;
+    }
+    100% {
+      opacity: 0.5;
+    }
+  }
+  .realtime-icon {
+    position: absolute;
+    top: -2px;
+    right: -9px;
+    animation: realtime-flicker 2000ms infinite ease;
+  }
+  .realtime-icon :global(svg) {
+    color: inherit;
   }
   .isRealtime .time h4 {
     opacity: 1;

@@ -8,6 +8,7 @@ describe('color', () => {
       expect(getTextColor('#ffffff')).toEqual('#000')
       expect(getTextColor('#bada55')).toEqual('#000')
       expect(getTextColor('#aacde3')).toEqual('#000')
+      expect(getTextColor('#f39200')).toEqual('#000')
     })
     it('should return #fff for dark colors', () => {
       expect(getTextColor('#000000')).toEqual('#fff')
