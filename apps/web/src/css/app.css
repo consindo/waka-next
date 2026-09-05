@@ -7,18 +7,19 @@
   --collapsed-height: 4rem;
   --screen-padding: 0.5rem;
 
-  --bg: light-dark(#f5f5f5, #18181b);
+  --bg: light-dark(#f5f5f5, #121213);
   --base-border-radius: 4px;
 
-  --surface-bg: light-dark(#fff, #393939);
-  --surface-bg-hover: light-dark(rgba(55, 53, 47, 0.07), rgba(255, 255, 255, 0.15));
+  --surface-bg: light-dark(#fff, #19191a);
+  --surface-bg-hover: light-dark(rgba(55, 53, 47, 0.07), rgba(255, 255, 255, 0.04));
+  --surface-bg-pressed: light-dark(rgba(55, 53, 47, 0.14), rgba(255, 255, 255, 0.08));
   --surface-bg-subtle: light-dark(#fafaf9, #242424);
   --surface-bg-subtle-hover: light-dark(rgba(55, 53, 47, 0.08), rgba(255, 255, 255, 0.075));
   --surface-bg-interactive: #0074e4;
   --surface-bg-interactive-hover: light-dark(#0069cc, #339cff);
   --surface-bg-interactive-focus: light-dark(#0069cc, #339cff);
 
-  --surface-border: light-dark(rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0.15));
+  --surface-border: light-dark(rgba(0, 0, 0, 0.15), rgba(255, 255, 255, 0.1));
 
   --surface-text: light-dark(#09090b, #fafafa);
   --surface-text-subtle: light-dark(#3f3f46, #eee); /* todo: get the correct color from tailwind */

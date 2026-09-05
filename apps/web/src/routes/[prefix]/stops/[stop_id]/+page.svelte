@@ -52,8 +52,6 @@
   onDestroy(() => {
     mapState.currentStop = []
   })
-
-  const jono = 'NO_CHANGE'
 </script>
 
 <Header title={name} subtitle={stopInfo?.stopCode ? `Stop ${stopInfo?.stopCode}` : undefined} />

@@ -32,12 +32,12 @@
     href="{page.url.pathname}?{newSearchParams.toString()}"
     onclick={triggerCloseDetails}
   >
-    <strong
-      >{formatShortDate(
+    <time datetime={service.departureTime || service.arrivalTime}>
+      {formatShortDate(
         new Date(service.departureTime || service.arrivalTime || ''),
         service.timezone,
         'long'
-      )}</strong
+      )}</time
     >
 
     <div>
@@ -50,6 +50,9 @@
 <style>
   li:not(:last-child) a {
     border-bottom: 0.5px solid var(--surface-border);
+  }
+  time {
+    font-weight: bold;
   }
   a {
     color: var(--surface-text);

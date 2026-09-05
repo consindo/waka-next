@@ -17,7 +17,7 @@
   <summary>
     <img class="alert-img" src={alertSvg} alt="" />
     <h2>{serviceAlerts.length} alerts</h2>
-    <img class="chevron-img" src={chevronRightSvg} alt="" /></summary
+    <img class="chevron-img img-invert" src={chevronRightSvg} alt="" /></summary
   >
   {#each serviceAlerts as alert, key (key)}
     {@const descriptionTranslation = alert.descriptionText?.translation}
@@ -35,7 +35,7 @@
       <summary>
         <img class="alert-img" src={alertSvg} alt="" />
         <h3>{headerText}</h3>
-        <img class="chevron-img" src={chevronRightSvg} alt="" />
+        <img class="chevron-img img-invert" src={chevronRightSvg} alt="" />
       </summary>
       {#if descriptionText}
         <div class="alert-content">

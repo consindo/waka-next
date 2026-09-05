@@ -5,6 +5,7 @@
 
   import { getTextColor } from '$lib/utils/color'
   import { formatTime } from '$lib/utils/formatDate'
+  import { sortRoutes } from '$lib/utils/sortRoutes'
 
   let {
     prefix,
@@ -73,9 +74,9 @@
       <h4>{stopName}</h4>
       {#if transfersWithoutSelf.length > 0}
         <ul>
-          {#each transfersWithoutSelf as route (route.routeShortName)}
+          {#each transfersWithoutSelf.toSorted(sortRoutes) as route (route.routeShortName)}
             <li
-              style={`${route.routeColor ? `background: #${route.routeColor};color: #${getTextColor(route.routeColor)};` : ''}`}
+              style={`${route.routeColor ? `background: #${route.routeColor};color: ${getTextColor(route.routeColor)};` : ''}`}
             >
               {route.routeShortName}
             </li>
@@ -116,6 +117,9 @@
 
     &:has(a:hover) {
       background: var(--surface-bg-hover);
+    }
+    &:has(a:active) {
+      background: var(--surface-bg-pressed);
     }
   }
   .stop-time::after,
@@ -183,8 +187,8 @@
     display: inline-block;
     font-size: 11px;
     font-weight: 600;
-    background: #444;
-    color: #fff;
+    background: var(--surface-bg-subtle-hover);
+    color: var(--surface-text-subtle);
     padding: 1px 4px;
     border-radius: 3px;
     margin-right: 2px;

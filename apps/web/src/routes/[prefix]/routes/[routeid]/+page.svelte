@@ -15,7 +15,7 @@
   import { mapState } from '../../../../routes/mapstate.svelte'
 
   const { realtimeInvalidationInterval } = variables
-  const { data, params } = $props()
+  const { data } = $props()
 
   const searchParams = $derived(new URLSearchParams(page.url.search))
   const tripId = $derived(searchParams.get('tripId'))
@@ -64,7 +64,7 @@
         prefix: currentService.prefix,
         coordinates: [lon, lat],
         routeType: data.route.routeType,
-        occupancy: i.occupancyStatus,
+        occupancy: i.occupancyStatus?.toString(),
         lastUpdated: typeof i.timestamp === 'number' ? new Date(i.timestamp * 1000) : new Date(),
       }
     })
@@ -92,19 +92,17 @@
       {#if serviceAlerts.length > 0}
         <ServiceAlerts {serviceAlerts} />
       {/if}
-      {#if data.services && data.services.length > 0}
-        <Services
-          {directionId}
-          {tripUpdates}
-          routeName={data.route.routeLongName ||
-            formatTripHeadsign(
-              (data.services || []).find((i) => i.directionId === directionId)?.tripHeadsign
-            ).join(' ') ||
-            data.route.routeShortName}
-          services={data.services}
-          selectedService={searchParams.get('tripId')}
-        />
-      {/if}
+      <Services
+        {directionId}
+        {tripUpdates}
+        routeName={data.route.routeLongName ||
+          formatTripHeadsign(
+            (data.services || []).find((i) => i.directionId === directionId)?.tripHeadsign
+          ).join(' ') ||
+          data.route.routeShortName}
+        services={data.services || []}
+        selectedService={searchParams.get('tripId')}
+      />
     </div>
     <div>
       {#if currentService}

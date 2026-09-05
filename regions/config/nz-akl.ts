@@ -23,16 +23,20 @@ export const nz_akl: RegionalConfig = {
       where: `route_short_name LIKE '10%' OR route_short_name LIKE '2%' OR route_short_name like '6%' OR route_short_name = 'CTY' OR route_short_name = 'INN' OR route_short_name = 'OUT' OR route_short_name = 'TMK'`,
     },
     {
+      name: 'North Shore',
+      where: `route_short_name LIKE '8%' OR (route_short_name LIKE '9%' AND route_short_name NOT LIKE '98%' AND route_short_name NOT LIKE '99%')`,
+    },
+    {
       name: 'South',
       where: `route_short_name LIKE '3%' OR route_short_name = 'AIR'`,
     },
     {
-      name: 'West',
-      where: `route_short_name LIKE '1%'`,
+      name: 'East',
+      where: `route_short_name LIKE '7%'`,
     },
     {
-      name: 'North Shore',
-      where: `route_short_name LIKE '8%' OR (route_short_name LIKE '9%' AND route_short_name NOT LIKE '98%' AND route_short_name NOT LIKE '99%')`,
+      name: 'West',
+      where: `route_short_name LIKE '1%'`,
     },
     {
       name: 'Hibiscus Coast & Rodney',
@@ -45,27 +49,21 @@ export const nz_akl: RegionalConfig = {
   ],
   routeOverrides: [
     {
-      routeShortName: 'EAST',
+      routeShortName: 'E-W',
       overrides: {
-        routeLongName: 'Eastern Line',
+        routeLongName: 'East West Line',
       },
     },
     {
-      routeShortName: 'WEST',
+      routeShortName: 'O-W',
       overrides: {
-        routeLongName: 'Western Line',
+        routeLongName: 'Onehunga West Line',
       },
     },
     {
-      routeShortName: 'ONE',
+      routeShortName: 'S-C',
       overrides: {
-        routeLongName: 'Onehunga Line',
-      },
-    },
-    {
-      routeShortName: 'STH',
-      overrides: {
-        routeLongName: 'Southern Line',
+        routeLongName: 'South City Line',
       },
     },
     {
@@ -94,6 +92,37 @@ export const nz_akl: RegionalConfig = {
       overrides: {
         routeLongName: 'Northern Express 2',
         routeColor: '008544',
+      },
+    },
+    {
+      routeShortName: 'CTY',
+      overrides: {
+        routeLongName: 'CityLink',
+      },
+    },
+    {
+      routeShortName: 'INN',
+      overrides: {
+        routeLongName: 'InnerLink',
+      },
+    },
+    {
+      routeShortName: 'OUT',
+      overrides: {
+        routeLongName: 'OuterLink',
+      },
+    },
+    {
+      routeShortName: 'TMK',
+      overrides: {
+        routeLongName: 'TāmakiLink',
+      },
+    },
+    {
+      routeShortName: 'AIR',
+      overrides: {
+        routeLongName: 'AirportLink',
+        routeColor: 'F39120',
       },
     },
   ],

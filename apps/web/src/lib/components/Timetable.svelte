@@ -132,9 +132,15 @@
 </ul>
 
 <style>
+  details + .stop-times-wrapper {
+    margin-top: 0;
+  }
+  details .stop-times-wrapper {
+    margin-bottom: 0;
+  }
   .stop-times-wrapper {
     padding: 0;
-    margin: 0;
+    margin: 0.5rem 0;
     --route-color: #444;
   }
   details summary {

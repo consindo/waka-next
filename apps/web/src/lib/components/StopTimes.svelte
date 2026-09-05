@@ -179,7 +179,7 @@
     cursor: default;
     padding: calc(var(--edge-padding) - 0.25rem) var(--edge-padding);
     color: #fff;
-    background: #555;
+    background: #4c4c4c;
     align-items: center;
     border-bottom: 1px solid var(--surface-border);
   }

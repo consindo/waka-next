@@ -4,6 +4,7 @@
   import type { RouteResult } from '@lib/client'
 
   import { getTextColor } from '$lib/utils/color'
+  import { sortRoutes } from '$lib/utils/sortRoutes'
 
   interface Props {
     group: { name: string; emoji: string; routes: RouteResult[] }
@@ -17,7 +18,7 @@
     <h2><span>{group.emoji}</span><span>{group.name}</span><small>{group.routes.length}</small></h2>
   </summary>
   <ul>
-    {#each group.routes as route (route.routeId)}
+    {#each group.routes.toSorted(sortRoutes) as route (route.routeId)}
       {@const color = route.routeColor
         ? `background-color: #${route.routeColor};color: ${getTextColor(route.routeColor)}`
         : ''}
