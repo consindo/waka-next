@@ -1,8 +1,12 @@
 import type { ServiceResult, TimetableResult } from '@lib/client'
 
-export const formatShortDate = (date: Date, timeZone: string, suffix?: 'long' | 'short') => {
+export const formatShortDate = (
+  date: Date,
+  timeZone: string,
+  suffix?: 'long' | 'short' | 'long-due'
+) => {
   const now = new Date()
-  if (suffix === 'short' && date.getTime() < now.getTime() + 60 * 1000) {
+  if ((suffix === 'short' || suffix === 'long-due') && date.getTime() < now.getTime() + 60 * 1000) {
     return 'Due'
   } else if (date.getTime() < now.getTime() + 60 * 90 * 1000) {
     let mins = Math.floor((date.getTime() - now.getTime()) / 1000 / 60)

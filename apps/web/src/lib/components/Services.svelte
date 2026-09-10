@@ -1,10 +1,12 @@
 <script lang="ts">
+  import type { transit_realtime } from 'gtfs-realtime-bindings'
   import { page } from '$app/state'
 
   import type { ServiceResult } from '@lib/client'
 
+  import type { RealtimeServiceResult } from '$lib/types'
+
   import ServiceItem from './ServiceItem.svelte'
-  import type { transit_realtime } from 'gtfs-realtime-bindings'
 
   import arrowRightSmallSvg from '../../icons/arrow-right-small.svg?raw'
   import spinSvg from '../../icons/spin.svg?raw'
@@ -26,20 +28,25 @@
 
   const currentService = $derived(services.find((i) => i.tripId === selectedService))
   const derivedDirectionId = $derived(currentService ? currentService.directionId : directionId)
-  const filteredServices = $derived(
+  const filteredServices: RealtimeServiceResult[] = $derived(
     services
       .filter((i) => i.directionId === derivedDirectionId)
       .map((i) => {
         const realtimeTrip = tripUpdates.find((j) => j.trip.tripId === i.tripId)
         if (!realtimeTrip) {
-          return i
+          return {
+            ...i,
+            isRealtime: false,
+          }
         }
 
         // this probably has a bit more nuance to think about
         // especially for those european trains that are delayed all the time
         // will build the ui first and see how best to handle this
+        let hasDeparted = false
         let arrivalDelay = realtimeTrip.delay || 0
         let departureDelay = realtimeTrip.delay || 0
+
         const stopTimeUpdate = realtimeTrip.stopTimeUpdate?.find(
           (j) => j.stopSequence === i.stopSequence
         )
@@ -49,6 +56,16 @@
           }
           if (stopTimeUpdate.departure?.delay) {
             departureDelay = stopTimeUpdate.departure.delay
+          }
+        } else if ((realtimeTrip.stopTimeUpdate || []).length > 0) {
+          // the vehicle may have left!
+          const minStopSequence = Math.min(
+            ...(realtimeTrip.stopTimeUpdate || [])
+              .map((i) => i.stopSequence)
+              .filter((i) => typeof i === 'number')
+          )
+          if (i.stopSequence < minStopSequence) {
+            hasDeparted = true
           }
         }
 
@@ -70,6 +87,7 @@
           arrivalDelay,
           departureTime,
           departureDelay,
+          hasDeparted,
           isRealtime: true,
         }
       })
@@ -213,6 +231,7 @@
     border-radius: var(--base-border-radius);
     border: 0.5px solid var(--surface-border);
     box-shadow: var(--surface-shadow);
+    overflow: hidden;
   }
   ul {
     list-style-type: none;

@@ -249,12 +249,14 @@ export class Client {
           dayofweek === 6 ? '1' : '0',
           dayofweek === 0 ? '1' : '0',
         ]) as ServiceResult[]
-      ).map((i) => ({
-        ...i,
-        date: dateInput,
-        arrivalTime: convertFromGtfsDateToISOTimestamp(dateInput, i.arrivalTime, i.timezone),
-        departureTime: convertFromGtfsDateToISOTimestamp(dateInput, i.departureTime, i.timezone),
-      }))
+      ).map((i) =>
+        mapRouteOverride({
+          ...i,
+          date: dateInput,
+          arrivalTime: convertFromGtfsDateToISOTimestamp(dateInput, i.arrivalTime, i.timezone),
+          departureTime: convertFromGtfsDateToISOTimestamp(dateInput, i.departureTime, i.timezone),
+        })
+      )
     })
 
     let route: RouteResult | null = null

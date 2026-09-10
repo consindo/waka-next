@@ -141,7 +141,7 @@
   .stop-times-wrapper {
     padding: 0;
     margin: 0.5rem 0;
-    --route-color: #444;
+    --route-color: #4c4c4c;
   }
   details summary {
     list-style-type: none;
