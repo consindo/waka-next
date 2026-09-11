@@ -9,6 +9,7 @@ export interface RegionalConfig {
   routeGroups?: {
     name: string
     where: string
+    emoji?: string
     groupBy?: string
     orderBy?: string
   }[]

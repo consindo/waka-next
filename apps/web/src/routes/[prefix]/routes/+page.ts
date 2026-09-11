@@ -33,7 +33,7 @@ export const load: PageLoad = async ({ fetch, params }) => {
           )
           returnGroups.push({
             name: i.name,
-            emoji: '😺',
+            emoji: i.emoji,
             routes: result.data?.routes || [],
             include: { routeType: [] },
           })

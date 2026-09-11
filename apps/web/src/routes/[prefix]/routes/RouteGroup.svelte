@@ -6,8 +6,10 @@
   import { getTextColor } from '$lib/utils/color'
   import { sortRoutes } from '$lib/utils/sortRoutes'
 
+  import chevronRightSvg from '../../../icons/chevron-right.svg'
+
   interface Props {
-    group: { name: string; emoji: string; routes: RouteResult[] }
+    group: { name: string; emoji?: string; routes: RouteResult[] }
   }
 
   let { group }: Props = $props()
@@ -15,7 +17,8 @@
 
 <details>
   <summary>
-    <h2><span>{group.emoji}</span><span>{group.name}</span><small>{group.routes.length}</small></h2>
+    <div><img class="img-invert" src={chevronRightSvg} alt="" /></div>
+    <h2><span>{group.name}</span><small>{group.routes.length}</small></h2>
   </summary>
   <ul>
     {#each group.routes.toSorted(sortRoutes) as route (route.routeId)}
@@ -45,9 +48,25 @@
   }
 
   details summary {
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem 0.5rem;
     color: var(--surface-text-subtle);
     cursor: default;
+    list-style-type: none;
+    display: flex;
+    align-items: center;
+    gap: 0.125rem;
+
+    div {
+      width: 16px;
+      height: 16px;
+
+      img {
+        transform: rotate(90deg);
+      }
+    }
+  }
+  details[open] div img {
+    transform: rotate(-90deg);
   }
   details summary:hover {
     background: var(--surface-bg-hover);
@@ -56,16 +75,18 @@
   h2 {
     margin: 0;
     display: inline-flex;
-    font-size: 18px;
+    font-size: 17px;
     line-height: 1.25rem;
     gap: 0.3em;
     padding: 0.25rem 0.125rem;
     color: var(--surface-text);
+    align-items: end;
   }
 
   small {
     color: var(--surface-text-subtle);
-    font-size: 70%;
+    font-size: 13px;
+    line-height: 1rem;
   }
 
   ul {

@@ -1,6 +1,12 @@
+interface RouteGroup {
+  name: string
+  emoji?: string
+  include: { routeType: number[] }
+}
+
 // sensible default groupings
 // no city will have all of these
-export const defaultRouteGroups = [
+export const defaultRouteGroups: RouteGroup[] = [
   {
     name: 'Metro',
     emoji: '🚇',
