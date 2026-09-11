@@ -17,15 +17,9 @@ export const load: PageLoad = async ({ fetch, params, url, depends }) => {
   const prefix = params.prefix as Prefix
   const routeId = params.routeid
   const tripId = url.searchParams.get('tripId')
-  const stopId = url.searchParams.get('stopId') || undefined
 
   const [route, trip] = await Promise.all([
-    resolveData(
-      prefix,
-      `/routes/${routeId}${stopId ? `?stopId=${encodeURIComponent(stopId)}` : ''}`,
-      (client) => client.getRoute(prefix, routeId, stopId),
-      fetch
-    ),
+    resolveData(prefix, `/routes/${routeId}`, (client) => client.getRoute(prefix, routeId), fetch),
     tripId
       ? resolveData(
           prefix,

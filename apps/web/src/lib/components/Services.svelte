@@ -36,6 +36,7 @@
         if (!realtimeTrip) {
           return {
             ...i,
+            scheduleRelationship: 'SCHEDULED',
             isRealtime: false,
           }
         }
@@ -46,7 +47,9 @@
         let hasDeparted = false
         let arrivalDelay = realtimeTrip.delay || 0
         let departureDelay = realtimeTrip.delay || 0
+        let scheduleRelationship: 'SCHEDULED' | 'SKIPPED' | 'NO_DATA' | 'UNSCHEDULED' = 'SCHEDULED'
 
+        // todo: sometimes selects and gives realtime info to tomorrow's trip
         const stopTimeUpdate = realtimeTrip.stopTimeUpdate?.find(
           (j) => j.stopSequence === i.stopSequence
         )
@@ -56,6 +59,10 @@
           }
           if (stopTimeUpdate.departure?.delay) {
             departureDelay = stopTimeUpdate.departure.delay
+          }
+          if (stopTimeUpdate.scheduleRelationship) {
+            scheduleRelationship = stopTimeUpdate.scheduleRelationship.toString() as
+              'SCHEDULED' | 'SKIPPED' | 'NO_DATA' | 'UNSCHEDULED'
           }
         } else if ((realtimeTrip.stopTimeUpdate || []).length > 0) {
           // the vehicle may have left!
@@ -88,6 +95,7 @@
           departureTime,
           departureDelay,
           hasDeparted,
+          scheduleRelationship,
           isRealtime: true,
         }
       })
@@ -121,11 +129,7 @@
 </script>
 
 <h2 class={{ 'is-outbound': derivedDirectionId === 1 }}>
-  {#if services.length - filteredServices.length > 0}
-    <div>
-      {@html arrowRightSmallSvg}
-    </div>
-  {/if}
+  <div>{@html arrowRightSmallSvg}</div>
   <span>
     {routeName}
   </span>
@@ -142,16 +146,23 @@
 {#if firstVisibleServiceIndex >= 0}
   <div class="services-wrapper">
     <ul>
-      {#if isShowingHiddenService && filteredServices[currentFilteredServiceIndex]}
+      {#if isShowingHiddenService && filteredServices[currentFilteredServiceIndex] && currentFilteredServiceIndex < firstVisibleServiceIndex}
         <ServiceItem
           service={filteredServices[currentFilteredServiceIndex]}
           {selectedService}
           {triggerCloseDetails}
         />
-      {:else}
-        {#each filteredServices.slice(firstVisibleServiceIndex, firstVisibleServiceIndex + 3) as service, i (i)}
-          <ServiceItem {service} {selectedService} triggerCloseDetails={() => null} />
-        {/each}
+      {/if}
+      {#each filteredServices.slice(firstVisibleServiceIndex, firstVisibleServiceIndex + 3) as service, i (i)}
+        <ServiceItem {service} {selectedService} triggerCloseDetails={() => null} />
+      {/each}
+      {#if isShowingHiddenService && filteredServices[currentFilteredServiceIndex] && currentFilteredServiceIndex > firstVisibleServiceIndex}
+        <ServiceItem
+          service={filteredServices[currentFilteredServiceIndex]}
+          {selectedService}
+          {triggerCloseDetails}
+          hideOnOpen={true}
+        />
       {/if}
     </ul>
 
@@ -161,7 +172,7 @@
           ><img src={chevronRightSvg} class="img-invert" alt="" /><span>Departures</span></summary
         >
         <ul>
-          {#each filteredServices.slice(isShowingHiddenService ? firstVisibleServiceIndex : firstVisibleServiceIndex + 3) as service, i (i)}
+          {#each filteredServices.slice(firstVisibleServiceIndex + 3) as service, i (i)}
             <ServiceItem {service} {selectedService} {triggerCloseDetails} />
           {/each}
         </ul>

@@ -6,6 +6,7 @@ import type { Prefix } from '@lib/client'
 import { resolveData } from '$lib/dataResolver'
 
 import { formatStopName } from '$lib/utils/formatStopName'
+import { formatRouteType } from '$lib/utils/formatRouteType'
 
 export const getRegionsFromBounds = (
   regionalBounds: { prefix: Prefix; bounds: Feature }[],
@@ -18,21 +19,13 @@ export const getRegionsFromBounds = (
   return prefixes
 }
 
-const routeTypeMap: Record<string, string> = {
-  '-1': 'pin',
-  '0': 'tram',
-  '2': 'train',
-  '3': 'bus',
-  '4': 'ferry',
-  '5': 'funicular',
-}
 export const mapToIcon = (
   prefix: string,
   routeType: number | undefined,
   iconType: 'pin' | 'vehicle',
   icons: Record<string, { id: string; png: string }[]>
 ) => {
-  const baseIconId = routeTypeMap[(routeType || -1).toString()] || routeTypeMap['-1']
+  const baseIconId = formatRouteType(routeType || -1).id
   const baseFile = `${baseIconId}-${iconType}.svg`
   if ((icons[prefix] || []).find((i) => i.id === baseFile)) {
     return `${prefix}-${baseFile}`

@@ -13,6 +13,7 @@
   import { variables } from '$lib/variables'
 
   import { mapState } from '../../../../routes/mapstate.svelte'
+  import { formatRouteType } from '$lib/utils/formatRouteType'
 
   const { realtimeInvalidationInterval } = variables
   const { data } = $props()
@@ -86,7 +87,10 @@
 </script>
 
 {#if data.route}
-  <Header title={data.route.routeShortName} />
+  <Header
+    title={data.route.routeShortName}
+    subtitle={formatRouteType(data.route.routeType).route}
+  />
   <ScrollContainer>
     <div>
       {#if serviceAlerts.length > 0}

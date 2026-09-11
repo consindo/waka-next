@@ -12,10 +12,12 @@
     service,
     selectedService,
     triggerCloseDetails,
+    hideOnOpen,
   }: {
     service: RealtimeServiceResult
     selectedService: string | null
     triggerCloseDetails: () => void
+    hideOnOpen?: boolean
   } = $props()
 
   const existingSearchParams = $derived(new URLSearchParams(page.url.search))
@@ -27,12 +29,21 @@
       return p
     })()
   )
+
+  const scheduleRelationshipMap: Record<string, string> = {
+    SCHEDULED: 'On time',
+    SKIPPED: 'Cancelled',
+    NO_DATA: 'No Data',
+    UNSCHEDULED: 'Cancelled',
+  }
 </script>
 
-<li>
+<li class={{ hideOnOpen }}>
   <a
     data-sveltekit-replacestate
-    class:selected={service.tripId === selectedService}
+    class={{
+      selected: service.tripId === selectedService,
+    }}
     style={service.routeColor ? `--surface-bg-interactive: #${service.routeColor}` : ''}
     href="{page.url.pathname}?{newSearchParams.toString()}"
     onclick={triggerCloseDetails}
@@ -50,7 +61,9 @@
         isEarly:
           !service.hasDeparted && service.departureDelay ? service.departureDelay < -180 : false,
         isLate:
-          !service.hasDeparted && service.departureDelay ? service.departureDelay > 180 : false,
+          service.scheduleRelationship === 'SKIPPED' ||
+          service.scheduleRelationship === 'UNSCHEDULED' ||
+          (!service.hasDeparted && service.departureDelay ? service.departureDelay > 180 : false),
       }}
     >
       {#if service.isRealtime}
@@ -71,7 +84,7 @@
         {:else if service.departureDelay && service.departureDelay > 180}
           Late ({Math.ceil(service.departureDelay / 60)}m)
         {:else if service.isRealtime}
-          On time
+          {scheduleRelationshipMap[service.scheduleRelationship]}
         {:else}
           Scheduled
         {/if}
@@ -81,8 +94,11 @@
 </li>
 
 <style>
-  li:not(:last-child) a {
-    border-bottom: 0.5px solid var(--surface-border);
+  :global(ul:has(.hideOnOpen):has(+ details[open]) .hideOnOpen) {
+    display: none;
+  }
+  li:not(:first-child) a {
+    border-top: 0.5px solid var(--surface-border);
   }
   time {
     font-weight: bold;
@@ -112,6 +128,9 @@
   }
   li:has(a:hover) {
     background: var(--surface-bg-hover);
+  }
+  li:has(a:active) {
+    background: var(--surface-bg-pressed);
   }
   .time {
     text-align: right;

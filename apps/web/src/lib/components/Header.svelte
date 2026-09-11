@@ -99,9 +99,12 @@
     cursor: default;
     padding: 0.25rem;
     border-radius: 0.5rem;
-  }
-  a:hover {
-    background: var(--surface-bg-hover);
+    &:hover {
+      background: var(--surface-bg-hover);
+    }
+    &:active {
+      background: var(--surface-bg-pressed);
+    }
   }
   img {
     width: 24px;

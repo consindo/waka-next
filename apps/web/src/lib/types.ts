@@ -7,5 +7,6 @@ export interface RealtimeServiceResult extends ServiceResult {
   departureTime?: string
   departureDelay?: number
   hasDeparted?: boolean
+  scheduleRelationship: 'SCHEDULED' | 'SKIPPED' | 'NO_DATA' | 'UNSCHEDULED'
   isRealtime: boolean
 }
