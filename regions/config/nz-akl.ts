@@ -43,6 +43,10 @@ export const nz_akl: RegionalConfig = {
       where: `route_short_name LIKE '98%' OR route_short_name LIKE '99%' OR route_short_name = 'MEX'`,
     },
     {
+      name: 'Waiheke Island',
+      where: `route_short_name LIKE '5%'`,
+    },
+    {
       name: 'Rail Replacement',
       where: `route_short_name LIKE 'RB%'`,
     },
@@ -91,7 +95,7 @@ export const nz_akl: RegionalConfig = {
       routeShortName: 'NX2',
       overrides: {
         routeLongName: 'Northern Express 2',
-        routeColor: '008544',
+        routeColor: '00A4B6',
       },
     },
     {
@@ -123,6 +127,11 @@ export const nz_akl: RegionalConfig = {
       overrides: {
         routeLongName: 'AirportLink',
         routeColor: 'F39120',
+      },
+    },
+    {
+      overrides: {
+        routeColor: '0073BD',
       },
     },
   ],

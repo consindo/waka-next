@@ -65,13 +65,20 @@ const mapRouteOverride = <Type extends MapRoute>(i: Type): Type => {
       return route.agencyId === i.agencyId
     } else if (route.routeShortName) {
       return route.routeShortName === i.routeShortName
+    } else if (!route.agencyId && !route.routeShortName) {
+      return true
     }
   })
   if (r?.overrides.routeLongName) {
     i.routeLongName = r.overrides.routeLongName
   }
   if (r?.overrides.routeColor) {
-    i.routeColor = r.overrides.routeColor
+    if (!r.agencyId && !r.routeShortName && i.routeColor) {
+      // don't apply the routeColor override if the route already has a color
+      // for the default color for the region
+    } else {
+      i.routeColor = r.overrides.routeColor
+    }
   }
   return i
 }
