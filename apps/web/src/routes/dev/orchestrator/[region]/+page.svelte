@@ -154,9 +154,11 @@
 </div>
 
 <style>
-  .container {
-    display: flex;
-    gap: calc(var(--edge-padding) * 2);
+  @media (min-width: 640px) {
+    .container {
+      display: flex;
+      gap: calc(var(--edge-padding) * 2);
+    }
   }
   .active {
     overflow-y: hidden;
@@ -200,6 +202,10 @@
   }
   dt {
     font-weight: 500;
+  }
+  dd {
+    font-family: var(--font-mono);
+    font-size: 13px;
   }
   button {
     display: inline-block;

@@ -27,5 +27,11 @@ input,
 textarea,
 select,
 button {
-  font-family: 'Figtree', sans-serif;
+  font-family: var(--font-family);
+}
+
+pre,
+code {
+  font-family: var(--font-mono);
+  font-size: 13px;
 }

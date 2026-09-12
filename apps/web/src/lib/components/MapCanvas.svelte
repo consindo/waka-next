@@ -12,6 +12,7 @@
   import { resolveData } from '$lib/dataResolver'
 
   import { currentRegions, mapState } from '../../routes/mapstate.svelte'
+  import alertSvg from '../../icons/alert.svg?url'
 
   import { addLayers } from './map/mapLayers'
   import {
@@ -329,10 +330,32 @@
   })
 </script>
 
-<div id="maplibre-canvas"></div>
+<div id="maplibre-canvas">
+  <noscript>
+    <p>
+      <img src={alertSvg} alt="" />
+      <span>To display a map of transit routes and stops, please enable JavaScript.</span>
+    </p>
+  </noscript>
+</div>
 
 <style>
   #maplibre-canvas {
     height: 100%;
+  }
+  p {
+    margin: 0;
+    padding: 1rem;
+    line-height: 32px;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  p span {
+    flex: 1;
+  }
+  img {
+    width: 16px;
+    height: 16px;
   }
 </style>

@@ -11,12 +11,9 @@
     <p>this will eventually be the new waka. it's not too far off being done.</p>
     <ul>
       <li><a href="/cities">cities</a></li>
-      <li><a href="/{currentRegions.ids.join(',')}/stops">stops</a></li>
       <li><a href="/{currentRegions.ids.join(',')}/routes">routes</a></li>
-    </ul>
-    <ul>
+      <li><a href="/changelog">what's new?</a></li>
       <li><a href="/dev/orchestrator">developer console</a></li>
-      <li><a href="https://github.com/consindo/waka-next">github</a></li>
     </ul>
   </div>
 </ScrollContainer>

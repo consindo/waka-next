@@ -10,28 +10,30 @@
   let { activeRegions, inactiveRegions, selectedRegion = '' }: Props = $props()
 </script>
 
-<div class="regions">
-  <h2>active regions</h2>
-  <ul>
-    {#each activeRegions as region}
-      <li class:selected={selectedRegion === region.region}>
-        <a href="/dev/orchestrator/{region.region}">
-          <h3>{region.region}</h3>
-          <code>{region.etag}</code></a
-        >
-      </li>
-    {/each}
-  </ul>
-  {#if inactiveRegions}
-    <h2>inactive regions</h2>
+<div>
+  <div class="regions">
+    <h2>active regions</h2>
     <ul>
-      {#each inactiveRegions as region}
+      {#each activeRegions as region}
         <li class:selected={selectedRegion === region.region}>
-          <a href="/dev/orchestrator/{region.region}"> <h3>{region.region}</h3></a>
+          <a href="/dev/orchestrator/{region.region}">
+            <h3>{region.region}</h3>
+            <code>{region.etag}</code></a
+          >
         </li>
       {/each}
     </ul>
-  {/if}
+    {#if inactiveRegions}
+      <h2>inactive regions</h2>
+      <ul>
+        {#each inactiveRegions as region}
+          <li class:selected={selectedRegion === region.region}>
+            <a href="/dev/orchestrator/{region.region}"> <h3>{region.region}</h3></a>
+          </li>
+        {/each}
+      </ul>
+    {/if}
+  </div>
 </div>
 
 <style>

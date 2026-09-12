@@ -1,6 +1,11 @@
 :root {
   color-scheme: light dark;
 
+  --font-family: 'Figtree', system-ui, sans-serif;
+  --font-mono:
+    'JetBrains Mono', ui-monospace, 'Cascadia Code', 'Source Code Pro', 'Menlo', 'Consolas',
+    monospace;
+
   --screen-height: 100svh;
   --drawer-top-margin: 2rem;
   --drawer-midpoint: 45vh;

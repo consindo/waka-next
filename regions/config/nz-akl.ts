@@ -11,8 +11,8 @@ export const nz_akl: RegionalConfig = {
   ],
   routeGroups: [
     {
-      name: 'Train & Rapid Bus',
-      where: `route_type == 2 OR route_short_name LIKE '_X%'`,
+      name: 'Auckland Rapid Transit',
+      where: `route_type == 2 OR route_short_name LIKE '_X%' OR route_short_name = 'AIR'`,
     },
     {
       name: 'Ferries',
@@ -28,7 +28,7 @@ export const nz_akl: RegionalConfig = {
     },
     {
       name: 'South',
-      where: `route_short_name LIKE '3%' OR route_short_name = 'AIR'`,
+      where: `route_short_name LIKE '3%'`,
     },
     {
       name: 'East',

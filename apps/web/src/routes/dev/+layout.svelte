@@ -10,11 +10,12 @@
   const links = [
     { name: 'orchestrator', href: '/dev/orchestrator' },
     { name: 'sql', href: '/dev/query' },
+    { name: 'git repo', href: 'https://github.com/consindo/waka-next' },
   ]
 </script>
 
 <header>
-  <h1><a href="/">waka:next</a></h1>
+  <h1><a href="/">waka:devtools</a></h1>
   <nav>
     <ul>
       {#each links as link (link.href)}

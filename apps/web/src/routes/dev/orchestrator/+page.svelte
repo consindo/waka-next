@@ -20,8 +20,10 @@
 </div>
 
 <style>
-  .container {
-    display: flex;
-    gap: calc(var(--edge-padding) * 2);
+  @media (min-width: 640px) {
+    .container {
+      gap: calc(var(--edge-padding) * 2);
+      display: flex;
+    }
   }
 </style>

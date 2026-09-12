@@ -12,6 +12,8 @@
 
   import { mapState } from '../../../mapstate.svelte.js'
 
+  import alertSvg from '../../../../icons/alert.svg'
+
   const { realtimeInvalidationInterval } = variables
   const { data } = $props()
 
@@ -59,14 +61,32 @@
   {#if serviceAlerts.length > 0}
     <ServiceAlerts compact {serviceAlerts} />
   {/if}
-  <noscript>Realtime data requires JavaScript to be enabled.</noscript>
+  <noscript>
+    <p>
+      <img src={alertSvg} alt="" />
+      <span>Realtime data requires JavaScript to be enabled.</span>
+    </p></noscript
+  >
   <StopTimes {stopInfo} stopTimes={data.data?.stopTimes || []} {tripUpdates} />
 </ScrollContainer>
 
 <style>
   noscript {
     display: block;
-    padding: 0.5rem var(--edge-padding);
+  }
+  p {
+    display: flex;
     font-size: 14px;
+    padding: 1rem var(--edge-padding);
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+  }
+  span {
+    flex: 1;
+  }
+  img {
+    width: 16px;
+    height: 16px;
   }
 </style>

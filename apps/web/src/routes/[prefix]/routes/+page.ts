@@ -22,7 +22,7 @@ export const load: PageLoad = async ({ fetch, params }) => {
 
   await Promise.all(
     prefixes.flatMap(async (prefix) => {
-      if (regionalConfig[prefix].routeGroups) {
+      if (regionalConfig[prefix]?.routeGroups) {
         let k = 0
         for (const i of regionalConfig[prefix].routeGroups) {
           const result = await resolveData(

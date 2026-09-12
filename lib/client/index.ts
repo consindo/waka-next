@@ -58,6 +58,9 @@ interface MapRoute {
   routeColor?: string
 }
 const mapRouteOverride = <Type extends MapRoute>(i: Type): Type => {
+  if (regionalConfig[i.prefix] === undefined) {
+    return i
+  }
   const r = (regionalConfig[i.prefix].routeOverrides || []).find((route) => {
     if (route.agencyId && route.routeShortName) {
       return route.agencyId === i.agencyId && route.routeShortName === i.routeShortName
