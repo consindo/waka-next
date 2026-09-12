@@ -7,6 +7,7 @@
   import { type PageData } from './$types'
   import { currentRegions } from './mapstate.svelte'
 
+  import routesImg from '../images/routes.avif?url'
   import routeSvg from '../icons/route.svg?url'
   import citySvg from '../icons/city.svg?url'
   import consoleSvg from '../icons/console.svg?url'
@@ -46,7 +47,11 @@
     <nav>
       <div class="block-link-wrapper">
         {#if selectedRegionsUrl !== ''}
-          <a class="block-link" href={resolve('/[region]/routes', { region: selectedRegionsUrl })}>
+          <a
+            class="block-link"
+            href={resolve('/[region]/routes', { region: selectedRegionsUrl })}
+            style={`--bg: url(${routesImg})`}
+          >
             <img class="img-invert icon" src={routeSvg} alt="" />
             <h4>Routes</h4>
           </a>
@@ -100,6 +105,7 @@
   .block-link-wrapper {
     display: flex;
     gap: 0.25rem;
+    max-height: 150px;
   }
   .block-link,
   .wide-link {
@@ -125,7 +131,7 @@
     background-size: cover;
     background-position: 50% 50%;
     background-repeat: no-repeat;
-    background-image: linear-gradient(#00000000 30%, #000000aa 100%), var(--bg);
+    background-image: linear-gradient(#00000000 40%, #00000099 100%), var(--bg);
     font-size: 14px;
     font-weight: 600;
 

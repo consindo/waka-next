@@ -86,7 +86,7 @@
     background-size: cover;
     background-position: 50% 50%;
     background-repeat: no-repeat;
-    background-image: linear-gradient(#00000000 30%, #000000aa 100%), var(--bg);
+    background-image: linear-gradient(#00000000 40%, #00000099 100%), var(--bg);
     text-shadow: 0 1px 0 #000000aa;
   }
   h2 {
