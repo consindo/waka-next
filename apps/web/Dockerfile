@@ -23,15 +23,10 @@ RUN npm ci --include=dev
 COPY --link . .
 
 # Build application
-RUN npm run build:orchestrator
+RUN npm run build:web
 
 # Remove development dependencies
 RUN npm prune --omit=dev
-
-# Install gtfstidy
-FROM golang:1.27-alpine as gtfstidy
-RUN apk add --no-cache git libc-dev
-RUN go install github.com/patrickbr/gtfstidy@95d4796d9e7cf7d9a1257bfa6e18419571da01f8
 
 # Final stage for app image
 FROM base
@@ -39,10 +34,7 @@ FROM base
 # Copy built application
 COPY --from=build /app/package.json /app
 COPY --from=build /app/node_modules /app/node_modules
-COPY --from=build /app/apps/orchestrator/build /app
-
-# Copy gtfstidy
-COPY --from=gtfstidy /go/bin/gtfstidy /bin
+COPY --from=build /app/apps/web/build /app
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000

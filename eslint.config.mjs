@@ -11,7 +11,7 @@ export default defineConfig([
   ...tseslint.configs.stylistic,
   ...eslintPluginSvelte.configs['flat/recommended'],
   {
-    ignores: ['**/.svelte-kit/*', '**/build/*', '**/*.netlify/*'],
+    ignores: ['**/.svelte-kit/*', '**/build/*'],
   },
   {
     files: ['**/*.svelte', '*.svelte', '**/*.svelte.ts', '*.svelte.ts'],

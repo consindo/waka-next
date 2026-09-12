@@ -11,9 +11,30 @@ This is a rewrite of Waka. The notable difference is that it now uses sqlite on 
 - `npm run build` to build
 - `npm run preview` for a preview server
 
+## Container Builds
+
+You need to run from the root for each of the apps that make up Waka.
+
+```bash
+podman build -f apps/orchestrator/Dockerfile . -t waka-next:orchestrator
+podman build -f apps/realtime/Dockerfile . -t waka-next:realtime
+podman build -f apps/web/Dockerfile . -t waka-next:web
+```
+
 ## Configuration
 
-_The orchestrator will start without any configuration and serve the sample configuration._ However, if you do not set up AWS credentials (S3), imports on the server will not work but you can still use the Waka dev tools in the client to test imports locally. If you're not using S3 (e.g Cloudflare R2) you can set `AWS_S3_ENDPOINT`.
+### Web Configuration
+
+Only two variables at the moment needed (and not needed if you're running stuff on the same server).
+
+- PUBLIC_GTFS_ENDPOINT
+- PUBLIC_GTFS_REALTIME_ENDPOINT
+
+These should point to your orchestrator and realtime respectively.
+
+### Orchestrator Configuration
+
+The orchestrator will start without any configuration and serve the sample configuration._ However, if you do not set up AWS credentials (S3), imports on the server will not work but you can still use the Waka dev tools in the client to test imports locally. If you're not using S3 (e.g Cloudflare R2) you can set `AWS_S3_ENDPOINT`.
 
 To configure the orchestrator, set `WAKA_ORCHESTRATOR_CONFIG` to something like:
 
@@ -43,7 +64,7 @@ The `WAKA_ORCHESTRATOR_CACHE_PERIOD` variable can also be set to a number in mil
 
 The `WAKA_ORCHESTRATOR_NO_CACHE` variable can be used to set shouldCache to false globally.
 
-## Realtime Configuration
+### Realtime Configuration
 
 To get realtime trip updates etc, set `WAKA_REALTIME_CONFIG` to something like.
 
@@ -57,7 +78,9 @@ regions:
       Ocp-Apim-Subscription-Key: SECRET.nz-akl # you can use WAKA_REALTIME_SECRETS to substitute secrets
 ```
 
-## Scheduling Updates
+### Scheduling Updates
+
+You need some sort of cronjob that runs hourly and hits the `/admin/schedule-update` endpoint. Like this:
 
 ```bash
 fly machine run alpine --entrypoint "sh -c 'apk add --no-cache curl && curl -X POST -H \"Authorization: Bearer \$WAKA_ORCHESTRATOR_ACCESS_TOKEN\" https://waka-next-orchestrator.fly.dev:5000/admin/schedule-update'" --schedule hourly

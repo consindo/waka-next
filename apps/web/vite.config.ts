@@ -6,6 +6,9 @@ export default {
   plugins: [sveltekit(), devtoolsJson()],
   server: {
     port: 5180,
+    fs: {
+      allow: ['../..'],
+    },
   },
   preview: {
     port: 4173,
