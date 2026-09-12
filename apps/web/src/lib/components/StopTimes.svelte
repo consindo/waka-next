@@ -82,7 +82,7 @@
         href="/{trip.prefix}/routes/{trip.routeId}?tripId={encodeURIComponent(
           trip.tripId
         )}&stopId={encodeURIComponent(trip.stopId)}"
-        style={`${trip.routeColor ? `color: ${getTextColor(trip.routeColor)};` : ''}${trip.routeColor ? `background: #${trip.routeColor};` : ''}`}
+        style={`${trip.routeColor ? `color: ${getTextColor(trip.routeColor)};` : ''}${trip.routeColor ? `--bg: #${trip.routeColor};` : ''}`}
       >
         <div class="direction">
           <h3>{trip.routeShortName}</h3>
@@ -172,6 +172,7 @@
     padding: 0;
   }
   li a {
+    --bg: #4c4c4c;
     display: grid;
     grid-template-columns: minmax(100px, 1fr) auto;
     gap: 1.5rem;
@@ -179,13 +180,16 @@
     cursor: default;
     padding: calc(var(--edge-padding) - 0.25rem) var(--edge-padding);
     color: #fff;
-    background: #4c4c4c;
+    background: var(--bg);
     align-items: center;
     border-bottom: 1px solid var(--surface-border);
-  }
-  li a:active,
-  li a:hover {
-    opacity: 0.9;
+
+    &:hover {
+      background: color-mix(in srgb, var(--bg), #000 5%);
+    }
+    &:active {
+      background: color-mix(in srgb, var(--bg), #000 15%);
+    }
   }
   li h3 {
     font-weight: 800;

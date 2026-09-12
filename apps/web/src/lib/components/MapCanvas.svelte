@@ -343,6 +343,9 @@
   #maplibre-canvas {
     height: 100%;
   }
+  #maplibre-canvas :global(canvas) {
+    cursor: default;
+  }
   p {
     margin: 0;
     padding: 1rem;

@@ -210,6 +210,7 @@
       border: 0.5px solid var(--surface-border);
       border-radius: calc(var(--base-border-radius) + 1px);
       box-shadow: var(--surface-shadow);
+      box-sizing: border-box;
     }
     .map-inner {
       animation: none;

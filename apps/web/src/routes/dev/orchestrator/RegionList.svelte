@@ -73,7 +73,7 @@
     color: var(--surface-text);
     border: 0.5px solid transparent;
     padding: 0.25rem 0.5rem;
-    border-radius: 4px;
+    border-radius: var(--base-border-radius);
   }
   .selected a,
   a:hover {

@@ -165,7 +165,7 @@
   }
   .logs {
     padding: 0.5rem 1rem;
-    border-radius: 5px;
+    border-radius: var(--base-border-radius);
     background: var(--surface-bg);
     border: 1px solid var(--surface-border);
     box-shadow:
@@ -187,7 +187,7 @@
     background: green;
     color: #fff;
     margin-left: 0.25rem;
-    border-radius: 5px;
+    border-radius: var(--base-border-radius);
     padding: 0.125rem 0.25rem;
   }
   strong {

@@ -190,7 +190,7 @@
     background: var(--surface-bg-subtle-hover);
     color: var(--surface-text-subtle);
     padding: 1px 4px;
-    border-radius: 3px;
+    border-radius: calc(var(--base-border-radius) - 2px);
     margin-right: 2px;
   }
   .stop-time time {

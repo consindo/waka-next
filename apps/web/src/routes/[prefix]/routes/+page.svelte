@@ -2,9 +2,10 @@
   import Header from '$lib/components/Header.svelte'
   import ScrollContainer from '$lib/components/ScrollContainer.svelte'
 
+  import type { PageData } from './$types'
   import RouteGroup from './RouteGroup.svelte'
 
-  let { data } = $props()
+  let { data }: { data: PageData } = $props()
 </script>
 
 <Header title="Routes" />
