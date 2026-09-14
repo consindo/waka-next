@@ -4,6 +4,12 @@
   "description": "Your realtime guide to public transport in Aoteroa New Zealand",
   "icons": [
     {
+      "purpose": "any",
+      "sizes": "512x512",
+      "src": "/branding/icon_x512.png",
+      "type": "image/png"
+    },
+    {
       "purpose": "maskable",
       "sizes": "96x96",
       "src": "/branding/maskable_icon_x96.png",

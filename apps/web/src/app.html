@@ -3,9 +3,18 @@
   <head>
     <meta charset="utf-8" />
     <link rel="icon" href="%sveltekit.assets%/favicon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=0, shrink-to-fit=no" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, user-scalable=0, shrink-to-fit=no"
+    />
     %sveltekit.head%
     <link rel="manifest" href="%sveltekit.assets%/manifest.json" />
+    <script>
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault()
+        window.__installPrompt = e
+      })
+    </script>
   </head>
   <body data-sveltekit-preload-data="hover">
     <div style="display: contents">%sveltekit.body%</div>

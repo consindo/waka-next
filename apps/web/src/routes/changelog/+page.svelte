@@ -15,14 +15,14 @@
 <Header title="Changelog" subtitle={`v${version}`} />
 <ScrollContainer>
   <div>
-    <h3>v4.0.0</h3>
+    <h3>v4.0</h3>
     <time datetime="2026-09-12">September 12, 2026</time>
     <p>
       Waka v4 is a full rebuild of Waka with a new design, and aims to support many more cities in
       the future!
     </p>
     <p>There's a few features missing from v3, but these will be added back in the near future.</p>
-    <h4>New</h4>
+    <h5>New</h5>
     <ul>
       <li>New overall app design, with much improved accessibility and dark mode.</li>
       <li>Much faster page loads, and improved app performance.</li>
@@ -30,14 +30,21 @@
       <li>Realtime service alerts from transit agencies are visible in app.</li>
       <li>Large stations show as a single station, rather than many individual stations.</li>
     </ul>
-    <h4>Regional Changes</h4>
+    <h5>Regional Changes</h5>
     <ul>
       <li>Auckland now has new map icons, and new route categories.</li>
     </ul>
-    <h4>Removed</h4>
+    <h5>Removed</h5>
     <ul>
       <li>The timetable currently only shows information one day in advance.</li>
       <li>Saved stations have been temporarily removed.</li>
+    </ul>
+    <h3>v4.0 Patch Releases</h3>
+    <h4>v4.0.1</h4>
+    <time datetime="2026-09-14">September 14, 2026</time>
+    <h5>New</h5>
+    <ul>
+      <li>An Install App button has been added for Chromium based browsers</li> 
     </ul>
   </div>
 </ScrollContainer>
@@ -54,14 +61,19 @@
     font-size: 13px;
   }
   ul {
-    margin: 0.75em 0 1em;
+    margin: 0.75em 0;
     padding-left: 2em;
   }
   li {
     margin-bottom: 0.25em;
   }
   h3,
-  h4 {
+  h4,
+  h5 {
     margin-bottom: 0;
+  }
+  h5 {
+    margin-top: 1em;
+    font-size: 1em;
   }
 </style>

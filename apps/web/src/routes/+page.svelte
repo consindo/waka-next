@@ -10,8 +10,10 @@
   import routesImg from '../images/routes.avif?url'
   import routeSvg from '../icons/route.svg?url'
   import citySvg from '../icons/city.svg?url'
+  import installSvg from '../icons/install.svg?url'
   import consoleSvg from '../icons/console.svg?url'
   import starSvg from '../icons/star.svg?url'
+  import { onMount } from 'svelte'
 
   const { data }: { data: PageData } = $props()
   const { regions } = $derived(data)
@@ -32,9 +34,21 @@
   )
 
   const cityImage = $derived(
-    Object.keys(images).find((i) => i.endsWith((primaryRegion?.region || 'nz-akl') + '.avif'))
+    Object.keys(images).find((i) => i.endsWith((primaryRegion?.region || 'nz-akl') + '.avif')) || ''
   )
-  const cityImageUrl = $derived(images[cityImage].default)
+  const cityImageUrl = $derived((images as Record<string, { default: string }>)[cityImage]?.default)
+
+  let isInstallable = $state(false)
+  onMount(() => {
+    // @ts-expect-error added in app.html
+    if (window.__installPrompt) {
+      isInstallable = true
+    }
+  })
+  const triggerInstall = () => {
+    // @ts-expect-error added in app.html
+    window.__installPrompt.prompt()
+  }
 </script>
 
 <Header title="Waka" subtitle={primaryCity?.title} isCloseButtonEnabled={false} />
@@ -49,6 +63,7 @@
         {#if selectedRegionsUrl !== ''}
           <a
             class="block-link"
+            // @ts-expect-error I think the typings are wrong? there's definitely two arguments
             href={resolve('/[region]/routes', { region: selectedRegionsUrl })}
             style={`--bg: url(${routesImg})`}
           >
@@ -62,6 +77,15 @@
         </a>
       </div>
 
+      {#if isInstallable}
+        <button class="wide-link" onclick={triggerInstall}>
+          <img class="img-invert icon" src={installSvg} alt="" />
+          <div>
+            <h4>Install app</h4>
+            <p>Add Waka to your apps menu</p>
+          </div>
+        </button>
+      {/if}
       <a class="wide-link" href={resolve('/changelog')}>
         <img class="img-invert icon" src={starSvg} alt="" />
         <div>
@@ -157,6 +181,10 @@
     margin-bottom: 0.25rem;
     display: flex;
     align-items: center;
+    text-align: left;
+    width: 100%;
+    font-size: inherit;
+    box-sizing: border-box;
 
     &:last-child {
       margin-bottom: 0;
