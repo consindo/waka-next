@@ -44,7 +44,7 @@
     <time datetime="2026-09-14">September 14, 2026</time>
     <h5>New</h5>
     <ul>
-      <li>An Install App button has been added for Chromium based browsers</li> 
+      <li>An Install App button has been added for Chromium based browsers</li>
     </ul>
   </div>
 </ScrollContainer>
