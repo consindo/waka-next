@@ -22,9 +22,14 @@
 
   $effect(() => {
     if (stopInfo?.stopLon && stopInfo?.stopLat) {
+      if (mapState.currentStop.length === 1 && mapState.currentStop[0].stopId === stopInfo.stopId) {
+        // todo: will need to handle multiple stops
+        return
+      }
       mapState.currentStop = [
         {
           prefix: stopInfo.prefix,
+          stopId: stopInfo.stopId,
           name: name,
           routeType: stopInfo.routes[0]?.routeType || 3,
           coordinates: [stopInfo?.stopLon, stopInfo?.stopLat],

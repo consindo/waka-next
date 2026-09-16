@@ -4,6 +4,7 @@ interface MapState {
   currentStop: {
     prefix: string
     name: string
+    stopId: string
     routeType: number | undefined
     coordinates: [number, number]
   }[]
