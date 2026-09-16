@@ -46,13 +46,28 @@ const getData = async (url?: string, headers?: Record<string, string>) => {
 
 const pullRealtimeData = (regionId: string, region: RealtimeRegionConfig) => async () => {
   const timeStart = new Date().getTime()
-  const gtfsRtUpdates = (
-    await Promise.all([
-      getData(region.gtfsRtServiceAlertsUrl, region.gtfsRtHeaders),
-      getData(region.gtfsRtTripUpdatesUrl, region.gtfsRtHeaders),
-      getData(region.gtfsRtVehicleLocationsUrl, region.gtfsRtHeaders),
-    ])
-  ).flat()
+
+  let gtfsRtUpdates: GtfsRealtimeBindings.transit_realtime.IFeedEntity[]
+  try {
+    gtfsRtUpdates = (
+      await Promise.all([
+        getData(region.gtfsRtServiceAlertsUrl, region.gtfsRtHeaders),
+        getData(region.gtfsRtTripUpdatesUrl, region.gtfsRtHeaders),
+        getData(region.gtfsRtVehicleLocationsUrl, region.gtfsRtHeaders),
+      ])
+    ).flat()
+  } catch (err) {
+    console.warn(regionId, 'error pulling data', err)
+
+    // just clear the cache if it can't pull data
+    cache.regions[regionId] = {
+      lastUpdated: new Date(),
+      serviceAlerts: [],
+      tripUpdates: [],
+      vehicleLocations: [],
+    }
+    return
+  }
 
   const serviceAlerts = new Map<string, GtfsRealtimeBindings.transit_realtime.IAlert>()
   const tripUpdates = new Map<string, GtfsRealtimeBindings.transit_realtime.ITripUpdate>()
@@ -75,7 +90,11 @@ const pullRealtimeData = (regionId: string, region: RealtimeRegionConfig) => asy
     vehicleLocations: Array.from(vehicleLocations.values()),
   }
   const elapsedTime = new Date().getTime() - timeStart
-  logger.info(`${regionId} rt update (${elapsedTime}ms)`)
+  const totalEntities =
+    cache.regions[regionId].serviceAlerts.length +
+    cache.regions[regionId].tripUpdates.length +
+    cache.regions[regionId].vehicleLocations.length
+  logger.info(`${regionId} rt update (${elapsedTime}ms, ${totalEntities} entities)`)
 }
 
 export const startRealtime = (regions: (RealtimeRegionConfig & { id: string })[]) => {
