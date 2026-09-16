@@ -65,7 +65,12 @@
       // todo: need to put the same route short names next to each other
       .sort((a, b) => a.departureTime.getTime() - b.departureTime.getTime())
   )
-  const groupedTimes = $derived(Object.groupBy(filteredTimes, (i) => i.routeId + i.directionId))
+  const groupedTimes = $derived(
+    Object.groupBy(
+      filteredTimes,
+      (i) => (i.stopHeadsign || i.tripHeadsign) + i.routeId + i.directionId
+    )
+  )
 </script>
 
 <ul>
@@ -92,7 +97,7 @@
             >
             <p class="headsign">
               <!-- todo: should probably be a nice format headsign function -->
-              {#each formatTripHeadsign(trip.tripHeadsign) as headsignPart, index (index)}
+              {#each formatTripHeadsign(trip.stopHeadsign || trip.tripHeadsign) as headsignPart, index (index)}
                 <span class="headsign-segment">
                   {headsignPart}&nbsp;
                 </span>

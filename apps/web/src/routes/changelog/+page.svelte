@@ -40,6 +40,18 @@
       <li>Saved stations have been temporarily removed.</li>
     </ul>
     <h3>v4.0 Patch Releases</h3>
+    <h4>v4.0.2</h4>
+    <time datetime="2026-09-16">September 16, 2026</time>
+    <h5>Fixes</h5>
+    <ul>
+      <li>Routes that visit the same station twice on a trip are handled properly</li>
+      <li>Stop headsigns are now prioritized over trip headsigns</li>
+      <li>An error page has been added</li>
+    </ul>
+    <h5>Regional Changes</h5>
+    <ul>
+      <li>Franklin route group has been added for Auckland</li>
+    </ul>
     <h4>v4.0.1</h4>
     <time datetime="2026-09-14">September 14, 2026</time>
     <h5>New</h5>

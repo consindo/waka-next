@@ -8,6 +8,11 @@ vi.mock('$app/environment', () => ({
     return browserGetter()
   },
 }))
+vi.mock('$env/dynamic/public', () => ({
+  get env() {
+    return {}
+  },
+}))
 
 vi.stubGlobal('navigator', { connection: { saveData: false } })
 
