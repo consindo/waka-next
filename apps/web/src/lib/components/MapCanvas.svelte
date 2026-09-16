@@ -71,6 +71,14 @@
       zoom: 16,
     })
 
+    const geolocateControl = new maplibregl.GeolocateControl({
+      positionOptions: {
+        enableHighAccuracy: true,
+      },
+      trackUserLocation: true
+    })
+    map.addControl(geolocateControl)
+
     map.on('load', (e) => {
       addIcons('generic')
       addLayers(map)

@@ -40,6 +40,13 @@
       <li>Saved stations have been temporarily removed.</li>
     </ul>
     <h3>v4.0 Patch Releases</h3>
+    <h4>v4.0.3</h4>
+    <time datetime="2026-09-17">September 17, 2026</time>
+    <h5>Fixes</h5>
+    <ul>
+      <li>Added geolocate button back to map.</li>
+      <li>Prevents map recentering to stop on data refresh.</li>
+    </ul>
     <h4>v4.0.2</h4>
     <time datetime="2026-09-16">September 16, 2026</time>
     <h5>Fixes</h5>
