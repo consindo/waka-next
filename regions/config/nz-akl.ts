@@ -28,7 +28,7 @@ export const nz_akl: RegionalConfig = {
     },
     {
       name: 'South',
-      where: `route_short_name LIKE '3%'`,
+      where: `route_short_name LIKE '3%' AND route_short_name NOT LIKE '37_' AND route_short_name NOT LIKE '38_' AND route_short_name NOT LIKE '39_'`,
     },
     {
       name: 'East',
@@ -41,6 +41,10 @@ export const nz_akl: RegionalConfig = {
     {
       name: 'Hibiscus Coast & Rodney',
       where: `route_short_name LIKE '98%' OR route_short_name LIKE '99%' OR route_short_name = 'MEX'`,
+    },
+    {
+      name: 'Franklin',
+      where: `route_short_name LIKE '4%' OR route_short_name LIKE '37_' OR route_short_name LIKE '38_' OR route_short_name LIKE '39_'`,
     },
     {
       name: 'Waiheke Island',
