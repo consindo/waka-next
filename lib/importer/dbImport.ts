@@ -75,4 +75,9 @@ export class DBImport {
       logger.info(`(${schema.table}) ran post import script`)
     }
   }
+
+  optimize = () => {
+    this.db.run('PRAGMA optimize;')
+    logger.info('optimized db')
+  }
 }

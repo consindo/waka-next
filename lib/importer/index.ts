@@ -74,6 +74,8 @@ export class Importer {
       shapesBlob = await importShapes(shapesStream)
     }
 
+    this.#dbImport.optimize()
+
     logger.info('import complete')
 
     return {

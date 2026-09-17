@@ -15,7 +15,7 @@ const sampleRegions = {
     regions: {
       'zz-sample1': {
         name: 'Sample Region',
-        gtfsZipUrl: 'https://next.waka.app/sample-feed-1.zip', // apps/web
+        gtfsZipUrl: 'https://waka.app/sample-feed-1.zip', // apps/web
       },
     },
     database: null,

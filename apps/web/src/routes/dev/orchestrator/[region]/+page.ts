@@ -1,3 +1,4 @@
+import { error } from '@sveltejs/kit'
 import type { ActiveRegion, InactiveRegion, Version } from '../types'
 import type { PageLoad } from './$types'
 
@@ -7,11 +8,14 @@ export const load: PageLoad = async ({ fetch, params, data }) => {
     fetch('/api/regions/all').then((r) => r.json()),
     fetch(`/api/${params.region}`).then((r) => r.json()),
   ])
+  const details = apiData[2]
+  if (details?.status === 'error') {
+    error(404)
+  }
   const activeRegions = apiData[0].regions as ActiveRegion[]
   const inactiveRegions = apiData[1].regions.filter(
     (i: InactiveRegion) => !activeRegions.some((j) => j.region === i.region)
   )
-  const details = apiData[2]
   const { importResult } = data
   return {
     id: params.region,
