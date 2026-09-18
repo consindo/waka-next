@@ -9,6 +9,8 @@
   import arrowRightSmallSvg from '../../icons/arrow-right-small.svg?raw'
   import realtimeSvg from '../../icons/realtime.svg?raw'
 
+  const SIX_HOURS = 6 * 60 * 60 * 1000
+
   const {
     stopInfo,
     stopTimes,
@@ -67,10 +69,13 @@
   )
   const groupedTimes = $derived(
     Object.groupBy(
-      filteredTimes,
+      // filter out everything that is more than 6 hours in the future...
+      filteredTimes.filter(i => i.departureTime.getTime() < new Date().getTime() + SIX_HOURS),
       (i) => (i.stopHeadsign || i.tripHeadsign) + i.routeId + i.directionId
     )
   )
+
+  // const inactiveLines = $derived()
 </script>
 
 <ul>
@@ -163,6 +168,12 @@
               also {#if secondTime.includes('min')}in{:else}at{/if}
               <time datetime={route[1].departureTime.toISOString()}>{secondTime}</time>
             </p>
+          {:else}
+          <div>
+            <div class="last">
+              Last
+            </div>
+          </div>
           {/if}
         </div>
       </a>
@@ -247,6 +258,17 @@
     background: #ffffff18;
     border-radius: var(--base-border-radius);
     font-size: 11px;
+  }
+  .last {
+    display: inline-block;
+    padding: 2px 4px;
+    border: 1px solid var(--surface-border);
+    border-radius: var(--base-border-radius);
+    font-size: 11px;
+    letter-spacing: 0.25px;
+    text-transform: uppercase;
+    font-weight: 700;
+    margin-right: -1px;
   }
   .time {
     text-align: right;
