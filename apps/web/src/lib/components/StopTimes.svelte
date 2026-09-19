@@ -70,7 +70,7 @@
   const groupedTimes = $derived(
     Object.groupBy(
       // filter out everything that is more than 6 hours in the future...
-      filteredTimes.filter(i => i.departureTime.getTime() < new Date().getTime() + SIX_HOURS),
+      filteredTimes.filter((i) => i.departureTime.getTime() < new Date().getTime() + SIX_HOURS),
       (i) => (i.stopHeadsign || i.tripHeadsign) + i.routeId + i.directionId
     )
   )
@@ -169,11 +169,9 @@
               <time datetime={route[1].departureTime.toISOString()}>{secondTime}</time>
             </p>
           {:else}
-          <div>
-            <div class="last">
-              Last
+            <div>
+              <div class="last">Last</div>
             </div>
-          </div>
           {/if}
         </div>
       </a>
@@ -264,7 +262,7 @@
     padding: 2px 4px;
     border: 1px solid var(--surface-border);
     border-radius: var(--base-border-radius);
-    font-size: 11px;
+    font-size: 10px;
     letter-spacing: 0.25px;
     text-transform: uppercase;
     font-weight: 700;

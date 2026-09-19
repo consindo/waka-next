@@ -75,7 +75,7 @@
       positionOptions: {
         enableHighAccuracy: true,
       },
-      trackUserLocation: true
+      trackUserLocation: true,
     })
     map.addControl(geolocateControl)
 

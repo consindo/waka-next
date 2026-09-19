@@ -71,7 +71,11 @@
             <h4>Routes</h4>
           </a>
         {/if}
-        <a class="block-link" href={resolve('/cities')} style={cityImageUrl ? `--bg: url(${cityImageUrl})` : undefined}>
+        <a
+          class="block-link"
+          href={resolve('/cities')}
+          style={cityImageUrl ? `--bg: url(${cityImageUrl})` : undefined}
+        >
           <img class="img-invert icon" src={citySvg} alt="" />
           <h4>Cities</h4>
         </a>

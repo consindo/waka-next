@@ -12,6 +12,8 @@
   import spinSvg from '../../icons/spin.svg?raw'
   import chevronRightSvg from '../../icons/chevron-right.svg'
 
+  const SIX_HOURS = 1000 * 60 * 60 * 6
+
   const {
     routeName,
     directionId,
@@ -26,11 +28,24 @@
     tripUpdates: transit_realtime.ITripUpdate[]
   } = $props()
 
-  const currentService = $derived(services.find((i) => i.tripId === selectedService))
-  const derivedDirectionId = $derived(currentService ? currentService.directionId : directionId)
+  const hasDirectionId0 = $derived(services.some((i) => i.directionId === 0))
+  const hasDirectionId1 = $derived(services.some((i) => i.directionId === 1))
+  const derivedDirectionId = $derived(
+    hasDirectionId0 && hasDirectionId1
+      ? services.find((i) => i.tripId === selectedService)?.directionId || directionId
+      : hasDirectionId0
+        ? 0
+        : 1
+  )
   const filteredServices: RealtimeServiceResult[] = $derived(
     services
       .filter((i) => i.directionId === derivedDirectionId)
+      // todo: need to be able to choose the day, so for now we filter out all the services that were 6+ hours ago
+      .filter(
+        (i) =>
+          new Date(i.departureTime || i.arrivalTime || 0).getTime() >
+          new Date().getTime() - SIX_HOURS
+      )
       .map((i) => {
         const realtimeTrip = tripUpdates.find((j) => j.trip.tripId === i.tripId)
         if (!realtimeTrip) {
@@ -112,10 +127,9 @@
     })()
   )
   const currentFilteredServiceIndex = $derived(
-    filteredServices
-      .slice(firstVisibleServiceIndex)
-      .findIndex((i) => i.tripId === selectedService) + firstVisibleServiceIndex
+    filteredServices.findIndex((i) => i.tripId === selectedService)
   )
+  const currentService = $derived(filteredServices[currentFilteredServiceIndex])
   const isShowingHiddenService = $derived(
     currentFilteredServiceIndex >= firstVisibleServiceIndex + 3
   )
@@ -133,7 +147,7 @@
   <span>
     {routeName}
   </span>
-  {#if services.length - filteredServices.length > 0}
+  {#if services.length - filteredServices.length > 0 && hasDirectionId0 && hasDirectionId1}
     <a
       data-sveltekit-replacestate
       href="{page.url.pathname}?directionId={(derivedDirectionId + 1) % 2}"
@@ -146,19 +160,16 @@
 {#if firstVisibleServiceIndex >= 0}
   <div class="services-wrapper">
     <ul>
-      {#if isShowingHiddenService && filteredServices[currentFilteredServiceIndex] && currentFilteredServiceIndex < firstVisibleServiceIndex}
-        <ServiceItem
-          service={filteredServices[currentFilteredServiceIndex]}
-          {selectedService}
-          {triggerCloseDetails}
-        />
+      {#if currentFilteredServiceIndex < firstVisibleServiceIndex && currentService}
+        {currentFilteredServiceIndex}, {firstVisibleServiceIndex}
+        <ServiceItem service={currentService} {selectedService} {triggerCloseDetails} />
       {/if}
       {#each filteredServices.slice(firstVisibleServiceIndex, firstVisibleServiceIndex + 3) as service, i (i)}
-        <ServiceItem {service} {selectedService} triggerCloseDetails={() => null} />
+        <ServiceItem {service} {selectedService} {triggerCloseDetails} />
       {/each}
-      {#if isShowingHiddenService && filteredServices[currentFilteredServiceIndex] && currentFilteredServiceIndex > firstVisibleServiceIndex}
+      {#if isShowingHiddenService && currentService}
         <ServiceItem
-          service={filteredServices[currentFilteredServiceIndex]}
+          service={currentService}
           {selectedService}
           {triggerCloseDetails}
           hideOnOpen={true}
@@ -166,7 +177,7 @@
       {/if}
     </ul>
 
-    {#if (isShowingHiddenService && filteredServices.length > 0 && currentService) || filteredServices.length > 3}
+    {#if (isShowingHiddenService && filteredServices.length - firstVisibleServiceIndex > 4) || filteredServices.length - firstVisibleServiceIndex > 3}
       <details bind:this={detailsElement}>
         <summary
           ><img src={chevronRightSvg} class="img-invert" alt="" /><span>Departures</span></summary
