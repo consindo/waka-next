@@ -41,5 +41,9 @@ interface RouteType {
  * Takes a GTFS route_type and returns the actual vehicle
  */
 export const formatRouteType = (routeType: number): RouteType => {
+  // extended gtfs route types
+  if (routeType > 700 && routeType <= 712) {
+    routeType = 3
+  }
   return routeTypeMap[routeType.toString()] || routeTypeMap['-1']
 }

@@ -40,16 +40,25 @@
       <li>Saved stations have been temporarily removed.</li>
     </ul>
     <h3>v4.0 Patch Releases</h3>
+    <h4>v4.0.4</h4>
+    <time datetime="2026-09-19">September 19, 2026</time>
+    <h5>Bug Fixes</h5>
+    <ul>
+      <li>Fixed inaccurate times on timetable page.</li>
+      <li>Added back indicator for the last service of the day.</li>
+      <li>Correctly displays school bus stops as bus stops.</li>
+      <li>Developer: Sample GTFS data now works properly.</li>
+    </ul>
     <h4>v4.0.3</h4>
     <time datetime="2026-09-17">September 17, 2026</time>
-    <h5>Fixes</h5>
+    <h5>Bug Fixes</h5>
     <ul>
       <li>Added geolocate button back to map.</li>
       <li>Prevents map recentering to stop on data refresh.</li>
     </ul>
     <h4>v4.0.2</h4>
     <time datetime="2026-09-16">September 16, 2026</time>
-    <h5>Fixes</h5>
+    <h5>Bug Fixes</h5>
     <ul>
       <li>Routes that visit the same station twice on a trip are handled properly.</li>
       <li>Stop headsigns are now prioritized over trip headsigns.</li>

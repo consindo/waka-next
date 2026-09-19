@@ -66,21 +66,25 @@ export const getStops = async (
     features: stops
       .map((i) => i.data || [])
       .flat()
-      .map((i) => ({
-        type: 'Feature',
-        properties: {
-          prefix: i.prefix,
-          stopId: i.stopId,
-          stopName:
-            i.routes[0]?.routeType !== 3 && i.stopName ? formatStopName(i.stopName) : undefined,
-          shouldZoom: i.routes[0]?.routeType === 3,
-          icon: mapToIcon(i.prefix, i.routes[0]?.routeType, 'pin', icons),
-        },
-        geometry: {
-          type: 'Point',
-          coordinates: [i.stopLon, i.stopLat],
-        },
-      })),
+      .map((i) => {
+        const icon = mapToIcon(i.prefix, i.routes[0]?.routeType, 'pin', icons)
+        // a bit flaky, but it works
+        const isBus = icon.endsWith('bus-pin.svg')
+        return {
+          type: 'Feature',
+          properties: {
+            prefix: i.prefix,
+            stopId: i.stopId,
+            stopName: !isBus && i.stopName ? formatStopName(i.stopName) : undefined,
+            shouldZoom: isBus,
+            icon,
+          },
+          geometry: {
+            type: 'Point',
+            coordinates: [i.stopLon, i.stopLat],
+          },
+        }
+      }),
   }
   return result
 }
