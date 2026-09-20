@@ -40,6 +40,13 @@
       <li>Saved stations have been temporarily removed.</li>
     </ul>
     <h3>v4.0 Patch Releases</h3>
+    <h4>v4.0.5</h4>
+    <time datetime="2026-09-20">September 20, 2026</time>
+    <h5>Bug Fixes</h5>
+    <ul>
+      <li>Fixed inaccurate realtime times on station page.</li>
+      <li>Developer: Switched to native node.js sqlite for queries performed on server.</li>
+    </ul>
     <h4>v4.0.4</h4>
     <time datetime="2026-09-19">September 19, 2026</time>
     <h5>Bug Fixes</h5>

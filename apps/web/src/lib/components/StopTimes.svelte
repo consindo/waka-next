@@ -42,7 +42,9 @@
 
           let arrivalDelay = realtimeTrip.delay || 0
           let departureDelay = realtimeTrip.delay || 0
-          const stopTimeUpdate = (realtimeTrip.stopTimeUpdate || []).find((i) => i.stopSequence)
+          const stopTimeUpdate = (realtimeTrip.stopTimeUpdate || []).find(
+            (j) => j.stopSequence === i.stopSequence
+          )
           if (stopTimeUpdate) {
             if (stopTimeUpdate.arrival?.delay) {
               arrivalDelay = stopTimeUpdate.arrival.delay
