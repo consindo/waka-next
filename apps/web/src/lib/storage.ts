@@ -97,7 +97,7 @@ export const createClient = async (
 
     await db.connect()
     db.load(data)
-    db.exec('select * from stops limit 1') // verifies the database actually works
+    db.execObject('select * from stops limit 1') // verifies the database actually works
     databases[`${prefix}:${version}`] = db
 
     if (globalClient === undefined) {

@@ -46,6 +46,14 @@
   }
 }
 
+h1 {
+  text-rendering: geometricPrecision;
+}
+h2,
+h3 {
+  text-rendering: optimizeLegibility;
+}
+
 body,
 html {
   margin: 0;

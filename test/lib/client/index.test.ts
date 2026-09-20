@@ -14,7 +14,7 @@ describe('client', () => {
   beforeAll(async () => {
     await db.connect()
     const compressedFeed = await fs.readFile(sampleFeed)
-    const feed = zlib.brotliDecompressSync(compressedFeed)
+    const feed = zlib.brotliDecompressSync(compressedFeed) as unknown as ArrayBuffer
     db.load(feed)
   })
   describe('runQuery', () => {
@@ -67,7 +67,7 @@ describe('client', () => {
     it('should return feed info from table if it exists', () => {
       const client = new Client()
       client.addRegion(region, db)
-      db.execObject(`CREATE TABLE feed_info (
+      db.run(`CREATE TABLE feed_info (
         feed_publisher_name char,
         feed_publisher_url char,
         feed_lang char,

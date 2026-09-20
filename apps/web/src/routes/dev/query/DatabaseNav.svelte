@@ -1,14 +1,14 @@
 <script lang="ts">
   import type { ChangeEventHandler } from 'svelte/elements'
 
-  import type { DB } from '@lib/db'
+  import type { IDatabase } from '@lib/db/IDatabase'
   import { Importer } from '@lib/importer'
   import { getErrorMessage, logger } from '@lib/logger'
 
   import { getDatabases } from '$lib/storage'
 
   interface Props {
-    db: DB
+    db: IDatabase
     dbName: string | null
     triggerChange: ChangeEventHandler<HTMLSelectElement>
   }
@@ -33,7 +33,7 @@
         db.reset()
         db.load(data)
         try {
-          db.exec('select * from sqlite_schema limit 1')
+          db.run('select * from sqlite_schema limit 1')
           logger.info(`loaded ${dbFiles[0].name}`)
         } catch (err) {
           logger.error(getErrorMessage(err))

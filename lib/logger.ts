@@ -9,12 +9,12 @@ export class Logger {
   stream = writable('')
 
   info(message: string) {
-    console.log(message)
+    console.log({ timestamp: new Date().toISOString(), level: 'info', message })
     this.stream.set(`[info] ${message}`)
   }
 
   error(message: string) {
-    console.error(message)
+    console.error({ timestamp: new Date().toISOString(), level: 'error', message })
     this.stream.set(`[error] ${message}`)
   }
 }

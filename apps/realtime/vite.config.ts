@@ -13,7 +13,7 @@ export default {
     },
   },
   preview: {
-    port: 4174,
+    port: 4175,
   },
   resolve: {
     alias: {

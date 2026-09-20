@@ -1,12 +1,15 @@
 import { QueryExecResult, SqlValue } from 'sql.js'
 import { describe, expect, it, vi } from 'vitest'
 
-import { DB } from '@lib/db'
+import { SqlJSDB } from '@lib/db/sqljs'
+import { NodeSqliteDB } from '@lib/db/nodesqlite'
 
-describe('db', () => {
+// these are the same tests, but the nodejs and sql.js return a different format from the db
+describe('SqlJSDB', () => {
   describe('execObject', () => {
     it('should convert a raw sql result into an object format', async () => {
-      const db = new DB()
+      const db = new SqlJSDB()
+      // @ts-expect-error test exec override
       db.exec = vi.fn(
         () =>
           [
@@ -28,7 +31,8 @@ describe('db', () => {
       ])
     })
     it('should combine multiple sql results into a single object', async () => {
-      const db = new DB()
+      const db = new SqlJSDB()
+      // @ts-expect-error test exec override
       db.exec = vi.fn(
         () =>
           [
@@ -43,7 +47,8 @@ describe('db', () => {
       ])
     })
     it('should convert columns with dates in the name to js date objects', async () => {
-      const db = new DB()
+      const db = new SqlJSDB()
+      // @ts-expect-error test exec override
       db.exec = vi.fn(
         () =>
           [
@@ -53,6 +58,66 @@ describe('db', () => {
             },
           ] as QueryExecResult[]
       )
+      const result = db.execObject('fake query')
+      expect(result).toEqual([{ aDate: new Date(Date.parse('2002-12-10')), b: 2 }])
+    })
+  })
+})
+
+describe('NodeSqliteDB', () => {
+  describe('execObject', () => {
+    it('should convert a raw sql result into an object format', async () => {
+      const db = new NodeSqliteDB()
+      // @ts-expect-error test exec override
+      db.exec = vi.fn(() => [
+        {
+          a: 1,
+          b: 2,
+        },
+        {
+          a: 3,
+          b: 4,
+        },
+        {
+          a: 5,
+          b: 6,
+        },
+      ])
+      const result = db.execObject('fake query')
+      expect(result).toEqual([
+        { a: 1, b: 2 },
+        { a: 3, b: 4 },
+        { a: 5, b: 6 },
+      ])
+    })
+    it('should combine multiple sql results into a single object', async () => {
+      const db = new NodeSqliteDB()
+      // @ts-expect-error test exec override
+      db.exec = vi.fn(() => [
+        {
+          a: 1,
+          b: 2,
+        },
+        {
+          c: 3,
+          d: 4,
+        },
+      ])
+      const result = db.execObject('fake query')
+      expect(result).toEqual([
+        { a: 1, b: 2 },
+        { c: 3, d: 4 },
+      ])
+    })
+    it('should convert columns with dates in the name to js date objects', async () => {
+      const db = new NodeSqliteDB()
+      // @ts-expect-error test exec override
+      db.exec = vi.fn(() => [
+        {
+          a_date: 20021210,
+          b: 2,
+        },
+      ])
       const result = db.execObject('fake query')
       expect(result).toEqual([{ aDate: new Date(Date.parse('2002-12-10')), b: 2 }])
     })

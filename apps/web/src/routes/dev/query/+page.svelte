@@ -29,7 +29,7 @@
   })
 
   let error = $state('')
-  let results: QueryExecResult[] = $state([])
+  let results: Record<string, unknown>[] = $state([])
   let query = $state('select * from stops limit 100')
   const run = () => {
     error = ''
@@ -38,7 +38,7 @@
         throw new Error('db.db not found')
       }
       const startTime = performance.now()
-      const queryResults = db.db.exec(query)
+      const queryResults = db.execObject(query)
       const endTime = performance.now()
       console.log(queryResults)
       results = queryResults
@@ -75,7 +75,7 @@
     <div>
       <button class="dev-btn" onclick={run}>run query (ctrl+enter)</button>
       {#if querySpeed >= 0}
-        {@const resultCount = results.reduce((acc, cur) => acc + cur.values.length, 0)}
+        {@const resultCount = results.length}
         <div class="result-count">
           {resultCount}
           {resultCount === 1 ? 'result' : 'results'} ({querySpeed.toFixed(1)}ms)
@@ -86,26 +86,29 @@
   <div>{$stream}</div>
   <div>{error}</div>
   <div class="results">
-    {#each results as result, i (i)}
+    {#if results.length > 0}
+      {@const columns = Object.keys(results[0])}
       <table>
         <thead>
           <tr>
-            {#each result.columns as column}
+            {#each columns as column (column)}
               <th>{column}</th>
             {/each}
           </tr>
         </thead>
         <tbody>
-          {#each result.values as row}
+          {#each results as row, key (key)}
             <tr>
-              {#each row as value}
-                <td>{value}</td>
+              {#each columns as column (column)}
+                <td>{row[column]}</td>
               {/each}
             </tr>
           {/each}
         </tbody>
       </table>
-    {/each}
+    {:else}
+      <div>no results</div>
+    {/if}
   </div>
 {/await}
 

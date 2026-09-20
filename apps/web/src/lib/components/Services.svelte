@@ -161,7 +161,6 @@
   <div class="services-wrapper">
     <ul>
       {#if currentFilteredServiceIndex < firstVisibleServiceIndex && currentService}
-        {currentFilteredServiceIndex}, {firstVisibleServiceIndex}
         <ServiceItem service={currentService} {selectedService} {triggerCloseDetails} />
       {/if}
       {#each filteredServices.slice(firstVisibleServiceIndex, firstVisibleServiceIndex + 3) as service, i (i)}

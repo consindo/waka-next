@@ -1,64 +1,6 @@
-import sqlInit, { type Database, type SqlValue } from 'sql.js'
-import wasm from 'sql.js/dist/sql-wasm.wasm?url'
+import sqlite from 'node:sqlite'
 
-const parseGtfsDate = (date: string) => {
-  date = date.toString()
-  return new Date(Date.parse(`${date.slice(0, 4)}-${date.slice(4, 6)}-${date.slice(6, 8)}`))
-}
+import { SqlJSDB } from './db/sqljs'
+import { NodeSqliteDB } from './db/nodesqlite'
 
-export class DB {
-  db?: Database
-  sql?: sqlInit.SqlJsStatic
-
-  async connect() {
-    this.sql = await sqlInit({
-      locateFile: typeof window !== 'undefined' ? () => wasm : undefined,
-    })
-    this.db = new this.sql.Database()
-  }
-
-  reset() {
-    if (!this.sql) throw 'DB needs to be connected!'
-    this.db = new this.sql.Database()
-  }
-
-  load(data: ArrayBuffer) {
-    if (!this.sql) throw 'DB needs to be connected!'
-    this.db = new this.sql.Database(new Uint8Array(data))
-  }
-
-  exec(query: string, params?: string[]) {
-    if (!this.db) throw 'DB needs to be connected!'
-    const results = this.db.exec(query, params)
-    return results
-  }
-
-  run(query: string) {
-    if (!this.db) throw 'DB needs to be connected!'
-    this.db.run(query)
-  }
-
-  export() {
-    if (!this.db) throw 'DB needs to be connected!'
-    return this.db.export()
-  }
-
-  execObject(query: string, params?: string[]) {
-    const results = this.exec(query, params)
-    return results.flatMap((result) => {
-      const casedColumns = result.columns.map((i: string) =>
-        i.toLowerCase().replace(/[-_][a-z]/g, (group: string) => group.slice(-1).toUpperCase())
-      )
-      return result.values.map((row) =>
-        row.reduce((acc: Record<string, unknown>, cur: SqlValue, index: number) => {
-          if (casedColumns[index].includes('Date')) {
-            acc[casedColumns[index]] = parseGtfsDate(cur as string)
-          } else {
-            acc[casedColumns[index]] = cur
-          }
-          return acc
-        }, {})
-      )
-    })
-  }
-}
+export const DB = 'DatabaseSync' in sqlite ? NodeSqliteDB : SqlJSDB
