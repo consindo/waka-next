@@ -1,8 +1,10 @@
 <script lang="ts">
-  import { onNavigate } from '$app/navigation'
+  import { beforeNavigate, onNavigate } from '$app/navigation'
   import { page } from '$app/state'
+  import LoadingSkeleton from '$lib/components/LoadingSkeleton.svelte'
 
   import MapCanvas from '$lib/components/MapCanvas.svelte'
+  import { tick } from 'svelte'
 
   import '../css/app.css'
   import '../css/fonts.css'
@@ -17,15 +19,23 @@
   const { regions } = $derived(data)
 
   let mainElement: HTMLElement | undefined = undefined
+  let contentElement: HTMLElement | undefined = undefined
 
-  onNavigate((navigation) => {
-    // if the route id is not changing, we don't run an animation
+  let isLoading = $state(0)
+  let navigationPromise = $state<Promise<void>>()
+
+  beforeNavigate((navigation) => {
+    const height = contentElement?.querySelector(':scope > div')?.getBoundingClientRect()?.height
+
+    // if the route id is not changing, we don't run a transition animation
     if (navigation.from?.route.id === navigation.to?.route.id) {
       return
     }
 
-    // if the api is not supported
-    if (!document.startViewTransition) return
+    // if the api is not supported, do nothing
+    if (!document.startViewTransition) {
+      return
+    }
 
     const types: string[] = []
     if ((navigation.delta || 0) < 0) {
@@ -40,16 +50,42 @@
       types.push('expanded')
     }
 
-    return new Promise((resolve) => {
+    navigationPromise = new Promise<void>((resolve) => {
       document.startViewTransition({
         types,
         update: async () => {
           resolve()
-          await navigation.complete
+
+          // shows a loading spinner after 250ms
+          const sleepPeriod = 225
+          const isLoadingTimeout = setTimeout(() => {
+            if (height) {
+              isLoading = height
+            }
+          }, sleepPeriod)
+
+          // on complete, it should turn off the loading spinner (or stop it from ever starting)
+          const completionPromise = navigation.complete.then(() => {
+            clearTimeout(isLoadingTimeout)
+            if (isLoading !== 0) {
+              isLoading = 0
+            }
+          })
+
+          // a sleep period
+          const sleepPromise = new Promise((resolve) => setTimeout(resolve, sleepPeriod + 25))
+
+          // wait till either it's completed, or sleep period
+          // this means we'll animate to a spinner or data directly
+          await Promise.any([completionPromise, sleepPromise])
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any)
     })
+  })
+
+  onNavigate(() => {
+    return navigationPromise
   })
 </script>
 
@@ -61,8 +97,12 @@
     </div>
   </section>
   <section class="content">
-    <div class="content-inner">
-      {@render children?.()}
+    <div class="content-inner" bind:this={contentElement}>
+      {#if isLoading > 0}
+        <LoadingSkeleton height={isLoading} />
+      {:else}
+        {@render children?.()}
+      {/if}
     </div>
   </section>
 </main>
