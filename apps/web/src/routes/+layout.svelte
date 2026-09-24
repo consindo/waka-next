@@ -1,10 +1,9 @@
 <script lang="ts">
   import { beforeNavigate, onNavigate } from '$app/navigation'
   import { page } from '$app/state'
-  import LoadingSkeleton from '$lib/components/LoadingSkeleton.svelte'
 
+  import LoadingSkeleton from '$lib/components/LoadingSkeleton.svelte'
   import MapCanvas from '$lib/components/MapCanvas.svelte'
-  import { tick } from 'svelte'
 
   import '../css/app.css'
   import '../css/fonts.css'
@@ -89,7 +88,7 @@
   })
 </script>
 
-<main class:single={page.url.pathname.startsWith('/dev')} bind:this={mainElement}>
+<main id="drawer" class:single={page.url.pathname.startsWith('/dev')} bind:this={mainElement}>
   <div class="screen-top"></div>
   <section class="map">
     <div class="map-inner">
@@ -267,6 +266,7 @@
       border-radius: calc(var(--base-border-radius) + 1px);
       box-shadow: var(--surface-shadow);
       view-transition-name: none;
+      position: relative;
     }
   }
 </style>

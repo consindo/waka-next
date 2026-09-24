@@ -14,6 +14,7 @@
 
   import { mapState } from '../../../../routes/mapstate.svelte'
   import { formatRouteType } from '$lib/utils/formatRouteType'
+  import { moveDrawer } from '$lib/utils/moveDrawer'
 
   const { realtimeInvalidationInterval } = variables
   const { data } = $props()
@@ -27,6 +28,10 @@
   const directionId = $derived(
     parseInt(searchParams.get('directionId') || currentService?.directionId.toString() || '0')
   )
+
+  onMount(() => {
+    moveDrawer('middle')
+  })
 
   // we resolve the realtime promises here, so it doesn't flicker when we invalidate the page
   let tripUpdates = $state<transit_realtime.ITripUpdate[]>([])

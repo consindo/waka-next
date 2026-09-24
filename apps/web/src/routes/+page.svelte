@@ -14,9 +14,14 @@
   import consoleSvg from '../icons/console.svg?url'
   import starSvg from '../icons/star.svg?url'
   import { onMount } from 'svelte'
+  import { moveDrawer } from '$lib/utils/moveDrawer'
 
   const { data }: { data: PageData } = $props()
   const { regions } = $derived(data)
+
+  onMount(() => {
+    moveDrawer('middle-expanded')
+  })
 
   const images = import.meta.glob('@regions/images/*.avif', { eager: true })
 

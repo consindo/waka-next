@@ -29,6 +29,7 @@
   } from './map/mapConstants'
   import { getRegionsFromBounds, getStops, mapToIcon } from './map/mapData'
   import { getMapIcons } from './map/mapIcons'
+  import { getDrawerPosition } from '$lib/utils/moveDrawer'
 
   const { regions }: { regions: RegionResponse[] } = $props()
   const regionalBounds = $derived(
@@ -164,7 +165,17 @@
 
     if (mapState.currentStop.length > 0 && mounted) {
       const { coordinates } = mapState.currentStop[0]
-      map.flyTo({ center: coordinates, zoom: 17, speed: 1.5 })
+      map.flyTo({
+        center: coordinates,
+        zoom: 17,
+        speed: 1.5,
+        padding: {
+          bottom:
+            document.documentElement.clientWidth < 640
+              ? document.documentElement.clientHeight * 0.45 + 0
+              : 0,
+        },
+      })
 
       const source = map.getSource(CURRENT_STOP_LAYER) as GeoJSONSource
       if (source) {
@@ -230,10 +241,19 @@
           // todo: should be able to handle multiple shapes...
           const source = map.getSource(CURRENT_SHAPE_LAYER) as GeoJSONSource
           if (shape[0] !== null && typeof shape[0] !== 'string') {
+            const drawerPosition = getDrawerPosition()
             const extent = bbox(shape[0])
             source.setData(shape[0])
             map.fitBounds(extent as [number, number, number, number], {
-              padding: 32,
+              padding:
+                drawerPosition !== 'collapsed'
+                  ? 32
+                  : {
+                      top: 32,
+                      left: 32,
+                      right: 32,
+                      bottom: document.documentElement.clientHeight * 0.45 + 32,
+                    },
               speed: 2,
             })
 

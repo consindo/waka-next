@@ -13,12 +13,18 @@
   import { mapState } from '../../../mapstate.svelte.js'
 
   import alertSvg from '../../../../icons/alert.svg'
+  import { moveDrawer } from '$lib/utils/moveDrawer.js'
 
   const { realtimeInvalidationInterval } = variables
   const { data } = $props()
 
   const stopInfo = $derived(data.data?.stopInfo)
+  const stopId = $derived(stopInfo?.stopId)
   const name = $derived(formatStopName(stopInfo?.stopName || ''))
+
+  $effect(() => {
+    moveDrawer('middle', stopId)
+  })
 
   $effect(() => {
     if (stopInfo?.stopLon && stopInfo?.stopLat) {

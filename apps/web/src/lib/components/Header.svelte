@@ -1,13 +1,15 @@
 <script lang="ts">
+  import { fade } from 'svelte/transition'
   import closeIcon from '../../icons/close.svg'
 
   interface Props {
     title: string
+    isLoading?: boolean
     subtitle?: string
     isCloseButtonEnabled?: boolean
   }
 
-  const { title, subtitle = '', isCloseButtonEnabled = true }: Props = $props()
+  const { title, isLoading = false, subtitle = '', isCloseButtonEnabled = true }: Props = $props()
 </script>
 
 <svelte:head>
@@ -16,7 +18,11 @@
 
 <header>
   <div>
-    <h1 {title}>{title}</h1>
+    {#if isLoading}
+      <h1 in:fade>{title}</h1>
+    {:else}
+      <h1 {title}>{title}</h1>
+    {/if}
     {#if subtitle !== ''}<h2 title={subtitle}>{subtitle}</h2>{/if}
   </div>
   {#if isCloseButtonEnabled}

@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte'
   import Header from './Header.svelte'
-  import { fade } from 'svelte/transition'
 
   const { height }: { height: number } = $props()
 
@@ -11,15 +10,7 @@
   })
 </script>
 
-<Header title="" />
-<div style={`height: ${height}px;`}>
-  {#if isLoadingVisible}
-    <p transition:fade>Loading...</p>
-  {/if}
+<div class="wrapper">
+  <Header title={isLoadingVisible ? 'Loading...' : ''} isLoading={isLoadingVisible} />
+  <div style={`height: ${height}px;`}></div>
 </div>
-
-<style>
-  p {
-    text-align: center;
-  }
-</style>

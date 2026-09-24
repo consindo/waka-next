@@ -1,14 +1,14 @@
 <script lang="ts">
   import type { ChangeEventHandler } from 'svelte/elements'
 
-  import type { IDatabase } from '@lib/db/IDatabase'
+  import type { DB } from '@lib/db'
   import { Importer } from '@lib/importer'
   import { getErrorMessage, logger } from '@lib/logger'
 
   import { getDatabases } from '$lib/storage'
 
   interface Props {
-    db: IDatabase
+    db: DB
     dbName: string | null
     triggerChange: ChangeEventHandler<HTMLSelectElement>
   }
