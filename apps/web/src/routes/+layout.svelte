@@ -64,7 +64,7 @@
           }, sleepPeriod)
 
           // on complete, it should turn off the loading spinner (or stop it from ever starting)
-          const completionPromise = navigation.complete.then(() => {
+          const completionPromise = navigation.complete.finally(() => {
             clearTimeout(isLoadingTimeout)
             if (isLoading !== 0) {
               isLoading = 0

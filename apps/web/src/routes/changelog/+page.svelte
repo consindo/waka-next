@@ -40,8 +40,15 @@
       <li>Saved stations have been temporarily removed.</li>
     </ul>
     <h3>v4.0 Patch Releases</h3>
+    <h4>v4.0.7</h4>
+    <time datetime="2026-09-27">September 27, 2026</time>
+    <h5>Bug Fixes</h5>
+    <ul>
+      <li>Fixed inaccurate times on days where time transitions to/from daylight savings</li>
+      <li>Fixed some pages not loading</li>
+    </ul>
     <h4>v4.0.6</h4>
-    <time datetime="2026-09-20">September 24, 2026</time>
+    <time datetime="2026-09-24">September 24, 2026</time>
     <h5>Bug Fixes</h5>
     <ul>
       <li>Drawer on mobile repositions itself automatically</li>

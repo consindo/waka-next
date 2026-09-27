@@ -1,5 +1,4 @@
-import { TZDate } from '@date-fns/tz'
-import { addHours, addMinutes, addSeconds } from 'date-fns'
+import { TZDateMini } from '@date-fns/tz'
 
 export const convertFromTimezone = (timezone: string, date: string) => {
   date = date.split('Z').join('') // make it not iso format
@@ -22,13 +21,8 @@ export const convertFromGtfsDateToISOTimestamp = (
 ) => {
   if (time === undefined) return time
 
-  // eslint-disable-next-line prefer-const
-  let [year, month, day] = date.split('-').map((i) => parseInt(i))
-  month = month - 1
-  let newTime = new TZDate(year, month, day, timezone)
+  const [year, month, day] = date.split('-').map((i) => parseInt(i))
   const [hours, minutes, seconds] = time.split(':').map((i) => parseInt(i))
-  newTime = addHours(newTime, hours)
-  newTime = addMinutes(newTime, minutes)
-  newTime = addSeconds(newTime, seconds)
+  const newTime = new TZDateMini(year, month - 1, day, hours, minutes, seconds, timezone)
   return newTime.toISOString()
 }
