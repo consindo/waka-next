@@ -13,7 +13,7 @@
 </script>
 
 <svelte:head>
-  <title>{title}</title>
+  <title>{title !== 'Waka' ? `${title} | Waka` : title}</title>
 </svelte:head>
 
 <header>

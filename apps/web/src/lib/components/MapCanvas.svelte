@@ -18,6 +18,8 @@
   import { currentRegions, mapState } from '../../routes/mapstate.svelte'
   import alertSvg from '../../icons/alert.svg?url'
 
+  const styleUrl = 'https://tiles.openfreemap.org/styles/bright'
+
   import { addLayers } from './map/mapLayers'
   import {
     ALL_STOPS_LAYER,
@@ -67,7 +69,7 @@
     }
     map = new maplibregl.Map({
       container: 'maplibre-canvas',
-      style: 'https://tiles.openfreemap.org/styles/bright',
+      style: styleUrl,
       center: center as [number, number],
       zoom: 16,
     })
@@ -361,6 +363,10 @@
     }
   })
 </script>
+
+<svelte:head>
+  <link rel="preconnect" href={new URL(styleUrl).origin} />
+</svelte:head>
 
 <div id="maplibre-canvas">
   <noscript>
