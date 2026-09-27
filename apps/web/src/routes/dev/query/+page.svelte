@@ -1,6 +1,5 @@
 <script lang="ts">
   import { page } from '$app/state'
-  import type { QueryExecResult } from 'sql.js'
   import { onMount } from 'svelte'
 
   import { DB } from '@lib/db'

@@ -17,7 +17,6 @@ export class NodeSqliteDB implements IDatabase {
 
   load(data: ArrayBuffer) {
     this.db = new sqlite.DatabaseSync(':memory:')
-    // @ts-expect-error added in node 24
     this.db.deserialize(new Uint8Array(data))
   }
 
@@ -28,7 +27,6 @@ export class NodeSqliteDB implements IDatabase {
 
   export() {
     if (!this.db) throw 'DB needs to be connected!'
-    // @ts-expect-error added in node 24
     const buffer = this.db.serialize()
     return buffer
   }

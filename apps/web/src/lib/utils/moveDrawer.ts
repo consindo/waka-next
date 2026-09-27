@@ -16,7 +16,6 @@ export const getDrawerPosition = () => {
  * Dashed values mean that the drawer won't move if it is in either of those positions.
  * But, it will priorize the first stated position.
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const moveDrawer = (
   position:
     | 'collapsed'
@@ -26,6 +25,8 @@ export const moveDrawer = (
     | 'middle-expanded'
     | 'expanded'
     | 'expanded-middle',
+  // this allows to have a dependency for svelte, but it's just a noop
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _dep?: unknown
 ) => {
   const clientWidth = document.documentElement.clientWidth
