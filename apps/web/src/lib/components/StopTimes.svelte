@@ -9,7 +9,7 @@
   import arrowRightSmallSvg from '../../icons/arrow-right-small.svg?raw'
   import realtimeSvg from '../../icons/realtime.svg?raw'
 
-  const SIX_HOURS = 6 * 60 * 60 * 1000
+  const FOUR_HOURS = 4 * 60 * 60 * 1000
 
   const {
     stopInfo,
@@ -71,8 +71,8 @@
   )
   const groupedTimes = $derived(
     Object.groupBy(
-      // filter out everything that is more than 6 hours in the future...
-      filteredTimes.filter((i) => i.departureTime.getTime() < new Date().getTime() + SIX_HOURS),
+      // filter out everything that is more than 4 hours in the future...
+      filteredTimes.filter((i) => i.departureTime.getTime() < new Date().getTime() + FOUR_HOURS),
       (i) => (i.stopHeadsign || i.tripHeadsign) + i.routeId + i.directionId
     )
   )
@@ -82,7 +82,7 @@
 
 <ul>
   {#if Object.keys(groupedTimes).length === 0}
-    <li class="empty">No services found at this station today.</li>
+    <li class="empty">No more services found at this station today.</li>
   {/if}
   {#each Object.keys(groupedTimes) as routeId (routeId)}
     {@const route = groupedTimes[routeId] || []}
