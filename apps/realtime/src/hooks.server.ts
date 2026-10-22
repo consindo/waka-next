@@ -1,9 +1,9 @@
-import { type Handle } from '@sveltejs/kit'
-
-import { RealtimeConfigManager } from '$lib/configManager'
-import { startRealtime } from '$lib/realtime'
+import type { Handle } from '@sveltejs/kit/hooks'
+import { RealtimeConfigManager } from '#lib/configManager'
+import { startRealtime } from '#lib/realtime'
 
 const jobs: Promise<void>[] = []
+
 process.on('SIGINT', () => {
   console.log('Got SIGINT. Starting graceful shutdown.')
   Promise.all(jobs).then(() => {

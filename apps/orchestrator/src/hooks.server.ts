@@ -1,12 +1,12 @@
-import { env } from '$env/dynamic/private'
-import { type Handle, json } from '@sveltejs/kit'
-
+import type { Handle } from '@sveltejs/kit/hooks'
+import { json } from '@sveltejs/kit'
+import { WAKA_ORCHESTRATOR_ACCESS_TOKEN } from '$app/env/private'
 import { Client } from '@lib/client'
-
-import { ConfigManager } from '$lib/configManager'
-import { loadDb } from '$lib/loadDb'
+import { ConfigManager } from '#lib/configManager'
+import { loadDb } from '#lib/loadDb'
 
 const jobs: Promise<void>[] = []
+
 process.on('SIGINT', () => {
   console.log('Got SIGINT. Starting graceful shutdown.')
   Promise.all(jobs).then(() => {
@@ -28,9 +28,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 
   // only one token supported at the moment
   if (new URL(event.request.url).pathname.startsWith('/admin')) {
-    if (
-      event.request.headers.get('Authorization') !== `Bearer ${env.WAKA_ORCHESTRATOR_ACCESS_TOKEN}`
-    ) {
+    if (event.request.headers.get('Authorization') !== `Bearer ${WAKA_ORCHESTRATOR_ACCESS_TOKEN}`) {
       return json({ status: 'error', logs: ['403: Unauthorized'] }, { status: 403 })
     }
   }

@@ -4,17 +4,17 @@
   import type { transit_realtime } from 'gtfs-realtime-bindings'
 
   import { invalidate } from '$app/navigation'
-  import Header from '$lib/components/Header.svelte'
-  import ScrollContainer from '$lib/components/ScrollContainer.svelte'
-  import ServiceAlerts from '$lib/components/ServiceAlerts.svelte'
-  import Services from '$lib/components/Services.svelte'
-  import Timetable from '$lib/components/Timetable.svelte'
-  import { formatTripHeadsign } from '$lib/utils/formatHeadsign'
-  import { variables } from '$lib/variables'
+  import Header from '#lib/components/Header.svelte'
+  import ScrollContainer from '#lib/components/ScrollContainer.svelte'
+  import ServiceAlerts from '#lib/components/ServiceAlerts.svelte'
+  import Services from '#lib/components/Services.svelte'
+  import Timetable from '#lib/components/Timetable.svelte'
+  import { formatTripHeadsign } from '#lib/utils/formatHeadsign'
+  import { variables } from '#lib/variables'
 
   import { mapState } from '../../../../routes/mapstate.svelte'
-  import { formatRouteType } from '$lib/utils/formatRouteType'
-  import { moveDrawer } from '$lib/utils/moveDrawer'
+  import { formatRouteType } from '#lib/utils/formatRouteType'
+  import { moveDrawer } from '#lib/utils/moveDrawer'
 
   const { realtimeInvalidationInterval } = variables
   const { data } = $props()

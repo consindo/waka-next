@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from '$app/state'
-  import Header from '$lib/components/Header.svelte'
-  import ScrollContainer from '$lib/components/ScrollContainer.svelte'
+  import Header from '#lib/components/Header.svelte'
+  import ScrollContainer from '#lib/components/ScrollContainer.svelte'
 </script>
 
 <Header title="Error" />

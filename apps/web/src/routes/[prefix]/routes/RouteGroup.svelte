@@ -3,8 +3,8 @@
 
   import type { RouteResult } from '@lib/client'
 
-  import { getTextColor } from '$lib/utils/color'
-  import { sortRoutes } from '$lib/utils/sortRoutes'
+  import { getTextColor } from '#lib/utils/color'
+  import { sortRoutes } from '#lib/utils/sortRoutes'
 
   import chevronRightSvg from '../../../icons/chevron-right.svg'
 

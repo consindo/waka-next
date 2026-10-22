@@ -1,7 +1,7 @@
 import { ClientErrors } from '@lib/client'
 import GtfsRealtimeBindings from 'gtfs-realtime-bindings'
 
-import { variables } from '$lib/variables'
+import { variables } from '#lib/variables'
 
 const { realtimeMaxIds } = variables
 

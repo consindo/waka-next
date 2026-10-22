@@ -1,6 +1,6 @@
 import type { Client } from '@lib/client'
 
-import type { ConfigManager } from '$lib/configManager'
+import type { ConfigManager } from '#lib/configManager'
 
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces

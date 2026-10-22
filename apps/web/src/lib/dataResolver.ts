@@ -1,10 +1,8 @@
-import { browser } from '$app/environment'
+import { browser } from '$app/env'
 import { parseSync } from '@loaders.gl/core'
 import { WKBLoader } from '@loaders.gl/wkt'
 import type { Feature } from 'geojson'
-
 import { type Client, ClientErrors, type Prefix } from '@lib/client'
-
 import { getClient, isClientReady, waitForClient } from '../lib/storage'
 
 type Fetch = typeof fetch
@@ -38,7 +36,7 @@ export const resolveData = async <Type>(
       if (res.headers.get('Content-Type') === 'application/octet-stream') {
         const buffer = await res.arrayBuffer()
         const geometry = parseSync(buffer, WKBLoader, { wkb: { shape: 'geojson-geometry' } })
-        const feature = { type: 'Feature', properties: {}, geometry: geometry } as Feature
+        const feature = { type: 'Feature', properties: {}, geometry } as Feature
         return { provider: 'server', data: feature as Type }
       } else {
         const data = (await res.json()) as Type

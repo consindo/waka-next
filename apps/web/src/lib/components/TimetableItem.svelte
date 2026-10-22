@@ -3,9 +3,9 @@
 
   import type { Prefix, RouteResult } from '@lib/client'
 
-  import { getTextColor } from '$lib/utils/color'
-  import { formatTime } from '$lib/utils/formatDate'
-  import { sortRoutes } from '$lib/utils/sortRoutes'
+  import { getTextColor } from '#lib/utils/color'
+  import { formatTime } from '#lib/utils/formatDate'
+  import { sortRoutes } from '#lib/utils/sortRoutes'
 
   let {
     prefix,

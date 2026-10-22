@@ -3,10 +3,10 @@ import type { Feature, FeatureCollection } from 'geojson'
 
 import type { Prefix } from '@lib/client'
 
-import { resolveData } from '$lib/dataResolver'
+import { resolveData } from '#lib/dataResolver'
 
-import { formatStopName } from '$lib/utils/formatStopName'
-import { formatRouteType } from '$lib/utils/formatRouteType'
+import { formatStopName } from '#lib/utils/formatStopName'
+import { formatRouteType } from '#lib/utils/formatRouteType'
 
 export const getRegionsFromBounds = (
   regionalBounds: { prefix: Prefix; bounds: Feature }[],

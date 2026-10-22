@@ -2,11 +2,11 @@
   import { page } from '$app/state'
   import { SvelteURLSearchParams } from 'svelte/reactivity'
 
-  import { formatShortDate } from '$lib/utils/formatDate'
-  import { formatTripHeadsign } from '$lib/utils/formatHeadsign'
+  import { formatShortDate } from '#lib/utils/formatDate'
+  import { formatTripHeadsign } from '#lib/utils/formatHeadsign'
 
   import realtimeSvg from '../../icons/realtime.svg?raw'
-  import type { RealtimeServiceResult } from '$lib/types'
+  import type { RealtimeServiceResult } from '#lib/types'
 
   const {
     service,

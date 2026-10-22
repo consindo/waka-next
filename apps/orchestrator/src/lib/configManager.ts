@@ -1,9 +1,7 @@
-import { env } from '$env/dynamic/private'
+import { WAKA_ORCHESTRATOR_CONFIG, WAKA_ORCHESTRATOR_SECRETS } from '$app/env/private'
 import { parseYAML } from 'confbox'
-
 import type { Prefix } from '@lib/client'
 import { convertFromTimezone } from '@lib/client/timezone'
-
 import sampleGtfs from '../../static/sample-feed-1.bin.br?url'
 import { BucketClient } from './bucketClient'
 import { ImportManager } from './importManager'
@@ -45,10 +43,12 @@ export class ConfigManager {
 
   constructor() {
     try {
-      if (env.WAKA_ORCHESTRATOR_CONFIG === undefined)
+      if (WAKA_ORCHESTRATOR_CONFIG === undefined)
         throw Error('ENV WAKA_ORCHESTRATOR_CONFIG not set')
-      const secrets = parseYAML(env.WAKA_ORCHESTRATOR_SECRETS || '{}') as Record<string, string>
-      const config = replaceSecrets(secrets, env.WAKA_ORCHESTRATOR_CONFIG || '')
+
+      const secrets = parseYAML(WAKA_ORCHESTRATOR_SECRETS || '{}') as Record<string, string>
+      const config = replaceSecrets(secrets, WAKA_ORCHESTRATOR_CONFIG || '')
+
       this.#internalConfig = parseYAML(config)
     } catch (err) {
       console.warn(err)
@@ -65,23 +65,31 @@ export class ConfigManager {
 
   async getRegions(): Promise<RegionResult> {
     if (this.#bucketClient === null)
-      return { regions: sampleRegions.regions, regionsConfig: this.#internalConfig.regions }
+      return {
+        regions: sampleRegions.regions,
+        regionsConfig: this.#internalConfig.regions,
+      }
+
     const s3Objects = await this.#bucketClient.listObjects(regionsUrlPrefix)
 
     const regions = await Promise.all(
       (s3Objects.Contents || []).flatMap(async (i) => {
         if (i.Key === undefined) throw new Error('s3 key was undefined')
         if (i.ETag === undefined) throw new Error('s3 etag was undefined')
+
         const data = await this.#bucketClient?.getObjectMetadata(i.Key)
         const region = (data?.Metadata || {})['waka-region'] as Prefix
         const bounds = (data?.Metadata || {})['waka-bounds'] as string
+
         if (this.#internalConfig.regions[region] === undefined) return []
         if (i.Size === 0) return [] // filters out folders
         if (i.Key?.endsWith(shapesSuffix)) return [] // filters out shape files
+
         const shapesKey = `${regionsUrlPrefix}${region}${shapesSuffix}`
         const shape = (s3Objects.Contents || []).find((i) => i.Key === shapesKey)
 
         if (!this.#internalConfig.database) throw new Error('internalConfig database undefined')
+
         return [
           {
             region,
@@ -98,20 +106,22 @@ export class ConfigManager {
         ]
       })
     )
-    return { regions: regions.flat(), regionsConfig: this.#internalConfig.regions }
+
+    return {
+      regions: regions.flat(),
+      regionsConfig: this.#internalConfig.regions,
+    }
   }
 
   async checkForUpdate(
     prefix: Prefix
   ): Promise<{ status: string; region: Prefix; logs: string[] }> {
     if (!this.#bucketClient) throw 'No database configured'
+
     const region = this.#internalConfig.regions[prefix]
+
     if (region === undefined) {
-      return {
-        status: 'not found',
-        region: prefix,
-        logs: [],
-      }
+      return { status: 'not found', region: prefix, logs: [] }
     }
     const importManager = new ImportManager(
       prefix,
@@ -127,8 +137,10 @@ export class ConfigManager {
 
   async getVersions(prefix: Prefix): Promise<VersionResult> {
     if (this.#bucketClient === null) return { versions: [] }
+
     const keyPrefix = `${versionsUrlPrefix}${prefix}/`
     const s3Objects = await this.#bucketClient.listObjects(keyPrefix)
+
     const versions = (s3Objects.Contents || [])
       .filter((i) => i.Key?.endsWith(dbSuffix))
       .map((i) => {
@@ -139,6 +151,7 @@ export class ConfigManager {
         if (!i.LastModified) throw new Error('last modified not found')
         if (!i.ETag) throw new Error('etag not foun d')
         if (!this.#internalConfig.database) throw new Error('internalConfig database undefined')
+
         return {
           region: prefix,
           // remove the key, leading slash, and .bin
@@ -152,6 +165,7 @@ export class ConfigManager {
           shapesSize: shape ? shape.Size || 0 : undefined,
         }
       })
+
     return { versions }
   }
 
@@ -179,12 +193,13 @@ export class ConfigManager {
 
   async determineLatestVersion(prefix: Prefix) {
     if (!this.#bucketClient) throw 'No database configured'
+
     const versions = await this.getVersions(prefix)
     const candidates = versions.versions.toSorted(
       (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
     )
-
     let targetVersion: Version | null = null
+
     for (const version of candidates) {
       const dbSourceKey = `${versionsUrlPrefix}${prefix}/${version.version}${dbSuffix}`
       const metadata = await this.#bucketClient.getObjectMetadata(dbSourceKey)

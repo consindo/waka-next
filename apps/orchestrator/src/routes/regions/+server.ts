@@ -1,18 +1,12 @@
-import { env } from '$env/dynamic/private'
+import { WAKA_ORCHESTRATOR_CACHE_PERIOD } from '$app/env/private'
 import { regionalConfig } from '@regions/regionalConfig'
 import { json } from '@sveltejs/kit'
-
 import type { RegionResponse } from '@lib/client'
-
-import { loadDb } from '$lib/loadDb'
-import type { RegionResult } from '$lib/types'
-
+import { loadDb } from '#lib/loadDb'
+import type { RegionResult } from '#lib/types'
 import type { RequestHandler } from './$types'
 
-const cacheDuration = env.WAKA_ORCHESTRATOR_CACHE_PERIOD
-  ? parseInt(env.WAKA_ORCHESTRATOR_CACHE_PERIOD)
-  : 0
-
+const cacheDuration = WAKA_ORCHESTRATOR_CACHE_PERIOD ? parseInt(WAKA_ORCHESTRATOR_CACHE_PERIOD) : 0
 let cachedRegions: RegionResult
 let cacheTime: Date
 

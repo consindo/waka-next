@@ -5,7 +5,7 @@
   import { DB } from '@lib/db'
   import { getErrorMessage, logger } from '@lib/logger'
 
-  import { getDatabases } from '$lib/storage'
+  import { getDatabases } from '#lib/storage'
 
   import DatabaseNav from './DatabaseNav.svelte'
 

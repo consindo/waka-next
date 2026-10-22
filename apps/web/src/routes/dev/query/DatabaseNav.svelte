@@ -5,7 +5,7 @@
   import { Importer } from '@lib/importer'
   import { getErrorMessage, logger } from '@lib/logger'
 
-  import { getDatabases } from '$lib/storage'
+  import { getDatabases } from '#lib/storage'
 
   interface Props {
     db: DB

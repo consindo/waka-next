@@ -1,7 +1,7 @@
 import GtfsRealtimeBindings from 'gtfs-realtime-bindings'
 import { logger } from '@lib/logger'
 
-import type { RealtimeRegionConfig } from '$lib/configManager'
+import type { RealtimeRegionConfig } from '#lib/configManager'
 
 export interface RealtimeCache {
   regions: Record<string, RegionalRealtimeCache>

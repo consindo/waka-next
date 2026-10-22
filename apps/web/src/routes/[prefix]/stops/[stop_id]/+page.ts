@@ -1,10 +1,10 @@
 import type { Prefix } from '@lib/client'
 
-import { resolveData } from '$lib/dataResolver'
-import { getRealtimeServiceAlerts, getRealtimeTripUpdates } from '$lib/realtimeDataResolver'
+import { resolveData } from '#lib/dataResolver'
+import { getRealtimeServiceAlerts, getRealtimeTripUpdates } from '#lib/realtimeDataResolver'
 
 import type { PageLoad } from './$types'
-import { variables } from '$lib/variables'
+import { variables } from '#lib/variables'
 
 const { realtimeMaxDelay, realtimeMaxAdvance } = variables
 

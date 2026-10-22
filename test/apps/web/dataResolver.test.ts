@@ -1,11 +1,11 @@
-import { browser } from '$app/environment'
+import { browser } from '$app/env'
 import { afterEach, describe, expect, it, vi } from 'vitest'
-
 import { resolveData } from '../../../apps/web/src/lib/dataResolver'
 import { isClientReady, waitForClient } from '../../../apps/web/src/lib/storage'
 
 const prefix = 'sample-region'
 const browserGetter = vi.fn()
+
 vi.mock('$app/environment', () => ({
   get browser() {
     return browserGetter()
@@ -31,6 +31,7 @@ describe('DataResolver', () => {
       isClientReady.mockReturnValue(true)
 
       const data = await resolveData(prefix, '', () => 'clientData', vi.fn())
+
       expect(data).toEqual({ provider: 'client', data: 'clientData' })
     })
 
@@ -49,6 +50,7 @@ describe('DataResolver', () => {
         },
         vi.fn()
       )
+
       expect(data).toEqual({ provider: 'client', error: 'NOT_FOUND', data: null })
 
       const data2 = await resolveData(
@@ -61,6 +63,7 @@ describe('DataResolver', () => {
         },
         vi.fn()
       )
+
       expect(data2).toEqual({ provider: 'client', error: 'REGION_NOT_FOUND', data: null })
     })
 
@@ -79,6 +82,7 @@ describe('DataResolver', () => {
         },
         vi.fn()
       )
+
       await expect(() => data).rejects.toThrowError()
     })
 
@@ -96,6 +100,7 @@ describe('DataResolver', () => {
           headers: { get: () => 'application/json' },
         }))
       )
+
       expect(data).toEqual({ provider: 'server', data: 'serverData' })
     })
 
@@ -113,6 +118,7 @@ describe('DataResolver', () => {
           headers: { get: () => 'application/json' },
         }))
       )
+
       expect(data).toEqual({ provider: 'server', data: 'serverData' })
     })
 
@@ -126,6 +132,7 @@ describe('DataResolver', () => {
         vi.fn(),
         vi.fn(() => ({ ok: false, status: 404 }))
       )
+
       expect(data).toEqual({ provider: 'server', error: 'NOT_FOUND', data: null })
     })
 
@@ -139,6 +146,7 @@ describe('DataResolver', () => {
         vi.fn(),
         vi.fn(() => ({ ok: false }))
       )
+
       expect(data).toEqual({ provider: 'static-server', data: null })
     })
 
@@ -153,6 +161,7 @@ describe('DataResolver', () => {
         () => 'clientData',
         vi.fn(() => ({ ok: false }))
       )
+
       expect(data).toEqual({ provider: 'static-client', data: 'clientData' })
     })
 

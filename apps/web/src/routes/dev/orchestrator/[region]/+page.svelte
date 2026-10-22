@@ -3,7 +3,7 @@
 
   import type { Prefix } from '@lib/client'
 
-  import { createClient } from '$lib/storage'
+  import { createClient } from '#lib/storage'
 
   import RegionList from '../RegionList.svelte'
   import type { PageData } from './$types'

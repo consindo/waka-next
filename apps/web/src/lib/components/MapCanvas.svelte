@@ -13,7 +13,7 @@
 
   import type { RegionResponse } from '@lib/client'
 
-  import { resolveData } from '$lib/dataResolver'
+  import { resolveData } from '#lib/dataResolver'
 
   import { currentRegions, mapState } from '../../routes/mapstate.svelte'
   import alertSvg from '../../icons/alert.svg?url'
@@ -31,7 +31,7 @@
   } from './map/mapConstants'
   import { getRegionsFromBounds, getStops, mapToIcon } from './map/mapData'
   import { getMapIcons } from './map/mapIcons'
-  import { getDrawerPosition } from '$lib/utils/moveDrawer'
+  import { getDrawerPosition } from '#lib/utils/moveDrawer'
 
   const { regions }: { regions: RegionResponse[] } = $props()
   const regionalBounds = $derived(

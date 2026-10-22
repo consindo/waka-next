@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { transit_realtime } from 'gtfs-realtime-bindings'
-  import { variables } from '$lib/variables'
+  import { variables } from '#lib/variables'
 
   import alertSvg from '../../icons/alert.svg'
   import chevronRightSvg from '../../icons/chevron-right.svg'

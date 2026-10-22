@@ -1,6 +1,6 @@
 import type { Prefix } from '@lib/client'
 
-import { resolveData } from '$lib/dataResolver'
+import { resolveData } from '#lib/dataResolver'
 
 import type { PageLoad } from './$types'
 

@@ -1,4 +1,4 @@
-import { npm_package_version } from '$env/static/private'
+import { npm_package_version } from '$app/env/private'
 import type { PageServerLoad } from './$types'
 
 export const load: PageServerLoad = () => {

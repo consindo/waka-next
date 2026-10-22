@@ -1,4 +1,4 @@
-import { env } from '$env/dynamic/private'
+import { AWS_S3_ENDPOINT, AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY } from '$app/env/private'
 import {
   CopyObjectCommand,
   HeadObjectCommand,
@@ -13,9 +13,9 @@ export class BucketClient {
 
   constructor(bucket: string, region: string) {
     this.bucket = bucket
-    const endpoint = env.AWS_S3_ENDPOINT
-    const accessKeyId = env.AWS_ACCESS_KEY_ID
-    const secretAccessKey = env.AWS_SECRET_ACCESS_KEY
+    const endpoint = AWS_S3_ENDPOINT
+    const accessKeyId = AWS_ACCESS_KEY_ID
+    const secretAccessKey = AWS_SECRET_ACCESS_KEY
     this.#s3client = new S3Client({
       region,
       endpoint,

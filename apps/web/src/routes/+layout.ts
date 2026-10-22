@@ -1,4 +1,4 @@
-import { getRegions } from '$lib/storage'
+import { getRegions } from '#lib/storage'
 
 import type { LayoutLoad } from './$types'
 
