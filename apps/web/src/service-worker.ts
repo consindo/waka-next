@@ -1,4 +1,4 @@
-import { version } from '$service-worker'
+import { version } from '$app/env'
 
 const CACHE = `cache-${version}`
 

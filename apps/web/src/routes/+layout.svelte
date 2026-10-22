@@ -35,7 +35,7 @@
     }
 
     const types: string[] = []
-    if ((navigation.delta || 0) < 0) {
+    if ((navigation.type === 'popstate' && navigation.delta || 0) < 0) {
       types.push('backward')
     }
 
