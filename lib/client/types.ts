@@ -114,6 +114,7 @@ export interface ServiceResult {
   tripId: string
   date: string
   stopSequence: number
+  stopHeadsign?: string
   routeShortName: string
   arrivalTime?: string
   departureTime?: string

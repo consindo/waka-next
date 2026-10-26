@@ -72,7 +72,7 @@
             href={resolve('/[region]/routes', { region: selectedRegionsUrl })}
             style={`--bg: url(${routesImg})`}
           >
-            <img class="img-invert icon" src={routeSvg} alt="" />
+            <img class="icon" src={routeSvg} alt="" />
             <h4>Routes</h4>
           </a>
         {/if}
@@ -81,7 +81,7 @@
           href={resolve('/cities')}
           style={cityImageUrl ? `--bg: url(${cityImageUrl})` : undefined}
         >
-          <img class="img-invert icon" src={citySvg} alt="" />
+          <img class="icon" src={citySvg} alt="" />
           <h4>Cities</h4>
         </a>
       </div>

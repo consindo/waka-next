@@ -40,6 +40,14 @@
       <li>Saved stations have been temporarily removed.</li>
     </ul>
     <h3>v4.0 Patch Releases</h3>
+    <h4>v4.0.8</h4>
+    <time datetime="2026-10-27">October 27, 2026</time>
+    <h5>Bug Fixes</h5>
+    <ul>
+      <li>Fixed inaccurate times on public holidays</li>
+      <li>Improved loading speed of map</li>
+      <li>Last service indicator is more accurate</li>
+    </ul>
     <h4>v4.0.7</h4>
     <time datetime="2026-09-27">September 27, 2026</time>
     <h5>Bug Fixes</h5>
