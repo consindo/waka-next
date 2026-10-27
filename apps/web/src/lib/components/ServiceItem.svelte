@@ -49,8 +49,15 @@
     onclick={triggerCloseDetails}
   >
     <div class="destination">
+      {#if service.stopHeadsign}
+        <div><strong>{formatTripHeadsign(service.stopHeadsign).join(' ')}</strong></div>
+        {#if service.tripHeadsign}
+          <small>{formatTripHeadsign(service.tripHeadsign).join(' ')}</small>
+        {/if}
+      {:else}
       {#each formatTripHeadsign(service.tripHeadsign) as headsignSegment, index (index)}
-        <span>{headsignSegment}&nbsp;</span>{/each}
+        {#if index === 0}<div><strong>{headsignSegment}&nbsp;</strong></div>{:else}<small>{headsignSegment}&nbsp;</small>{/if}{/each}
+      {/if}
     </div>
     <div
       class={{
@@ -118,6 +125,9 @@
     flex: 1;
     font-size: 14px;
     text-wrap: pretty;
+  }
+  .destination strong {
+    font-weight: 500;
   }
   .selected {
     border-color: var(--surface-bg-interactive);

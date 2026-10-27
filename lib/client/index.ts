@@ -242,13 +242,13 @@ export class Client {
       const dayofweek = new Date(dateInput).getUTCDay()
       let getServicesQuery = getServices
       if (stopId) {
-        getServicesQuery = getServicesQuery.replace('AND stop_sequence = (?)', 'AND stop_id = (?)')
+        getServicesQuery = getServicesQuery.replace('AND stop_sequence = (?)', 'AND (stops.stop_id = (?) OR stops.parent_station = (?))')
       }
       return (
         this.runQuery(prefix, getServicesQuery, [
           date,
           routeId,
-          stopId || '1',
+          ...(stopId ? [stopId, stopId] : ['1']),
           date,
           date,
           dayofweek === 1 ? '1' : '0',

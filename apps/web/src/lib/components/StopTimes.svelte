@@ -93,7 +93,7 @@
         class={{ isRealtime: trip.isRealtime }}
         href="/{trip.prefix}/routes/{trip.routeId}?tripId={encodeURIComponent(
           trip.tripId
-        )}&stopId={encodeURIComponent(trip.stopId)}"
+        )}&stopId={encodeURIComponent(stopInfo?.stopId)}"
         style={`${trip.routeColor ? `color: ${getTextColor(trip.routeColor)};` : ''}${trip.routeColor ? `--bg: #${trip.routeColor};` : ''}`}
       >
         <div class="direction">

@@ -17,6 +17,7 @@ INNER JOIN routes ON trips.route_id = routes.route_id
 INNER JOIN agency ON routes.agency_id = agency.agency_id
 LEFT JOIN calendar ON trips.service_id = calendar.service_id
 INNER JOIN stop_times ON trips.trip_id = stop_times.trip_id
+INNER JOIN stops ON stop_times.stop_id = stops.stop_id
 LEFT JOIN calendar_dates ON trips.service_id = calendar_dates.service_id
 AND date = (?)
 WHERE trips.route_id = (?)
