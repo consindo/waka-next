@@ -1,8 +1,6 @@
-import { browser } from '$app/environment'
-
+import { browser } from '$app/env'
 import { Client, type Prefix, type RegionResponse } from '@lib/client'
 import { DB } from '@lib/db'
-
 import { variables } from './variables'
 
 type Fetch = typeof fetch
@@ -10,13 +8,14 @@ type Fetch = typeof fetch
 let regions: RegionResponse[] = []
 let globalClient: Client
 const databases: Record<string, DB> = {}
-
 const saveData = (): boolean =>
   browser && 'connection' in navigator && (navigator.connection as { saveData: boolean }).saveData
 
 // allows a function to wait for a function to be ready (i.e after page load)
 const promises: Record<Prefix, Promise<Client>> = {}
+
 const resolvers: Record<Prefix, (value: Client) => void> = {}
+
 export const waitForClient = (prefix: Prefix) => {
   // sets up a promise and attempts to resolve it with data
   if (promises[prefix] === undefined) {
@@ -56,6 +55,7 @@ export const getRegions = async (fetch: Fetch, loadRegion = createClient) => {
   if (regions.length > 0) return regions // don't refresh until page reload
 
   const data = await fetch('/api/regions').then((r) => r.json())
+
   regions = data.regions as RegionResponse[]
 
   // loads all regions that are in the area if the low data mode isn't on
@@ -84,6 +84,7 @@ export const createClient = async (
   shapesUrl?: string
 ) => {
   console.log('loading gtfs for', `${prefix}:${version}`)
+
   const db = new DB()
 
   try {
@@ -91,8 +92,11 @@ export const createClient = async (
     if (url.startsWith('/')) {
       url = variables.gtfsEndpoint + url
     }
+
     const res = await fetch(url)
+
     if (!res.ok) throw `http: ${res.status}`
+
     const data = await res.arrayBuffer()
 
     await db.connect()
@@ -103,10 +107,12 @@ export const createClient = async (
     if (globalClient === undefined) {
       globalClient = new Client()
     }
+
     globalClient.addRegion(prefix, db)
     console.log('offline gtfs client ready')
 
     let shapesData: Blob | undefined
+
     if (shapesUrl) {
       const shapesRes = await fetch(shapesUrl)
       shapesData = await shapesRes.blob()

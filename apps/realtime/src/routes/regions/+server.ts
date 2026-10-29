@@ -1,4 +1,3 @@
-import { json } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 
 interface RegionResponse {
@@ -25,5 +24,5 @@ export const GET: RequestHandler = ({ locals }) => {
       vehicleLocationsCount: vehicleLocations.length,
     }
   })
-  return json({ regions })
+  return Response.json({ regions })
 }

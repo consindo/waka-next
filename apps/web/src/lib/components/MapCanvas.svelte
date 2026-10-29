@@ -1,6 +1,8 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
   import { page } from '$app/state'
+  import { resolve } from '$app/paths'
+
   import { bbox, bboxPolygon, booleanContains, envelope, lineString, point } from '@turf/turf'
   import type { FeatureCollection } from 'geojson'
   import type { GeoJSONSource, MapLibreEvent } from 'maplibre-gl'
@@ -13,7 +15,7 @@
 
   import type { RegionResponse } from '@lib/client'
 
-  import { resolveData } from '$lib/dataResolver'
+  import { resolveData } from '#lib/dataResolver.ts'
 
   import { currentRegions, mapState } from '../../routes/mapstate.svelte'
   import alertSvg from '../../icons/alert.svg?url'
@@ -31,7 +33,7 @@
   } from './map/mapConstants'
   import { getRegionsFromBounds, getStops, mapToIcon } from './map/mapData'
   import { getMapIcons } from './map/mapIcons'
-  import { getDrawerPosition } from '$lib/utils/moveDrawer'
+  import { getDrawerPosition } from '#lib/utils/moveDrawer.ts'
 
   const { regions }: { regions: RegionResponse[] } = $props()
   const regionalBounds = $derived(
@@ -61,7 +63,7 @@
         ?.cities.find((j) => j.id === cityId)
       center = city?.startingLocation || regions[0].cities[0].startingLocation
 
-      const url = new URL(page.url)
+      const url = new URL(page.url.href)
       url.searchParams.delete('city')
       goto(url, { replaceState: true })
     } else {
@@ -113,7 +115,9 @@
     const addEvents = () => {
       map.on('click', ALL_STOPS_LAYER, (e) => {
         const { prefix, stopId } = (e.features || [])[0].properties
-        goto(`/${prefix}/stops/${stopId}`, { replaceState: page.url.pathname.includes('/stops/') })
+        goto(resolve('/[prefix]/stops/[stop_id]', { prefix, stop_id: stopId }), {
+          replaceState: page.url.pathname.includes('/stops/'),
+        })
       })
     }
 
@@ -352,7 +356,7 @@
       ])
 
       if (city !== undefined) {
-        const url = new URL(page.url)
+        const url = new URL(page.url.href)
         url.searchParams.delete('city')
         goto(url, { replaceState: true })
       }

@@ -1,9 +1,10 @@
 <script lang="ts">
   import { goto } from '$app/navigation'
+  import { resolve } from '$app/paths'
 
   import type { Prefix } from '@lib/client'
 
-  import { createClient } from '$lib/storage'
+  import { createClient } from '#lib/storage.ts'
 
   import RegionList from '../RegionList.svelte'
   import type { PageData } from './$types'
@@ -40,7 +41,7 @@
       e.currentTarget.innerText = 'loading...'
 
       await createClient(version.region as Prefix, version.version, version.url)
-      goto(`/dev/query?db=${encodeURIComponent(`${version.region}:${version.version}`)}`)
+      goto(resolve(`/dev/query?db=${encodeURIComponent(`${version.region}:${version.version}`)}`))
     }
 </script>
 
@@ -126,7 +127,7 @@
         <dd>{version.etag}</dd>
         <dt>url</dt>
         <dd>
-          <a href={version.url}>{formatUrl(version.url)}</a>
+          <a href={version.url} rel="external">{formatUrl(version.url)}</a>
           {formatSize(version.size)}
         </dd>
         {#if version.shapesEtag}
@@ -136,7 +137,7 @@
         {#if version.shapesUrl}
           <dt>shapes url</dt>
           <dd>
-            <a href={version.shapesUrl}>{formatUrl(version.shapesUrl)}</a>
+            <a href={version.shapesUrl} rel="external">{formatUrl(version.shapesUrl)}</a>
             {#if version.shapesSize}
               {formatSize(version.shapesSize)}
             {/if}

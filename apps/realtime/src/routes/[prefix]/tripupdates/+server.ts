@@ -1,4 +1,4 @@
-import { error, json } from '@sveltejs/kit'
+import { error } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 
 export const GET: RequestHandler = ({ locals, params, request }) => {
@@ -9,13 +9,14 @@ export const GET: RequestHandler = ({ locals, params, request }) => {
   const routeIds = searchParams.getAll('routeid')
   const tripIds = searchParams.getAll('tripid')
   if (routeIds.length + tripIds.length === 0) {
-    return error(400, {
-      name: 'missing search params',
-      message: 'please include one or many search parameters (routeid, tripid)',
-    })
+    return error(
+      400,
+      'missing search params',
+      new Error('please include one or many search parameters (routeid, tripid)')
+    )
   }
   const filteredTrips = tripUpdates.filter(
     (i) => routeIds.includes(i.trip?.routeId || '') || tripIds.includes(i.trip?.tripId || '')
   )
-  return json({ tripUpdates: filteredTrips })
+  return Response.json({ tripUpdates: filteredTrips })
 }

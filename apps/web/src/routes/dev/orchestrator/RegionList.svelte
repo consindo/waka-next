@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { resolve } from '$app/paths'
   import type { ActiveRegion, InactiveRegion } from './types'
 
   interface Props {
@@ -14,9 +15,9 @@
   <div class="regions">
     <h2>active regions</h2>
     <ul>
-      {#each activeRegions as region}
+      {#each activeRegions as region (region)}
         <li class:selected={selectedRegion === region.region}>
-          <a href="/dev/orchestrator/{region.region}">
+          <a href={resolve('/dev/orchestrator/[region]', { region: region.region })}>
             <h3>{region.region}</h3>
             <code>{region.etag}</code></a
           >
@@ -26,9 +27,11 @@
     {#if inactiveRegions}
       <h2>inactive regions</h2>
       <ul>
-        {#each inactiveRegions as region}
+        {#each inactiveRegions as region (region)}
           <li class:selected={selectedRegion === region.region}>
-            <a href="/dev/orchestrator/{region.region}"> <h3>{region.region}</h3></a>
+            <a href={resolve('/dev/orchestrator/[region]', { region: region.region })}>
+              <h3>{region.region}</h3></a
+            >
           </li>
         {/each}
       </ul>

@@ -1,6 +1,6 @@
-import { type RequestHandler, json } from '@sveltejs/kit'
+import { type RequestHandler } from '@sveltejs/kit'
 
 export const GET: RequestHandler = async ({ locals }) => {
   const { realtimeCache } = locals
-  return json(realtimeCache)
+  return Response.json(realtimeCache)
 }

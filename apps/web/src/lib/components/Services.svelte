@@ -4,7 +4,7 @@
 
   import type { ServiceResult } from '@lib/client'
 
-  import type { RealtimeServiceResult } from '$lib/types'
+  import type { RealtimeServiceResult } from '#lib/types.ts'
 
   import ServiceItem from './ServiceItem.svelte'
 

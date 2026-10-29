@@ -2,8 +2,8 @@
   import { resolve } from '$app/paths'
   import { page } from '$app/state'
 
-  import Header from '$lib/components/Header.svelte'
-  import ScrollContainer from '$lib/components/ScrollContainer.svelte'
+  import Header from '#lib/components/Header.svelte'
+  import ScrollContainer from '#lib/components/ScrollContainer.svelte'
 
   let { data } = $props()
 </script>
@@ -17,7 +17,8 @@
   <ul>
     {#each data.stops as stop (stop.stopId)}
       <li>
-        <a href={resolve(`/${stop.prefix}/stops/${stop.stopId}`)}
+        <a
+          href={resolve('/[prefix]/stops/[stop_id]', { prefix: stop.prefix, stop_id: stop.stopId })}
           >{stop.stopCode} - {stop.stopName}</a
         >
       </li>

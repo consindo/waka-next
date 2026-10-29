@@ -1,4 +1,4 @@
-import { error, json } from '@sveltejs/kit'
+import { error } from '@sveltejs/kit'
 import type { RequestHandler } from './$types'
 
 export const GET: RequestHandler = ({ locals, params, request }) => {
@@ -9,10 +9,11 @@ export const GET: RequestHandler = ({ locals, params, request }) => {
   const routeIds = searchParams.getAll('routeid')
   const stopIds = searchParams.getAll('stopid')
   if (routeIds.length + stopIds.length === 0) {
-    return error(400, {
-      name: 'missing search params',
-      message: 'please include one or many search parameters (routeid, stopid)',
-    })
+    return error(
+      400,
+      'missing search params',
+      new Error('please include one or many search parameters (routeid, stopid)')
+    )
   }
   // todo: feed also supports agency, trip, or routetype
   // just not sure if we need this for our app yet
@@ -22,5 +23,5 @@ export const GET: RequestHandler = ({ locals, params, request }) => {
       (i.informedEntity || []).some((j) => (j.stopId ? stopIds.includes(j.stopId) : false))
   )
 
-  return json({ serviceAlerts: filteredAlerts })
+  return Response.json({ serviceAlerts: filteredAlerts })
 }

@@ -10,7 +10,7 @@ export const load: PageLoad = async ({ fetch, params, data }) => {
   ])
   const details = apiData[2]
   if (details?.status === 'error') {
-    error(404)
+    error(404, 'not found', new Error('not found on the api'))
   }
   const activeRegions = apiData[0].regions as ActiveRegion[]
   const inactiveRegions = apiData[1].regions.filter(

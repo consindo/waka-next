@@ -1,10 +1,8 @@
 <script lang="ts">
   import { beforeNavigate, onNavigate } from '$app/navigation'
   import { page } from '$app/state'
-
-  import LoadingSkeleton from '$lib/components/LoadingSkeleton.svelte'
-  import MapCanvas from '$lib/components/MapCanvas.svelte'
-
+  import LoadingSkeleton from '#lib/components/LoadingSkeleton.svelte'
+  import MapCanvas from '#lib/components/MapCanvas.svelte'
   import '../css/app.css'
   import '../css/fonts.css'
   import type { PageData } from './$types'
@@ -16,14 +14,14 @@
 
   let { children, data }: Props = $props()
   const { regions } = $derived(data)
-
   let mainElement: HTMLElement | undefined = undefined
   let contentElement: HTMLElement | undefined = undefined
-
   let isLoading = $state(0)
   let navigationPromise = $state<Promise<void>>()
 
   beforeNavigate((navigation) => {
+    if (navigation.shallow && navigation.type === 'goto') return
+
     const height = contentElement?.querySelector(':scope > div')?.getBoundingClientRect()?.height
 
     // if the route id is not changing, we don't run a transition animation
@@ -37,7 +35,7 @@
     }
 
     const types: string[] = []
-    if ((navigation.delta || 0) < 0) {
+    if (((navigation.type === 'popstate' && navigation.delta) || 0) < 0) {
       types.push('backward')
     }
 
@@ -83,18 +81,17 @@
     })
   })
 
-  onNavigate(() => {
+  onNavigate(({ shallow, type }) => {
+    if (shallow && type === 'goto') return
+
     return navigationPromise
   })
 </script>
 
 <main id="drawer" class:single={page.url.pathname.startsWith('/dev')} bind:this={mainElement}>
   <div class="screen-top"></div>
-  <section class="map">
-    <div class="map-inner">
-      <MapCanvas {regions} />
-    </div>
-  </section>
+  <section class="map"><div class="map-inner"><MapCanvas {regions} /></div></section>
+
   <section class="content">
     <div class="content-inner" bind:this={contentElement}>
       {#if isLoading > 0}

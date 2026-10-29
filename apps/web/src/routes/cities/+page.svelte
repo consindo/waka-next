@@ -1,9 +1,7 @@
 <script lang="ts">
   import { resolve } from '$app/paths'
-
-  import Header from '$lib/components/Header.svelte'
-  import ScrollContainer from '$lib/components/ScrollContainer.svelte'
-
+  import Header from '#lib/components/Header.svelte'
+  import ScrollContainer from '#lib/components/ScrollContainer.svelte'
   import type { PageData } from './$types'
 
   const images = import.meta.glob('@regions/images/*.avif', { eager: true })
@@ -27,7 +25,7 @@
           ] as { default: string } | undefined}
           <li>
             <a
-              href={resolve(`/?city=${city.id}`)}
+              href={resolve(`?city=${city.id}`)}
               style={image && image.default ? `--bg: url(${image.default});` : undefined}
             >
               <h2>{city.title}</h2>

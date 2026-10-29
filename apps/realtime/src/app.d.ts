@@ -1,5 +1,5 @@
-import type { RealtimeConfigManager } from '$lib/configManager'
-import type { RealtimeCache } from '$lib/realtime'
+import type { RealtimeConfigManager } from '#lib/configManager.ts'
+import type { RealtimeCache } from '#lib/realtime.ts'
 
 // See https://kit.svelte.dev/docs/types#app
 // for information about these interfaces

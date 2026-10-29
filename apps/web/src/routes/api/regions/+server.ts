@@ -1,10 +1,10 @@
-import { type RequestHandler, json } from '@sveltejs/kit'
+import { type RequestHandler } from '@sveltejs/kit'
 
-import { variables } from '$lib/variables'
+import { variables } from '#lib/variables.ts'
 
 export const GET: RequestHandler = async ({ fetch }) => {
   const data = await fetch(variables.gtfsEndpoint + '/regions').then((r) => r.json())
 
   // todo: we will need to get the userlocation somehow...
-  return json({ ...data, userLocation: {} })
+  return Response.json({ ...data, userLocation: {} })
 }

@@ -1,14 +1,14 @@
 import type { Prefix } from '@lib/client'
 
-import { resolveData } from '$lib/dataResolver'
+import { resolveData } from '#lib/dataResolver.ts'
 
 import type { PageLoad } from './$types'
 import {
   getRealtimeServiceAlerts,
   getRealtimeTripUpdates,
   getRealtimeVehicleLocations,
-} from '$lib/realtimeDataResolver'
-import { variables } from '$lib/variables'
+} from '#lib/realtimeDataResolver.ts'
+import { variables } from '#lib/variables.ts'
 
 const { realtimeMaxDelay, realtimeMaxAdvance } = variables
 

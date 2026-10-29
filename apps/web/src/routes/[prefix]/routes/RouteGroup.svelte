@@ -3,8 +3,8 @@
 
   import type { RouteResult } from '@lib/client'
 
-  import { getTextColor } from '$lib/utils/color'
-  import { sortRoutes } from '$lib/utils/sortRoutes'
+  import { getTextColor } from '#lib/utils/color.ts'
+  import { sortRoutes } from '#lib/utils/sortRoutes.ts'
 
   import chevronRightSvg from '../../../icons/chevron-right.svg'
 
@@ -26,7 +26,12 @@
         ? `background-color: #${route.routeColor};color: ${getTextColor(route.routeColor)}`
         : ''}
       <li>
-        <a href={resolve(`/${route.prefix}/routes/${route.routeId}`)}>
+        <a
+          href={resolve(`/[prefix]/routes/[routeid]`, {
+            prefix: route.prefix,
+            routeid: route.routeId,
+          })}
+        >
           <span>{route.routeLongName ?? route.tripHeadsign ?? ''}</span>
           <strong style={`${color}`}>{route.routeShortName}</strong>
         </a>

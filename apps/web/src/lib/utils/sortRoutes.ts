@@ -1,4 +1,4 @@
-import { variables } from '$lib/variables'
+import { variables } from '#lib/variables.ts'
 
 /**
  * sorts lettered routes before numbers, and ensures it's a numeric sort

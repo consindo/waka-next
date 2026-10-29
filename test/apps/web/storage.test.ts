@@ -3,10 +3,14 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { getRegions } from '../../../apps/web/src/lib/storage'
 
 const browserGetter = vi.fn()
-vi.mock('$app/environment', () => ({
+vi.mock('$app/env', () => ({
   get browser() {
     return browserGetter()
   },
+}))
+vi.mock('$app/env/public', () => ({
+  PUBLIC_GTFS_ENDPOINT: '',
+  PUBLIC_GTFS_REALTIME_ENDPOINT: '',
 }))
 vi.mock('$env/dynamic/public', () => ({
   get env() {

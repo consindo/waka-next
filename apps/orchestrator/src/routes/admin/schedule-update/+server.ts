@@ -1,5 +1,3 @@
-import { json } from '@sveltejs/kit'
-
 import type { RequestHandler } from './$types'
 
 export const POST: RequestHandler = async ({ locals }) => {
@@ -25,5 +23,5 @@ export const POST: RequestHandler = async ({ locals }) => {
         .catch((err) => reject(err))
     })
   )
-  return json({ schedule: 'success' })
+  return Response.json({ schedule: 'success' })
 }

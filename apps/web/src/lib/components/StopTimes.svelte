@@ -2,9 +2,9 @@
   import gtfsRealtimeBindings from 'gtfs-realtime-bindings'
   import type { StopInfoResult, StopTimesResult } from '@lib/client'
 
-  import { getTextColor } from '$lib/utils/color'
-  import { formatTripHeadsign } from '$lib/utils/formatHeadsign'
-  import { formatShortDate } from '$lib/utils/formatDate'
+  import { getTextColor } from '#lib/utils/color.ts'
+  import { formatTripHeadsign } from '#lib/utils/formatHeadsign.ts'
+  import { formatShortDate } from '#lib/utils/formatDate.ts'
 
   import arrowRightSmallSvg from '../../icons/arrow-right-small.svg?raw'
   import realtimeSvg from '../../icons/realtime.svg?raw'

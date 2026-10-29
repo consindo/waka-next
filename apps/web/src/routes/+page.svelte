@@ -1,20 +1,18 @@
 <script lang="ts">
+  import { onMount } from 'svelte'
   import { resolve } from '$app/paths'
   import { page } from '$app/state'
-  import Header from '$lib/components/Header.svelte'
-  import ScrollContainer from '$lib/components/ScrollContainer.svelte'
-
+  import Header from '#lib/components/Header.svelte'
+  import ScrollContainer from '#lib/components/ScrollContainer.svelte'
   import { type PageData } from './$types'
   import { currentRegions } from './mapstate.svelte'
-
   import routesImg from '../images/routes.avif?url'
   import routeSvg from '../icons/route.svg?url'
   import citySvg from '../icons/city.svg?url'
   import installSvg from '../icons/install.svg?url'
   import consoleSvg from '../icons/console.svg?url'
   import starSvg from '../icons/star.svg?url'
-  import { onMount } from 'svelte'
-  import { moveDrawer } from '$lib/utils/moveDrawer'
+  import { moveDrawer } from '#lib/utils/moveDrawer.ts'
 
   const { data }: { data: PageData } = $props()
   const { regions } = $derived(data)
@@ -24,26 +22,24 @@
   })
 
   const images = import.meta.glob('@regions/images/*.avif', { eager: true })
-
-  const searchParams = new URL(page.url).searchParams
+  const searchParams = new URL(page.url.href).searchParams
   const cityParam = searchParams.get('city')
   const cityRegion = $derived(regions.find((i) => i.cities.find((j) => j.id === cityParam)))
-
   const selectedRegionIds = $derived(cityRegion ? [cityRegion.region] : currentRegions.ids)
   const selectedRegionsUrl = $derived(selectedRegionIds.join(','))
 
   // todo: we probably need some sort of currentCities if you're moving the map around - at the moment, it'll just show the first city unless you have js disabled
   const primaryRegion = $derived(regions.find((r) => r.region === selectedRegionIds[0]))
+
   const primaryCity = $derived(
     primaryRegion?.cities.find((i) => i.id === cityParam) || primaryRegion?.cities[0]
   )
-
   const cityImage = $derived(
     Object.keys(images).find((i) => i.endsWith((primaryRegion?.region || 'nz-akl') + '.avif')) || ''
   )
   const cityImageUrl = $derived((images as Record<string, { default: string }>)[cityImage]?.default)
-
   let isInstallable = $state(false)
+
   onMount(() => {
     // @ts-expect-error added in app.html
     if (window.__installPrompt) {
@@ -69,7 +65,8 @@
           <a
             class="block-link"
             // @ts-expect-error I think the typings are wrong? there's definitely two arguments
-            href={resolve('/[region]/routes', { region: selectedRegionsUrl })}
+            href={// @ts-expect-error I think the typings are wrong? there's definitely two arguments
+            resolve('/[region]/routes', { region: selectedRegionsUrl })}
             style={`--bg: url(${routesImg})`}
           >
             <img class="icon" src={routeSvg} alt="" />
@@ -78,7 +75,7 @@
         {/if}
         <a
           class="block-link"
-          href={resolve('/cities')}
+          href={resolve('cities')}
           style={cityImageUrl ? `--bg: url(${cityImageUrl})` : undefined}
         >
           <img class="icon" src={citySvg} alt="" />
@@ -95,14 +92,15 @@
           </div>
         </button>
       {/if}
-      <a class="wide-link" href={resolve('/changelog')}>
+      <a class="wide-link" href={resolve('changelog')}>
         <img class="img-invert icon" src={starSvg} alt="" />
         <div>
           <h4>What’s new?</h4>
           <p>Find out what’s new in Waka</p>
         </div>
       </a>
-      <a class="wide-link" href={resolve('/dev/orchestrator')}>
+
+      <a class="wide-link" href={resolve('dev/orchestrator')}>
         <img class="img-invert icon" src={consoleSvg} alt="" />
         <div>
           <h4>Developer console</h4>

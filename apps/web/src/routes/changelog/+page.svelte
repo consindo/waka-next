@@ -1,6 +1,6 @@
 <script lang="ts">
-  import Header from '$lib/components/Header.svelte'
-  import ScrollContainer from '$lib/components/ScrollContainer.svelte'
+  import Header from '#lib/components/Header.svelte'
+  import ScrollContainer from '#lib/components/ScrollContainer.svelte'
 
   import { type PageData } from './$types'
 

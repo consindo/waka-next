@@ -2,7 +2,7 @@ import { regionalConfig } from '@regions/regionalConfig'
 
 import type { Prefix, RouteResult } from '@lib/client'
 
-import { resolveData } from '$lib/dataResolver'
+import { resolveData } from '#lib/dataResolver.ts'
 
 import type { PageLoad } from './$types'
 import { defaultRouteGroups } from './defaultRouteGroups'

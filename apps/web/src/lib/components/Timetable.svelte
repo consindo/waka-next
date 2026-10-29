@@ -2,7 +2,7 @@
   import type { RouteResult, ServiceResult, TimetableResult } from '@lib/client'
   import type { transit_realtime } from 'gtfs-realtime-bindings'
 
-  import { getDate } from '$lib/utils/formatDate'
+  import { getDate } from '#lib/utils/formatDate.ts'
 
   import TimetableItem from './TimetableItem.svelte'
 

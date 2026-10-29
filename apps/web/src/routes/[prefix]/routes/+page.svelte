@@ -1,9 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte'
 
-  import Header from '$lib/components/Header.svelte'
-  import ScrollContainer from '$lib/components/ScrollContainer.svelte'
-  import { moveDrawer } from '$lib/utils/moveDrawer.js'
+  import Header from '#lib/components/Header.svelte'
+  import ScrollContainer from '#lib/components/ScrollContainer.svelte'
+  import { moveDrawer } from '#lib/utils/moveDrawer.ts'
 
   import type { PageData } from './$types'
   import RouteGroup from './RouteGroup.svelte'

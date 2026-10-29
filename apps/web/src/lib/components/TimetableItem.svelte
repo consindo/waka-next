@@ -3,9 +3,9 @@
 
   import type { Prefix, RouteResult } from '@lib/client'
 
-  import { getTextColor } from '$lib/utils/color'
-  import { formatTime } from '$lib/utils/formatDate'
-  import { sortRoutes } from '$lib/utils/sortRoutes'
+  import { getTextColor } from '#lib/utils/color.ts'
+  import { formatTime } from '#lib/utils/formatDate.ts'
+  import { sortRoutes } from '#lib/utils/sortRoutes.ts'
 
   let {
     prefix,
@@ -69,7 +69,7 @@
 </script>
 
 <li class="stop-time" class:firstService class:lastService class:isInPast>
-  <a href={resolve(`/${prefix}/stops/${stopId}`)}>
+  <a href={resolve('/[prefix]/stops/[stop_id]', { prefix, stop_id: stopId })}>
     <div>
       <h4>{stopName}</h4>
       {#if transfersWithoutSelf.length > 0}
