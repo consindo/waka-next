@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { transit_realtime } from 'gtfs-realtime-bindings'
-  import { page } from '$app/state'
+  import { resolve } from '$app/paths'
 
   import type { ServiceResult } from '@lib/client'
 
@@ -18,13 +18,15 @@
     routeName,
     directionId,
     services,
-    selectedService,
+    selectedTrip,
+    selectedStopSequence,
     tripUpdates,
   }: {
     routeName: string
     directionId: number
     services: ServiceResult[]
-    selectedService: string | null
+    selectedTrip: string | null
+    selectedStopSequence: string | null
     tripUpdates: transit_realtime.ITripUpdate[]
   } = $props()
 
@@ -32,7 +34,7 @@
   const hasDirectionId1 = $derived(services.some((i) => i.directionId === 1))
   const derivedDirectionId = $derived(
     hasDirectionId0 && hasDirectionId1
-      ? services.find((i) => i.tripId === selectedService)?.directionId || directionId
+      ? services.find((i) => i.tripId === selectedTrip)?.directionId || directionId
       : hasDirectionId0
         ? 0
         : 1
@@ -115,6 +117,14 @@
         }
       })
   )
+  const selectedService = $derived(
+    filteredServices.find(
+      (i) =>
+        i.tripId === selectedTrip &&
+        (selectedStopSequence ? i.stopSequence === parseInt(selectedStopSequence) : true)
+    )
+  )
+
   const firstVisibleServiceIndex = $derived(
     (() => {
       const now = new Date()
@@ -127,9 +137,8 @@
     })()
   )
   const currentFilteredServiceIndex = $derived(
-    filteredServices.findIndex((i) => i.tripId === selectedService)
+    selectedService ? filteredServices.indexOf(selectedService) : -1
   )
-  const currentService = $derived(filteredServices[currentFilteredServiceIndex])
   const isShowingHiddenService = $derived(
     currentFilteredServiceIndex >= firstVisibleServiceIndex + 3
   )
@@ -148,9 +157,15 @@
     {routeName}
   </span>
   {#if services.length - filteredServices.length > 0 && hasDirectionId0 && hasDirectionId1}
+    {@const params = new URLSearchParams({
+      directionId: ((derivedDirectionId + 1) % 2).toString(),
+    })}
     <a
       data-sveltekit-replacestate
-      href="{page.url.pathname}?directionId={(derivedDirectionId + 1) % 2}"
+      href={resolve(`/[prefix]/routes/[routeid]?${params}`, {
+        prefix: services[0].prefix,
+        routeid: services[0].routeId,
+      })}
     >
       {@html spinSvg}
     </a>
@@ -160,16 +175,16 @@
 {#if firstVisibleServiceIndex >= 0}
   <div class="services-wrapper">
     <ul>
-      {#if currentFilteredServiceIndex < firstVisibleServiceIndex && currentService}
-        <ServiceItem service={currentService} {selectedService} {triggerCloseDetails} />
+      {#if currentFilteredServiceIndex < firstVisibleServiceIndex && selectedService}
+        <ServiceItem service={selectedService} isSelected={true} {triggerCloseDetails} />
       {/if}
       {#each filteredServices.slice(firstVisibleServiceIndex, firstVisibleServiceIndex + 3) as service, i (i)}
-        <ServiceItem {service} {selectedService} {triggerCloseDetails} />
+        <ServiceItem {service} isSelected={selectedService === service} {triggerCloseDetails} />
       {/each}
-      {#if isShowingHiddenService && currentService}
+      {#if isShowingHiddenService && selectedService}
         <ServiceItem
-          service={currentService}
-          {selectedService}
+          service={selectedService}
+          isSelected={true}
           {triggerCloseDetails}
           hideOnOpen={true}
         />
@@ -183,7 +198,7 @@
         >
         <ul>
           {#each filteredServices.slice(firstVisibleServiceIndex + 3) as service, i (i)}
-            <ServiceItem {service} {selectedService} {triggerCloseDetails} />
+            <ServiceItem {service} isSelected={selectedService === service} {triggerCloseDetails} />
           {/each}
         </ul>
       </details>

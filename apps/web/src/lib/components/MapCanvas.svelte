@@ -55,6 +55,7 @@
   onMount(async () => {
     let center: number[]
     const cityId = page.url.searchParams.get('city')
+    const lastLocation = localStorage.getItem('last-location')
     if (mapState.currentStop.length > 0) {
       center = mapState.currentStop[0].coordinates
     } else if (cityId) {
@@ -66,6 +67,13 @@
       const url = new URL(page.url.href)
       url.searchParams.delete('city')
       goto(url, { replaceState: true })
+    } else if (lastLocation) {
+      try {
+        const [lon, lat] = JSON.parse(lastLocation)
+        center = [lon, lat]
+      } catch {
+        center = regions[0].cities[0].startingLocation
+      }
     } else {
       center = regions[0].cities[0].startingLocation
     }

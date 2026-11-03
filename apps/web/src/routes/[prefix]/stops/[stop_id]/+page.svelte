@@ -23,6 +23,10 @@
   const name = $derived(formatStopName(stopInfo?.stopName || ''))
 
   $effect(() => {
+    localStorage.setItem('last-location', JSON.stringify([stopInfo?.stopLon, stopInfo?.stopLat]))
+  })
+
+  $effect(() => {
     moveDrawer('middle', stopId)
   })
 

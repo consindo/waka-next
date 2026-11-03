@@ -1,5 +1,6 @@
 <script lang="ts">
   import { page } from '$app/state'
+  import { resolve } from '$app/paths'
   import { SvelteURLSearchParams } from 'svelte/reactivity'
 
   import { formatShortDate } from '#lib/utils/formatDate.ts'
@@ -10,12 +11,12 @@
 
   const {
     service,
-    selectedService,
+    isSelected,
     triggerCloseDetails,
     hideOnOpen,
   }: {
     service: RealtimeServiceResult
-    selectedService: string | null
+    isSelected: boolean
     triggerCloseDetails: () => void
     hideOnOpen?: boolean
   } = $props()
@@ -26,6 +27,7 @@
     (() => {
       const p = new SvelteURLSearchParams(existingSearchParams)
       p.set('tripId', service.tripId)
+      p.set('stopSequence', service.stopSequence.toString())
       return p
     })()
   )
@@ -41,16 +43,26 @@
 <li class={{ hideOnOpen }}>
   <a
     data-sveltekit-replacestate
-    class={{
-      selected: service.tripId === selectedService,
-    }}
+    class={{ isSelected }}
     style={service.routeColor ? `--surface-bg-interactive: #${service.routeColor}` : ''}
-    href="{page.url.pathname}?{newSearchParams.toString()}"
+    href={resolve(`/[prefix]/routes/[routeid]?${newSearchParams.toString()}`, {
+      prefix: service.prefix,
+      routeid: service.routeId,
+    })}
     onclick={triggerCloseDetails}
   >
     <div class="destination">
-      {#each formatTripHeadsign(service.tripHeadsign) as headsignSegment, index (index)}
-        <span>{headsignSegment}&nbsp;</span>{/each}
+      {#if service.stopHeadsign}
+        <div><strong>{formatTripHeadsign(service.stopHeadsign).join(' ')}</strong></div>
+        {#if service.tripHeadsign}
+          <small>{formatTripHeadsign(service.tripHeadsign).join(' ')}</small>
+        {/if}
+      {:else}
+        {#each formatTripHeadsign(service.tripHeadsign) as headsignSegment, index (index)}
+          {#if index === 0}<div><strong>{headsignSegment}&nbsp;</strong></div>{:else}<small
+              >{headsignSegment}&nbsp;</small
+            >{/if}{/each}
+      {/if}
     </div>
     <div
       class={{
@@ -102,6 +114,7 @@
   }
   time {
     font-weight: bold;
+    line-height: 18px;
   }
   a {
     color: var(--surface-text);
@@ -117,14 +130,16 @@
   a .destination {
     flex: 1;
     font-size: 14px;
+    line-height: 16px;
     text-wrap: pretty;
   }
-  .selected {
+  .destination strong {
+    font-weight: 500;
+    line-height: 18px;
+  }
+  .isSelected {
     border-color: var(--surface-bg-interactive);
     background: color-mix(in srgb, var(--surface-bg-interactive), transparent 95%);
-  }
-  a span {
-    display: inline-block;
   }
   li:has(a:hover) {
     background: var(--surface-bg-hover);
@@ -161,6 +176,7 @@
   }
   .status {
     font-size: 12px;
+    line-height: 16px;
     color: var(--surface-text-subtle);
   }
   .isRealtime .status {

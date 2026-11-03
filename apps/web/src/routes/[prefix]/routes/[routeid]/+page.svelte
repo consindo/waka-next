@@ -110,7 +110,8 @@
           ).join(' ') ||
           data.route.routeShortName}
         services={data.services || []}
-        selectedService={searchParams.get('tripId')}
+        selectedTrip={searchParams.get('tripId')}
+        selectedStopSequence={searchParams.get('stopSequence')}
       />
     </div>
     <div>

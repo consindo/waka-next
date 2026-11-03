@@ -1,6 +1,7 @@
 <script lang="ts">
   import gtfsRealtimeBindings from 'gtfs-realtime-bindings'
   import type { StopInfoResult, StopTimesResult } from '@lib/client'
+  import { resolve } from '$app/paths'
 
   import { getTextColor } from '#lib/utils/color.ts'
   import { formatTripHeadsign } from '#lib/utils/formatHeadsign.ts'
@@ -77,7 +78,7 @@
     )
   )
 
-  // const inactiveLines = $derived()
+  // todo: inactive lines
 </script>
 
 <ul>
@@ -88,12 +89,14 @@
     {@const route = groupedTimes[routeId] || []}
     {@const trip = route[0]}
     {@const departureTime = formatShortDate(trip.departureTime, trip.agencyTimezone, 'short')}
+    {@const params = new URLSearchParams({ tripId: trip.tripId, stopId: stopInfo?.stopId || '' })}
     <li>
       <a
         class={{ isRealtime: trip.isRealtime }}
-        href="/{trip.prefix}/routes/{trip.routeId}?tripId={encodeURIComponent(
-          trip.tripId
-        )}&stopId={encodeURIComponent(trip.stopId)}"
+        href={resolve(`/[prefix]/routes/[routeid]?${params.toString()}`, {
+          prefix: trip.prefix,
+          routeid: trip.routeId,
+        })}
         style={`${trip.routeColor ? `color: ${getTextColor(trip.routeColor)};` : ''}${trip.routeColor ? `--bg: #${trip.routeColor};` : ''}`}
       >
         <div class="direction">

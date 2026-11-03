@@ -3,6 +3,7 @@
   import ScrollContainer from '#lib/components/ScrollContainer.svelte'
 
   import { type PageData } from './$types'
+  import FriendlyTime from './FriendlyTime.svelte'
 
   interface Props {
     data: PageData
@@ -16,7 +17,7 @@
 <ScrollContainer>
   <div>
     <h3>v4.0</h3>
-    <time datetime="2026-09-12">September 12, 2026</time>
+    <FriendlyTime date="2026-09-12" />
     <p>
       Waka v4 is a full rebuild of Waka with a new design, and aims to support many more cities in
       the future!
@@ -40,8 +41,19 @@
       <li>Saved stations have been temporarily removed.</li>
     </ul>
     <h3>v4.0 Patch Releases</h3>
+    <h4>v4.0.9</h4>
+    <FriendlyTime date="2026-11-03" />
+    <h5>New</h5>
+    <ul>
+      <li>
+        Services that loop back on themselves (e.g Auckland CRL) now show services individually on
+        routes page.
+      </li>
+      <li>The last location is restored on new page load</li>
+      <li>Dates in changelog are now localized</li>
+    </ul>
     <h4>v4.0.8</h4>
-    <time datetime="2026-10-27">October 27, 2026</time>
+    <FriendlyTime date="2026-10-27" />
     <h5>Bug Fixes</h5>
     <ul>
       <li>Fixed inaccurate times on public holidays</li>
@@ -49,14 +61,14 @@
       <li>Last service indicator is more accurate</li>
     </ul>
     <h4>v4.0.7</h4>
-    <time datetime="2026-09-27">September 27, 2026</time>
+    <FriendlyTime date="2026-09-27" />
     <h5>Bug Fixes</h5>
     <ul>
       <li>Fixed inaccurate times on days where time transitions to/from daylight savings</li>
       <li>Fixed some pages not loading</li>
     </ul>
     <h4>v4.0.6</h4>
-    <time datetime="2026-09-24">September 24, 2026</time>
+    <FriendlyTime date="2026-09-24" />
     <h5>Bug Fixes</h5>
     <ul>
       <li>Drawer on mobile repositions itself automatically</li>
@@ -64,14 +76,14 @@
       <li>Faster animations between pages, with a better loading screen</li>
     </ul>
     <h4>v4.0.5</h4>
-    <time datetime="2026-09-20">September 20, 2026</time>
+    <FriendlyTime date="2026-09-20" />
     <h5>Bug Fixes</h5>
     <ul>
       <li>Fixed inaccurate realtime times on station page.</li>
       <li>Developer: Switched to native node.js sqlite for queries performed on server.</li>
     </ul>
     <h4>v4.0.4</h4>
-    <time datetime="2026-09-19">September 19, 2026</time>
+    <FriendlyTime date="2026-09-19" />
     <h5>Bug Fixes</h5>
     <ul>
       <li>Fixed inaccurate times on timetable page.</li>
@@ -80,14 +92,14 @@
       <li>Developer: Sample GTFS data now works properly.</li>
     </ul>
     <h4>v4.0.3</h4>
-    <time datetime="2026-09-17">September 17, 2026</time>
+    <FriendlyTime date="2026-09-17" />
     <h5>Bug Fixes</h5>
     <ul>
       <li>Added geolocate button back to map.</li>
       <li>Prevents map recentering to stop on data refresh.</li>
     </ul>
     <h4>v4.0.2</h4>
-    <time datetime="2026-09-16">September 16, 2026</time>
+    <FriendlyTime date="2026-09-16" />
     <h5>Bug Fixes</h5>
     <ul>
       <li>Routes that visit the same station twice on a trip are handled properly.</li>
@@ -99,7 +111,7 @@
       <li>Franklin route group has been added for Auckland.</li>
     </ul>
     <h4>v4.0.1</h4>
-    <time datetime="2026-09-14">September 14, 2026</time>
+    <FriendlyTime date="2026-09-14" />
     <h5>New</h5>
     <ul>
       <li>An Install App button has been added for Chromium based browsers.</li>
@@ -113,10 +125,6 @@
     line-height: 1.35;
     font-size: 15px;
     text-wrap: pretty;
-  }
-  time {
-    color: var(--surface-text-subtle);
-    font-size: 13px;
   }
   ul {
     margin: 0.75em 0;
